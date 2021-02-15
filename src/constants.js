@@ -1,0 +1,1 @@
+export const EVENT_SNIPPETS_LOADED = "event.snippets_loaded"

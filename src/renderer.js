@@ -27,5 +27,23 @@
  */
 
 import './index.css';
+import './app.jsx';
+import { EVENT_SNIPPETS_LOADED } from './constants';
 
-console.log('👋 This message is being logged by "renderer.js", included via webpack');
+const { exec } = require('child_process')
+const { ipcRenderer } = require('electron')
+
+exec('synvert --list', (err, stdout, stderr) => {
+    const snippets = []
+    let group = ''
+    let name = ''
+    stdout.split("\n").forEach(line => {
+        if (line.startsWith("    ")) {
+            name = line.trim()
+            snippets.push(`${group}/${name}`)
+        } else {
+            group = line
+        }
+    })
+    ipcRenderer.send(EVENT_SNIPPETS_LOADED, { snippets })
+})
