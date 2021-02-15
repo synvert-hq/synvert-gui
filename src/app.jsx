@@ -1,3 +1,5 @@
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 
@@ -42,8 +44,10 @@ const App = () => {
         <AppContext.Provider value={value}>
             <div className="container">
                 <SnippetHeader />
-                <div><ListSnippets /></div>
-                <div><ShowSnippet /></div>
+                <div className="row">
+                    <div className="col-5"><ListSnippets /></div>
+                    <div className="col-7"><ShowSnippet /></div>
+                </div>
             </div>
         </AppContext.Provider>
     )

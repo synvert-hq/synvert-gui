@@ -4,9 +4,12 @@ import AppContext from '../context'
 export default () => (
     <AppContext.Consumer>
         {({ path, currentSnippet, setPath, runSnippet }) => (
-            <div className="header">
-                <input type="text" value={path} onChange={(e) => setPath(e.target.value)} />
-                <button disabled={!path || !currentSnippet} onClick={runSnippet}>Run</button>
+            <div className="d-flex align-items-center mb-4">
+                <span>Workspace:</span>
+                <div class="input-group input-group-lg ml-2 mr-2">
+                    <input className="flex-grow-1 form-control" type="text" value={path} placeholder="directory path" onChange={(e) => setPath(e.target.value)} />
+                </div>
+                <button className="btn btn-primary" disabled={!path || !currentSnippet} onClick={runSnippet}>Run</button>
             </div>
         )}
     </AppContext.Consumer>

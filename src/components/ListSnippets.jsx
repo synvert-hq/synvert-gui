@@ -1,14 +1,19 @@
 import React from 'react'
 import AppContext from '../context'
 
+const snippetClassname = (snippet, currentSnippet) =>
+    currentSnippet && snippet.name == currentSnippet.name && snippet.group == currentSnippet.group ? 'list-group-item active' : 'list-group-item'
+
 export default () => (
     <AppContext.Consumer>
-        {({ snippets, setCurrentSnippet, syncSnippets }) => (
+        {({ snippets, currentSnippet, setCurrentSnippet, syncSnippets }) => (
             <>
-                <button onClick={syncSnippets}>Sync Snippets</button>
-                <ul>
+                <div className="overflow-hidden">
+                    <button type="button" className="btn btn-primary float-right" onClick={syncSnippets}>Sync Snippets</button>
+                </div>
+                <ul className="list-group list-group-flush mt-2">
                     {snippets.map(snippet => (
-                        <li key={`${snippet.group}/${snippet.name}`} onClick={() => setCurrentSnippet(snippet)}>
+                        <li className={snippetClassname(snippet, currentSnippet)} key={`${snippet.group}/${snippet.name}`} onClick={() => setCurrentSnippet(snippet)}>
                             {snippet.group}/{snippet.name}
                         </li>
                     ))}
