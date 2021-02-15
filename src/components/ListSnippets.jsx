@@ -3,10 +3,10 @@ import AppContext from '../context'
 
 const ListSnippets = () => (
     <AppContext.Consumer>
-        {({ snippets }) => (
+        {({ snippets, setCurrentSnippet }) => (
             <ul>
                 {snippets.map(snippet => (
-                    <li key={`${snippet.group}/${snippet.name}`}>
+                    <li key={`${snippet.group}/${snippet.name}`} onClick={() => setCurrentSnippet(snippet)}>
                         {snippet.group}/{snippet.name}
                     </li>
                 ))}

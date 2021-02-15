@@ -5,11 +5,18 @@ import ReactDOM from 'react-dom';
 
 import AppContext from './context'
 import ListSnippets from './components/ListSnippets.jsx'
+import ShowSnippet from './components/ShowSnippet.jsx'
 import { EVENT_SNIPPETS_LOADED } from './constants'
 
 const App = () => {
     const [snippets, setSnippets] = useState([])
-    const value = { snippets, setSnippets }
+    const [currentSnippet, setCurrentSnippet] = useState(null)
+    const value = {
+        snippets,
+        currentSnippet,
+        setSnippets,
+        setCurrentSnippet
+    }
 
     useEffect(() => {
         ipcRenderer.on(EVENT_SNIPPETS_LOADED, (_event, message) => {
@@ -22,6 +29,7 @@ const App = () => {
             <div className="container">
                 <h1>Snippets</h1>
                 <div><ListSnippets /></div>
+                <div><ShowSnippet /></div>
             </div>
         </AppContext.Provider>
     )
