@@ -33,17 +33,10 @@ import { EVENT_SNIPPETS_LOADED } from './constants';
 const { exec } = require('child_process')
 const { ipcRenderer } = require('electron')
 
-exec('synvert --list', (err, stdout, stderr) => {
-    const snippets = []
-    let group = ''
-    let name = ''
-    stdout.split("\n").forEach(line => {
-        if (line.startsWith("    ")) {
-            name = line.trim()
-            snippets.push(`${group}/${name}`)
-        } else {
-            group = line
-        }
-    })
+// check ruby
+// check synvert gem
+// check synvert gem version
+exec('synvert --list-all', (err, stdout, stderr) => {
+    const snippets = JSON.parse(stdout)
     ipcRenderer.send(EVENT_SNIPPETS_LOADED, { snippets })
 })

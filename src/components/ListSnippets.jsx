@@ -22,8 +22,8 @@ const ListSnippets = () => {
     return (
         <ul>
             {snippets.map(snippet => (
-                <li>
-                    {snippet}
+                <li key={`${snippet.group}/${snippet.name}`}>
+                    {snippet.group}/{snippet.name}
                 </li>
             ))}
         </ul>
