@@ -1,33 +1,18 @@
-const { ipcRenderer } = require("electron")
+import React from 'react'
+import AppContext from '../context'
 
-import React, { useEffect, useState } from 'react'
-import { EVENT_SNIPPETS_LOADED } from '../constants'
-
-const ListSnippets = () => {
-    const [loading, setLoading] = useState(true)
-    const [loaded, setLoaded] = useState(false)
-    const [snippets, setSnippets] = useState([])
-
-    useEffect(() => {
-        ipcRenderer.on(EVENT_SNIPPETS_LOADED, (_event, message) => {
-            setLoading(false)
-            setLoaded(true)
-            setSnippets(message.snippets)
-        })
-    })
-
-    if (loading) {
-        return <div>Loading...</div>
-    }
-    return (
-        <ul>
-            {snippets.map(snippet => (
-                <li key={`${snippet.group}/${snippet.name}`}>
-                    {snippet.group}/{snippet.name}
-                </li>
-            ))}
-        </ul>
-    )
-}
+const ListSnippets = () => (
+    <AppContext.Consumer>
+        {({ snippets }) => (
+            <ul>
+                {snippets.map(snippet => (
+                    <li key={`${snippet.group}/${snippet.name}`}>
+                        {snippet.group}/{snippet.name}
+                    </li>
+                ))}
+            </ul>
+        )}
+    </AppContext.Consumer>
+)
 
 export default ListSnippets

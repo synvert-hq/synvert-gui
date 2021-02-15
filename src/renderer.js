@@ -28,6 +28,7 @@
 
 import './index.css';
 import './app.jsx';
+
 import { EVENT_SNIPPETS_LOADED } from './constants';
 
 const { exec } = require('child_process')
