@@ -1,7 +1,7 @@
 import React from 'react'
 import AppContext from '../context'
 
-const ListSnippets = () => (
+export default () => (
     <AppContext.Consumer>
         {({ snippets, setCurrentSnippet }) => (
             <ul>
@@ -14,5 +14,3 @@ const ListSnippets = () => (
         )}
     </AppContext.Consumer>
 )
-
-export default ListSnippets

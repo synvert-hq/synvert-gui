@@ -1,33 +1,42 @@
-const { ipcRenderer } = require("electron")
-
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 
 import AppContext from './context'
+import SnippetHeader from './components/SnippetHeader.jsx'
 import ListSnippets from './components/ListSnippets.jsx'
 import ShowSnippet from './components/ShowSnippet.jsx'
-import { EVENT_SNIPPETS_LOADED } from './constants'
+import { EVENT_SNIPPETS_LOADED, EVENT_RUN_SNIPPET } from './constants'
 
 const App = () => {
+    const [path, setPath] = useState('')
     const [snippets, setSnippets] = useState([])
     const [currentSnippet, setCurrentSnippet] = useState(null)
+    const runSnippet = () => {
+        const event = new CustomEvent(EVENT_RUN_SNIPPET, { detail: { path, currentSnippet } })
+        document.dispatchEvent(event)
+    }
+
     const value = {
+        path,
         snippets,
         currentSnippet,
+        setPath,
         setSnippets,
-        setCurrentSnippet
+        setCurrentSnippet,
+        runSnippet,
     }
 
     useEffect(() => {
-        ipcRenderer.on(EVENT_SNIPPETS_LOADED, (_event, message) => {
-            setSnippets(message.snippets)
+        document.addEventListener(EVENT_SNIPPETS_LOADED, event => {
+            const { snippets } = event.detail
+            setSnippets(snippets)
         })
     })
 
     return (
         <AppContext.Provider value={value}>
             <div className="container">
-                <h1>Snippets</h1>
+                <SnippetHeader />
                 <div><ListSnippets /></div>
                 <div><ShowSnippet /></div>
             </div>

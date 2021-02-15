@@ -29,15 +29,23 @@
 import './index.css';
 import './app.jsx';
 
-import { EVENT_SNIPPETS_LOADED } from './constants';
+import { EVENT_SNIPPETS_LOADED, EVENT_RUN_SNIPPET } from './constants';
 
 const { exec } = require('child_process')
-const { ipcRenderer } = require('electron')
 
 // check ruby
 // check synvert gem
 // check synvert gem version
 exec('synvert --list-all', (err, stdout, stderr) => {
     const snippets = JSON.parse(stdout)
-    ipcRenderer.send(EVENT_SNIPPETS_LOADED, { snippets })
+    const event = new CustomEvent(EVENT_SNIPPETS_LOADED, { detail: { snippets } })
+    document.dispatchEvent(event)
+})
+
+document.addEventListener(EVENT_RUN_SNIPPET, (event) => {
+    const { currentSnippet, path } = event.detail
+    exec(`synvert -r ${currentSnippet.group}/${currentSnippet.name} ${path}`, (err, stdout, stderr) => {
+        // check result
+        console.log(err, stdout, stderr)
+    })
 })
