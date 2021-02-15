@@ -29,18 +29,23 @@
 import './index.css';
 import './app.jsx';
 
-import { EVENT_SNIPPETS_LOADED, EVENT_RUN_SNIPPET } from './constants';
+import { EVENT_SNIPPETS_LOADED, EVENT_SYNC_SNIPPETS, EVENT_RUN_SNIPPET } from './constants';
 
 const { exec } = require('child_process')
 
 // check ruby
 // check synvert gem
 // check synvert gem version
-exec('synvert --list-all', (err, stdout, stderr) => {
-    const snippets = JSON.parse(stdout)
-    const event = new CustomEvent(EVENT_SNIPPETS_LOADED, { detail: { snippets } })
-    document.dispatchEvent(event)
-})
+const syncSnippets = () => {
+    exec('synvert --list-all', (err, stdout, stderr) => {
+        const snippets = JSON.parse(stdout)
+        const event = new CustomEvent(EVENT_SNIPPETS_LOADED, { detail: { snippets } })
+        document.dispatchEvent(event)
+    })
+}
+syncSnippets()
+
+document.addEventListener(EVENT_SYNC_SNIPPETS, syncSnippets)
 
 document.addEventListener(EVENT_RUN_SNIPPET, (event) => {
     const { currentSnippet, path } = event.detail

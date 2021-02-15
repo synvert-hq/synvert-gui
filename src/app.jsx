@@ -5,7 +5,7 @@ import AppContext from './context'
 import SnippetHeader from './components/SnippetHeader.jsx'
 import ListSnippets from './components/ListSnippets.jsx'
 import ShowSnippet from './components/ShowSnippet.jsx'
-import { EVENT_SNIPPETS_LOADED, EVENT_RUN_SNIPPET } from './constants'
+import { EVENT_SNIPPETS_LOADED, EVENT_SYNC_SNIPPETS, EVENT_RUN_SNIPPET } from './constants'
 
 const App = () => {
     const [path, setPath] = useState('')
@@ -13,6 +13,10 @@ const App = () => {
     const [currentSnippet, setCurrentSnippet] = useState(null)
     const runSnippet = () => {
         const event = new CustomEvent(EVENT_RUN_SNIPPET, { detail: { path, currentSnippet } })
+        document.dispatchEvent(event)
+    }
+    const syncSnippets = () => {
+        const event = new Event(EVENT_SYNC_SNIPPETS)
         document.dispatchEvent(event)
     }
 
@@ -23,6 +27,7 @@ const App = () => {
         setPath,
         setSnippets,
         setCurrentSnippet,
+        syncSnippets,
         runSnippet,
     }
 
