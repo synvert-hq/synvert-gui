@@ -33,12 +33,18 @@ import { EVENT_SNIPPETS_LOADED, EVENT_SYNC_SNIPPETS, EVENT_RUN_SNIPPET } from '.
 
 const { exec } = require('child_process')
 
+const compareSnippets = (a, b) => {
+    if (`${a.group}/${a.name}` < `${b.group}/${b.name}`) return -1
+    if (`${a.group}/${a.name}` > `${b.group}/${b.name}`) return 1
+    return 0
+}
+
 // check ruby
 // check synvert gem
 // check synvert gem version
 const syncSnippets = () => {
     exec('synvert --list-all', (err, stdout, stderr) => {
-        const snippets = JSON.parse(stdout)
+        const snippets = JSON.parse(stdout).sort(compareSnippets)
         const event = new CustomEvent(EVENT_SNIPPETS_LOADED, { detail: { snippets } })
         document.dispatchEvent(event)
     })
