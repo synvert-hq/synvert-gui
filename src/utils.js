@@ -1,3 +1,12 @@
+export const convertSnippetsToStore = (snippets) =>
+    snippets.reduce(
+        (obj, snippet) => ({
+            ...obj,
+            [`${snippet.group}/${snippet.name}`]: snippet
+        }),
+        {}
+    );
+
 export const sortSnippets = (snippets) =>
     snippets.sort((a, b) => {
         if (`${a.group}/${a.name}` < `${b.group}/${b.name}`) return -1

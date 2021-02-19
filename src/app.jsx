@@ -11,8 +11,8 @@ import { EVENT_SNIPPETS_LOADED, EVENT_SYNC_SNIPPETS, EVENT_RUN_SNIPPET } from '.
 
 const App = () => {
     const [path, setPath] = useState('')
-    const [snippets, setSnippets] = useState([])
-    const [currentSnippet, setCurrentSnippet] = useState(null)
+    const [snippetsStore, setSnippetsStore] = useState({})
+    const [currentSnippetId, setCurrentSnippetId] = useState(null)
     const [searchTerm, setSearchTerm] = useState('')
     const runSnippet = () => {
         const event = new CustomEvent(EVENT_RUN_SNIPPET, { detail: { path, currentSnippet } })
@@ -25,12 +25,12 @@ const App = () => {
 
     const value = {
         path,
-        snippets,
-        currentSnippet,
+        snippetsStore,
+        currentSnippetId,
         searchTerm,
         setPath,
-        setSnippets,
-        setCurrentSnippet,
+        setSnippetsStore,
+        setCurrentSnippetId,
         setSearchTerm,
         syncSnippets,
         runSnippet,
@@ -38,8 +38,8 @@ const App = () => {
 
     useEffect(() => {
         document.addEventListener(EVENT_SNIPPETS_LOADED, event => {
-            const { snippets } = event.detail
-            setSnippets(snippets)
+            const { snippetsStore } = event.detail
+            setSnippetsStore(snippetsStore)
         })
     })
 

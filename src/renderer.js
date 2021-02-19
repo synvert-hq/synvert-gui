@@ -30,27 +30,37 @@ import './index.css';
 import './app.jsx';
 
 import { EVENT_SNIPPETS_LOADED, EVENT_SYNC_SNIPPETS, EVENT_RUN_SNIPPET } from './constants';
-import { sortSnippets } from './utils'
+import { convertSnippetsToStore } from './utils'
 
 const { exec } = require('child_process')
 
 // check ruby
 // check synvert gem
 // check synvert gem version
-const syncSnippets = () => {
+const listSnippets = () => {
     exec('synvert --list-all', (err, stdout, stderr) => {
-        const snippets = sortSnippets(JSON.parse(stdout))
-        const event = new CustomEvent(EVENT_SNIPPETS_LOADED, { detail: { snippets } })
+        console.log(err, stdout, stderr)
+        const snippets = JSON.parse(stdout)
+        const snippetsStore = convertSnippetsToStore(snippets)
+        const event = new CustomEvent(EVENT_SNIPPETS_LOADED, { detail: { snippetsStore } })
         document.dispatchEvent(event)
     })
 }
-syncSnippets()
+listSnippets()
+
+const syncSnippets = () => {
+    exec('synvert --sync', (err, stdout, stderr) => {
+        console.log(err, stdout, stderr)
+        listSnippets()
+    })
+}
 
 document.addEventListener(EVENT_SYNC_SNIPPETS, syncSnippets)
 
 document.addEventListener(EVENT_RUN_SNIPPET, (event) => {
-    const { currentSnippet, path } = event.detail
-    exec(`synvert -r ${currentSnippet.group}/${currentSnippet.name} ${path}`, (err, stdout, stderr) => {
+    const { snippetsStore, currentSnippetId, path } = event.detail
+    const snippet = snippetsStore[currentSnippetId]
+    exec(`synvert -r ${snippet.group}/${snippet.name} ${path}`, (err, stdout, stderr) => {
         // check result
         console.log(err, stdout, stderr)
     })

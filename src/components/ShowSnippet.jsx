@@ -10,9 +10,16 @@ export default () => {
 
     return (
         <AppContext.Consumer>
-            {({ currentSnippet }) => (
-                <div>{currentSnippet ? <ReactMarkdown children={currentSnippet.description} /> : ''}</div>
-            )}
+            {({ snippetsStore, currentSnippetId }) => {
+                if (!currentSnippetId) return null
+                const snippet = snippetsStore[currentSnippetId]
+                return (
+                    <>
+                        <h2>{snippet.group}/{snippet.name}</h2>
+                        <div><ReactMarkdown children={snippet.description} /></div>
+                    </>
+                )
+            }}
         </AppContext.Consumer>
     )
 }
