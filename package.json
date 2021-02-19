@@ -73,6 +73,7 @@
     "@electron-forge/plugin-webpack": "6.0.0-beta.54",
     "@marshallofsound/webpack-asset-relocator-loader": "^0.5.0",
     "babel-loader": "^8.2.2",
+    "babel-plugin-prismjs": "^2.0.1",
     "css-loader": "^4.2.1",
     "electron": "11.2.3",
     "node-loader": "^1.0.1",
@@ -81,6 +82,7 @@
   "dependencies": {
     "bootstrap": "^4.6.0",
     "electron-squirrel-startup": "^1.0.0",
+    "prismjs": "^1.23.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-markdown": "^5.0.3"
