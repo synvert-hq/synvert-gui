@@ -45,7 +45,7 @@ const App = () => {
 
     return (
         <AppContext.Provider value={value}>
-            <div className="container">
+            <div className="container-fluid">
                 <SnippetHeader />
                 <div className="row">
                     <div className="col-5"><ListSnippets /></div>
