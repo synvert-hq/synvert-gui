@@ -10,11 +10,12 @@ export default () => {
 
     return (
         <AppContext.Consumer>
-            {({ snippetsStore, currentSnippetId }) => {
+            {({ path, snippetsStore, currentSnippetId, runSnippet }) => {
                 if (!currentSnippetId) return null
                 const snippet = snippetsStore[currentSnippetId]
                 return (
                     <>
+                        <button className="btn btn-primary float-right" disabled={!path} onClick={runSnippet}>Run</button>
                         <h2>{snippet.group}/{snippet.name}</h2>
                         <div><ReactMarkdown children={snippet.description} /></div>
                         <ul>
