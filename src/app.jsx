@@ -15,7 +15,7 @@ const App = () => {
     const [currentSnippetId, setCurrentSnippetId] = useState(null)
     const [searchTerm, setSearchTerm] = useState('')
     const runSnippet = () => {
-        const event = new CustomEvent(EVENT_RUN_SNIPPET, { detail: { path, currentSnippet } })
+        const event = new CustomEvent(EVENT_RUN_SNIPPET, { detail: { path, currentSnippetId } })
         document.dispatchEvent(event)
     }
     const syncSnippets = () => {

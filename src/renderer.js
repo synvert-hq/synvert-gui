@@ -58,9 +58,8 @@ const syncSnippets = () => {
 document.addEventListener(EVENT_SYNC_SNIPPETS, syncSnippets)
 
 document.addEventListener(EVENT_RUN_SNIPPET, (event) => {
-    const { snippetsStore, currentSnippetId, path } = event.detail
-    const snippet = snippetsStore[currentSnippetId]
-    exec(`synvert -r ${snippet.group}/${snippet.name} ${path}`, (err, stdout, stderr) => {
+    const { currentSnippetId, path } = event.detail
+    exec(`synvert -r ${currentSnippetId} ${path}`, (err, stdout, stderr) => {
         // check result
         console.log(err, stdout, stderr)
     })
