@@ -41,12 +41,6 @@ const App = () => {
         snippetsStore,
         currentSnippetId,
         searchTerm,
-        setPath,
-        setSnippetsStore,
-        setCurrentSnippetId,
-        setSearchTerm,
-        syncSnippets,
-        runSnippet,
     }
 
     useEffect(() => {
@@ -67,8 +61,8 @@ const App = () => {
             <div className="d-flex flex-column">
                 <SnippetHeader selectPath={selectPath} />
                 <div className="d-flex flex-row flex-grow-1">
-                    <div className="w-30 mr-4"><ListSnippets /></div>
-                    <div className="flex-grow-1"><ShowSnippet /></div>
+                    <div className="w-30 mr-4"><ListSnippets setSearchTerm={setSearchTerm} setCurrentSnippetId={setCurrentSnippetId} syncSnippets={syncSnippets} /></div>
+                    <div className="flex-grow-1"><ShowSnippet runSnippet={runSnippet} /></div>
                 </div>
             </div>
         </AppContext.Provider>

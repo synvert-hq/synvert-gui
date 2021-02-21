@@ -3,14 +3,14 @@ import ReactMarkdown from 'react-markdown'
 import AppContext from '../context'
 import Prism from 'prismjs';
 
-export default () => {
+export default ({ runSnippet }) => {
     useEffect(() => {
         Prism.highlightAll();
     })
 
     return (
         <AppContext.Consumer>
-            {({ path, snippetsStore, currentSnippetId, runSnippet }) => {
+            {({ path, snippetsStore, currentSnippetId }) => {
                 if (!currentSnippetId) return null
                 const snippet = snippetsStore[currentSnippetId]
                 return (

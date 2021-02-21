@@ -5,9 +5,9 @@ import { searchSnippets, sortSnippets } from '../utils'
 const snippetClassname = (snippet, currentSnippetId) =>
     currentSnippetId && `${snippet.group}/${snippet.name}` == currentSnippetId ? 'list-group-item active' : 'list-group-item'
 
-export default () => (
+export default ({ setSearchTerm, setCurrentSnippetId, syncSnippets }) => (
     <AppContext.Consumer>
-        {({ snippetsStore, currentSnippetId, searchTerm, setCurrentSnippetId, setSearchTerm, syncSnippets }) => {
+        {({ snippetsStore, currentSnippetId, searchTerm }) => {
             if (Object.keys(snippetsStore).length === 0) {
                 return (
                     <div className="ml-5 mr-5">Loading Snippets...</div>
