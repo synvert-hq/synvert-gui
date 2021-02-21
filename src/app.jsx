@@ -14,6 +14,7 @@ const App = () => {
     const [snippetsStore, setSnippetsStore] = useState({})
     const [currentSnippetId, setCurrentSnippetId] = useState(null)
     const [searchTerm, setSearchTerm] = useState('')
+
     const runSnippet = () => {
         const event = new CustomEvent(EVENT_RUN_SNIPPET, { detail: { path, currentSnippetId } })
         document.dispatchEvent(event)
@@ -41,6 +42,12 @@ const App = () => {
             const { snippetsStore } = event.detail
             setSnippetsStore(snippetsStore)
         })
+    })
+
+    useEffect(() => {
+        if (Object.keys(snippetsStore).length > 0 && !currentSnippetId) {
+            setCurrentSnippetId(Object.keys(snippetsStore).sort()[0])
+        }
     })
 
     return (
