@@ -10,13 +10,15 @@ import AppContext from './context'
 import SnippetHeader from './components/SnippetHeader.jsx'
 import ListSnippets from './components/ListSnippets.jsx'
 import ShowSnippet from './components/ShowSnippet.jsx'
-import { EVENT_SNIPPETS_LOADED, EVENT_SYNC_SNIPPETS, EVENT_RUN_SNIPPET } from './constants'
+import { EVENT_SNIPPETS_LOADED, EVENT_SYNC_SNIPPETS, EVENT_RUN_SNIPPET, EVENT_SNIPPET_RUN } from './constants'
 
 const App = () => {
     const [path, setPath] = useState('')
     const [snippetsStore, setSnippetsStore] = useState({})
     const [currentSnippetId, setCurrentSnippetId] = useState(null)
     const [searchTerm, setSearchTerm] = useState('')
+    const [syncing, setSyncing] = useState(false)
+    const [running, setRunning] = useState(false)
 
     const selectPath = () => {
         const path = dialog.showOpenDialogSync({
@@ -30,10 +32,12 @@ const App = () => {
     const runSnippet = () => {
         const event = new CustomEvent(EVENT_RUN_SNIPPET, { detail: { path, currentSnippetId } })
         document.dispatchEvent(event)
+        setRunning(true)
     }
     const syncSnippets = () => {
         const event = new Event(EVENT_SYNC_SNIPPETS)
         document.dispatchEvent(event)
+        setSyncing(true)
     }
 
     const value = {
@@ -41,12 +45,21 @@ const App = () => {
         snippetsStore,
         currentSnippetId,
         searchTerm,
+        syncing,
+        running,
     }
 
     useEffect(() => {
         document.addEventListener(EVENT_SNIPPETS_LOADED, event => {
             const { snippetsStore } = event.detail
             setSnippetsStore(snippetsStore)
+            setSyncing(false)
+        })
+    })
+
+    useEffect(() => {
+        document.addEventListener(EVENT_SNIPPET_RUN, event => {
+            setRunning(false)
         })
     })
 

@@ -1,3 +1,4 @@
+import LoadingOverlay from 'react-loading-overlay';
 import React from 'react'
 import AppContext from '../context'
 import { searchSnippets, sortSnippets } from '../utils'
@@ -7,7 +8,7 @@ const snippetClassname = (snippet, currentSnippetId) =>
 
 export default ({ setSearchTerm, setCurrentSnippetId, syncSnippets }) => (
     <AppContext.Consumer>
-        {({ snippetsStore, currentSnippetId, searchTerm }) => {
+        {({ snippetsStore, currentSnippetId, searchTerm, syncing }) => {
             if (Object.keys(snippetsStore).length === 0) {
                 return (
                     <div className="ml-5 mr-5">Loading Snippets...</div>
@@ -15,7 +16,7 @@ export default ({ setSearchTerm, setCurrentSnippetId, syncSnippets }) => (
             }
 
             return (
-                <>
+                <LoadingOverlay active={syncing} spinner text='Syncing snippets...'>
                     <div className="d-flex">
                         <input className="flex-grow-1 form-control" type="text" value={searchTerm} placeholder="search snippets" onChange={(e) => setSearchTerm(e.target.value)} />
                         <button type="button" className="btn btn-primary btn-sm ml-2" onClick={syncSnippets}>Sync</button>
@@ -27,7 +28,7 @@ export default ({ setSearchTerm, setCurrentSnippetId, syncSnippets }) => (
                             </li>
                         ))}
                     </ul>
-                </>
+                </LoadingOverlay>
             )
         }}
     </AppContext.Consumer>

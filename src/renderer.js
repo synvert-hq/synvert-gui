@@ -29,7 +29,7 @@
 import './index.css';
 import './app.jsx';
 
-import { EVENT_SNIPPETS_LOADED, EVENT_SYNC_SNIPPETS, EVENT_RUN_SNIPPET } from './constants';
+import { EVENT_SNIPPETS_LOADED, EVENT_SYNC_SNIPPETS, EVENT_RUN_SNIPPET, EVENT_SNIPPET_RUN } from './constants';
 import { convertSnippetsToStore } from './utils'
 
 const { exec } = require('child_process')
@@ -62,5 +62,7 @@ document.addEventListener(EVENT_RUN_SNIPPET, (event) => {
     exec(`synvert -r ${currentSnippetId} ${path}`, (err, stdout, stderr) => {
         // check result
         console.log(err, stdout, stderr)
+        const event = new CustomEvent(EVENT_SNIPPET_RUN, { detail: {} })
+        document.dispatchEvent(event)
     })
 })
