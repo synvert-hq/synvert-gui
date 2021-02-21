@@ -1,4 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap-icons/font/bootstrap-icons.css';
+
+const { dialog } = require('electron').remote
 
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
@@ -14,6 +17,15 @@ const App = () => {
     const [snippetsStore, setSnippetsStore] = useState({})
     const [currentSnippetId, setCurrentSnippetId] = useState(null)
     const [searchTerm, setSearchTerm] = useState('')
+
+    const selectPath = () => {
+        const path = dialog.showOpenDialogSync({
+            properties: ['openDirectory']
+        });
+        if (path) {
+            setPath(path[0])
+        }
+    }
 
     const runSnippet = () => {
         const event = new CustomEvent(EVENT_RUN_SNIPPET, { detail: { path, currentSnippetId } })
@@ -53,7 +65,7 @@ const App = () => {
     return (
         <AppContext.Provider value={value}>
             <div className="d-flex flex-column">
-                <SnippetHeader />
+                <SnippetHeader selectPath={selectPath} />
                 <div className="d-flex flex-row flex-grow-1">
                     <div className="w-30 mr-4"><ListSnippets /></div>
                     <div className="flex-grow-1"><ShowSnippet /></div>
