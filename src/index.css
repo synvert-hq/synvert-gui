@@ -1,5 +1,19 @@
+html, body {
+  height: 100%;
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   margin: auto;
   padding: 2rem;
+}
+
+.snippets-list {
+  height: calc(100vh - 172px);
+  overflow-y: scroll;
+}
+
+.snippet-show {
+  height: calc(100vh - 126px);
+  overflow-y: scroll;
 }

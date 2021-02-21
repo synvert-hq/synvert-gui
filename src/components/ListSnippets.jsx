@@ -13,7 +13,7 @@ export default () => (
                     <input className="flex-grow-1 form-control" type="text" value={searchTerm} placeholder="search snippets" onChange={(e) => setSearchTerm(e.target.value)} />
                     <button type="button" className="btn btn-primary btn-sm ml-2" onClick={syncSnippets}>Sync</button>
                 </div>
-                <ul className="list-group list-group-flush mt-2">
+                <ul className="snippets-list list-group list-group-flush mt-2">
                     {searchSnippets(sortSnippets(Object.values(snippetsStore)), searchTerm).map(snippet => (
                         <li className={snippetClassname(snippet, currentSnippetId)} key={`${snippet.group}/${snippet.name}`} onClick={() => setCurrentSnippetId(`${snippet.group}/${snippet.name}`)}>
                             {snippet.group}/{snippet.name}

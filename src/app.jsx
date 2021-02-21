@@ -45,11 +45,11 @@ const App = () => {
 
     return (
         <AppContext.Provider value={value}>
-            <div className="container-fluid">
+            <div className="d-flex flex-column">
                 <SnippetHeader />
-                <div className="row">
-                    <div className="col-5"><ListSnippets /></div>
-                    <div className="col-7"><ShowSnippet /></div>
+                <div className="d-flex flex-row flex-grow-1">
+                    <div className="w-30 mr-4"><ListSnippets /></div>
+                    <div className="flex-grow-1"><ShowSnippet /></div>
                 </div>
             </div>
         </AppContext.Provider>
