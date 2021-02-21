@@ -8,7 +8,11 @@ const snippetClassname = (snippet, currentSnippetId) =>
 export default () => (
     <AppContext.Consumer>
         {({ snippetsStore, currentSnippetId, searchTerm, setCurrentSnippetId, setSearchTerm, syncSnippets }) => {
-            if (Object.keys(snippetsStore).length === 0) return null
+            if (Object.keys(snippetsStore).length === 0) {
+                return (
+                    <div className="ml-5 mr-5">Loading Snippets...</div>
+                )
+            }
 
             return (
                 <>
