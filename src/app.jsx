@@ -14,7 +14,7 @@ import { EVENT_DEPENDENCIES_CHECKED, EVENT_SNIPPETS_LOADED } from './constants'
 
 const App = () => {
     const [error, setError] = useState('')
-    const [path, setPath] = useState('')
+    const [path, setPath] = useState(localStorage.getItem('path') || '')
     const [snippetsStore, setSnippetsStore] = useState({})
     const [currentSnippetId, setCurrentSnippetId] = useState(null)
     const [checked, setChecked] = useState(false)
@@ -25,6 +25,7 @@ const App = () => {
         });
         if (path) {
             setPath(path[0])
+            localStorage.setItem('path', path[0])
         }
     }
 
