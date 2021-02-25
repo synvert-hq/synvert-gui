@@ -41,10 +41,11 @@ const checkDependencies = () => {
             document.dispatchEvent(event)
             return
         }
+        const rubyVersion = stdout
 
         exec('synvert --version', (err, stdout, stderr) => {
             if (err && err.code > 0) {
-                const event = new CustomEvent(EVENT_DEPENDENCIES_CHECKED, { detail: { error: 'Please install synvert gem first!' } })
+                const event = new CustomEvent(EVENT_DEPENDENCIES_CHECKED, { detail: { error: 'Please install synvert gem first in your ' + rubyVersion } })
                 document.dispatchEvent(event)
                 return
             }
