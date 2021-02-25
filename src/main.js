@@ -10,6 +10,7 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     show: false,
     webPreferences: {
+      devTools: false,
       enableRemoteModule: true,
       nodeIntegration: true
     }
