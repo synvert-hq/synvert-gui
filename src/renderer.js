@@ -36,14 +36,14 @@ const { exec } = require('child_process')
 
 const checkDependencies = () => {
     exec('ruby -v', (err, stdout, stderr) => {
-        if (err) {
+        if (err && err.code > 0) {
             const event = new CustomEvent(EVENT_DEPENDENCIES_CHECKED, { detail: { error: 'Please install ruby first!' } })
             document.dispatchEvent(event)
             return
         }
 
         exec('synvert --version', (err, stdout, stderr) => {
-            if (err) {
+            if (err && err.code > 0) {
                 const event = new CustomEvent(EVENT_DEPENDENCIES_CHECKED, { detail: { error: 'Please install synvert gem first!' } })
                 document.dispatchEvent(event)
                 return
@@ -57,7 +57,7 @@ const checkDependencies = () => {
 
 const listSnippets = () => {
     exec('synvert --list-all', (err, stdout, stderr) => {
-        if (err) {
+        if (err && err.code > 0) {
             const event = new CustomEvent(EVENT_SNIPPETS_LOADED, { detail: { error: 'Failed to sync snippets!' } })
             document.dispatchEvent(event)
             return
@@ -71,7 +71,7 @@ const listSnippets = () => {
 
 const syncSnippets = () => {
     exec('synvert --sync', (err, stdout, stderr) => {
-        if (err) {
+        if (err && err.code > 0) {
             const event = new CustomEvent(EVENT_SNIPPETS_LOADED, { detail: { error: 'Failed to sync snippets!' } })
             document.dispatchEvent(event)
             return
@@ -87,7 +87,7 @@ document.addEventListener(EVENT_SYNC_SNIPPETS, syncSnippets)
 document.addEventListener(EVENT_RUN_SNIPPET, (event) => {
     const { currentSnippetId, path } = event.detail
     exec(`synvert -r ${currentSnippetId} ${path}`, (err, stdout, stderr) => {
-        if (err) {
+        if (err && err.code > 0) {
             const event = new CustomEvent(EVENT_SNIPPET_RUN, { detail: { error: 'Failed to run this snippet!' } })
             document.dispatchEvent(event)
             return
