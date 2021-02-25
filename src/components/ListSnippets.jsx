@@ -12,6 +12,7 @@ export default ({ setCurrentSnippetId }) => {
     const [error, setError] = useState('')
     const [searchTerm, setSearchTerm] = useState('')
     const [syncing, setSyncing] = useState(false)
+    const [loaded, setLoaded] = useState(false)
 
     const { currentSnippetId, snippetsStore } = useContext(AppContext)
 
@@ -27,6 +28,7 @@ export default ({ setCurrentSnippetId }) => {
                 setError('')
             }
             setSyncing(false)
+            setLoaded(true)
         })
     })
 
@@ -36,9 +38,20 @@ export default ({ setCurrentSnippetId }) => {
         setSyncing(true)
     }
 
-    if (Object.keys(snippetsStore).length === 0) {
+    if (!loaded) {
         return (
             <div className="ml-5 mr-5">Loading Snippets...</div>
+        )
+    }
+
+    if (Object.keys(snippetsStore).length === 0) {
+        return (
+            <LoadingOverlay active={syncing} spinner text='Syncing snippets...'>
+                <div className="d-flex flex-column justify-content-center ml-5 mr-5">
+                  <div className="mb-2">No Snippet yet</div>
+                  <button type="button" className="btn btn-primary btn-sm ml-2" onClick={sync}>Sync</button>
+              </div>
+            </LoadingOverlay>
         )
     }
 
