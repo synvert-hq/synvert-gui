@@ -50,6 +50,18 @@ const config = {
         }
       }
     ]
+  ],
+  "publishers": [
+    {
+      "name": "@electron-forge/publisher-github",
+      "config": {
+        "repository": {
+          "owner": "xinminlabs",
+          "name": "Snippets",
+          "draft": true
+        }
+      }
+    }
   ]
 }
 
