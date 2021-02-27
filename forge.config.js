@@ -70,11 +70,6 @@ function notarizeMaybe() {
     return;
   }
 
-  if (!process.env.CI) {
-    console.log(`Not in CI, skipping notarization`);
-    return;
-  }
-
   if (!process.env.APPLE_ID || !process.env.APPLE_ID_PASSWORD) {
     console.warn(
       'Should be notarizing, but environment variables APPLE_ID or APPLE_ID_PASSWORD are missing!',
