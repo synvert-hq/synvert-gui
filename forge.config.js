@@ -50,18 +50,6 @@ const config = {
         }
       }
     ]
-  ],
-  "publishers": [
-    {
-      "name": "@electron-forge/publisher-github",
-      "config": {
-        "repository": {
-          "owner": "xinminlabs",
-          "name": "Snippets",
-          "draft": true
-        }
-      }
-    }
   ]
 }
 
@@ -83,7 +71,26 @@ function notarizeMaybe() {
   };
 }
 
+function publishMaybe() {
+  if (process.env.GITHUB_TOKEN) {
+    config.publishers = [
+      {
+        "name": "@electron-forge/publisher-github",
+        "config": {
+          "repository": {
+            "owner": "xinminlabs",
+            "name": "Snippets",
+            "draft": true
+          }
+        }
+      }
+    ]
+  }
+}
+
 notarizeMaybe();
+
+publishMaybe();
 
 // Finally, export it
 module.exports = config;
