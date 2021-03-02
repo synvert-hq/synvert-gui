@@ -36,21 +36,27 @@ const App = () => {
     }
 
     useEffect(() => {
-        document.addEventListener(EVENT_DEPENDENCIES_CHECKED, event => {
+        const listener = document.addEventListener(EVENT_DEPENDENCIES_CHECKED, event => {
             const { error } = event.detail
             setError(error)
             setChecked(true)
         })
-    })
+        return () => {
+            document.removeEventListener(EVENT_DEPENDENCIES_CHECKED, listener)
+        }
+    }, [])
 
     useEffect(() => {
-        document.addEventListener(EVENT_SNIPPETS_LOADED, event => {
+        const listener = document.addEventListener(EVENT_SNIPPETS_LOADED, event => {
             const { snippetsStore } = event.detail
             if (snippetsStore) {
                 setSnippetsStore(snippetsStore)
             }
         })
-    })
+        return () => {
+            document.removeEventListener(EVENT_SNIPPETS_LOADED, listener)
+        }
+    }, [])
 
     useEffect(() => {
         if (Object.keys(snippetsStore).length > 0 && !currentSnippetId) {

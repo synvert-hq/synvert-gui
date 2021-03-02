@@ -21,7 +21,7 @@ export default ({ setCurrentSnippetId }) => {
     }, [currentSnippetId])
 
     useEffect(() => {
-        document.addEventListener(EVENT_SNIPPETS_LOADED, event => {
+        const listener = document.addEventListener(EVENT_SNIPPETS_LOADED, event => {
             if (event.detail.error) {
                 setError(event.detail.error)
             } else {
@@ -30,7 +30,10 @@ export default ({ setCurrentSnippetId }) => {
             setSyncing(false)
             setLoaded(true)
         })
-    })
+        return () => {
+            document.removeEventListener(EVENT_SNIPPETS_LOADED, listener)
+        }
+    }, [])
 
     const sync = () => {
         const event = new Event(EVENT_SYNC_SNIPPETS)

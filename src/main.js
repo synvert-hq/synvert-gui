@@ -10,7 +10,7 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     show: false,
     webPreferences: {
-      devTools: false,
+      devTools: process.env.DEBUG === 'true',
       enableRemoteModule: true,
       nodeIntegration: true
     }

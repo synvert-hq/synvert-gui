@@ -29,7 +29,7 @@
 import './index.css';
 import './app.jsx';
 
-import { EVENT_SNIPPETS_LOADED, EVENT_SYNC_SNIPPETS, EVENT_RUN_SNIPPET, EVENT_SNIPPET_RUN, EVENT_DEPENDENCIES_CHECKED } from './constants';
+import { EVENT_SNIPPETS_LOADED, EVENT_SYNC_SNIPPETS, EVENT_RUN_SNIPPET, EVENT_SNIPPET_RUN, EVENT_DEPENDENCIES_CHECKED, EVENT_SHOW_SNIPPET, EVENT_SNIPPET_SHOWN } from './constants';
 import { convertSnippetsToStore } from './utils'
 
 const { exec } = require('child_process')
@@ -87,13 +87,22 @@ document.addEventListener(EVENT_SYNC_SNIPPETS, syncSnippets)
 
 document.addEventListener(EVENT_RUN_SNIPPET, (event) => {
     const { currentSnippetId, path } = event.detail
-    exec(`synvert -r ${currentSnippetId} ${path}`, (err, stdout, stderr) => {
+    exec(`synvert --run ${currentSnippetId} ${path}`, (err, stdout, stderr) => {
         if (err && err.code > 0) {
             const event = new CustomEvent(EVENT_SNIPPET_RUN, { detail: { error: 'Failed to run this snippet!' } })
             document.dispatchEvent(event)
             return
         }
         const event = new CustomEvent(EVENT_SNIPPET_RUN, { detail: {} })
+        document.dispatchEvent(event)
+    })
+})
+
+document.addEventListener(EVENT_SHOW_SNIPPET, (event) => {
+    const { currentSnippetId } = event.detail
+    exec(`synvert --show ${currentSnippetId}`, (err, stdout, stderr) => {
+        console.log(stdout)
+        const event = new CustomEvent(EVENT_SNIPPET_SHOWN, { detail: { code: stdout } })
         document.dispatchEvent(event)
     })
 })
