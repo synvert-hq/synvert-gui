@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown'
 import Prism from 'prismjs'
 import LoadingOverlay from 'react-loading-overlay'
 import AppContext from '../context'
-import Error from './Error.jsx'
+import Error from './Error'
 import { EVENT_RUN_SNIPPET, EVENT_SHOW_SNIPPET, EVENT_SNIPPET_RUN, EVENT_SNIPPET_SHOWN } from '../constants'
 
 export default () => {
@@ -23,12 +23,8 @@ export default () => {
     }, [currentSnippetId])
 
     useEffect(() => {
-        const listener = document.addEventListener(EVENT_SNIPPET_RUN, event => {
-            if (event.detail.error) {
-                setError(event.detail.error)
-            } else {
-                setError('')
-            }
+        const listener = document.addEventListener(EVENT_SNIPPET_RUN, () => {
+            setError(error)
             setRunning(false)
         })
         return () => {
@@ -38,7 +34,8 @@ export default () => {
 
     useEffect(() => {
         const listener = document.addEventListener(EVENT_SNIPPET_SHOWN, event => {
-            setCode(event.detail.code)
+            const { detail: { code } } = event
+            setCode(code)
         })
         return () => {
             document.removeEventListener(EVENT_SNIPPET_SHOWN, listener)

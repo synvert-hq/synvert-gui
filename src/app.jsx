@@ -7,12 +7,16 @@ import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 
 import AppContext from './context'
-import SnippetHeader from './components/SnippetHeader.jsx'
-import ListSnippets from './components/ListSnippets.jsx'
-import ShowSnippet from './components/ShowSnippet.jsx'
+import SnippetHeader from './components/SnippetHeader'
+import ListSnippets from './components/ListSnippets'
+import ShowSnippet from './components/ShowSnippet'
+import SelectDependencies from './components/SelectDependencies'
+import CheckDependency from './components/CheckDependency'
 import { EVENT_DEPENDENCIES_CHECKED, EVENT_SNIPPETS_LOADED } from './constants'
+import { dependencySelected } from './utils'
 
 const App = () => {
+    const [dependency, setDependency] = useState(dependencySelected())
     const [error, setError] = useState('')
     const [path, setPath] = useState(localStorage.getItem('path') || '')
     const [snippetsStore, setSnippetsStore] = useState({})
@@ -21,7 +25,7 @@ const App = () => {
 
     const selectPath = () => {
         const path = dialog.showOpenDialogSync({
-            properties: ['openDirectory']
+            properties: ['openDirectory', 'openFile']
         });
         if (path) {
             setPath(path[0])
@@ -37,7 +41,7 @@ const App = () => {
 
     useEffect(() => {
         const listener = document.addEventListener(EVENT_DEPENDENCIES_CHECKED, event => {
-            const { error } = event.detail
+            const { detail: { error } = {} } = event
             setError(error)
             setChecked(true)
         })
@@ -48,7 +52,7 @@ const App = () => {
 
     useEffect(() => {
         const listener = document.addEventListener(EVENT_SNIPPETS_LOADED, event => {
-            const { snippetsStore } = event.detail
+            const { detail: { snippetsStore } = {} } = event
             if (snippetsStore) {
                 setSnippetsStore(snippetsStore)
             }
@@ -64,8 +68,12 @@ const App = () => {
         }
     })
 
+    if (!dependency) {
+        return <SelectDependencies setDependency={setDependency} />
+    }
+
     if (!checked) {
-       return <div className="alert text-center">Checking dependencies...</div>
+        return <CheckDependency />
     }
 
     if (error) {
