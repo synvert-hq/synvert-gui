@@ -65,7 +65,7 @@ export default () => {
     const snippet = snippetsStore[currentSnippetId]
     return (
         <LoadingOverlay active={running} spinner text='Running snippet...'>
-            <div className="snippet-show">
+            <div className="snippet-show container-fluid">
                 <Error error={error} />
                 <button className="btn btn-primary float-right" disabled={!path} onClick={run}>Run</button>
                 <h2>{snippet.group}/{snippet.name}</h2>

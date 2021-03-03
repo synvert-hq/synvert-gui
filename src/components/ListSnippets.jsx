@@ -42,7 +42,7 @@ export default ({ setCurrentSnippetId }) => {
     }
 
     return (
-        <>
+        <div className="container-fluid">
             <Error error={error} />
             <input className="form-control" type="text" value={searchTerm} placeholder="search snippets" onChange={(e) => setSearchTerm(e.target.value)} />
             <ul className="snippets-list list-group list-group-flush mt-2">
@@ -52,6 +52,6 @@ export default ({ setCurrentSnippetId }) => {
                     </li>
                 ))}
             </ul>
-        </>
+        </div>
     )
 }
