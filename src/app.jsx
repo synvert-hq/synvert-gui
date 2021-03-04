@@ -12,12 +12,13 @@ import ListSnippets from './components/ListSnippets'
 import ShowSnippet from './components/ShowSnippet'
 import SelectDependencies from './components/SelectDependencies'
 import CheckDependency from './components/CheckDependency'
+import Error from './components/Error'
 import { EVENT_DEPENDENCIES_CHECKED, EVENT_SNIPPETS_LOADED } from './constants'
 import { dependencySelected } from './utils'
 
 const App = () => {
     const [dependency, setDependency] = useState(dependencySelected())
-    const [error, setError] = useState('')
+    const [error, setError] = useState(null)
     const [path, setPath] = useState(localStorage.getItem('path') || '')
     const [snippetsStore, setSnippetsStore] = useState({})
     const [currentSnippetId, setCurrentSnippetId] = useState(null)
@@ -72,12 +73,12 @@ const App = () => {
         return <SelectDependencies setDependency={setDependency} />
     }
 
-    if (!checked) {
-        return <CheckDependency />
+    if (error) {
+        return <Error error={error} />
     }
 
-    if (error) {
-        return <div className="alert alert-danger text-center">{error}</div>
+    if (!checked) {
+        return <CheckDependency />
     }
 
     return (

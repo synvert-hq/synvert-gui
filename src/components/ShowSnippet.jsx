@@ -3,11 +3,9 @@ import ReactMarkdown from 'react-markdown'
 import Prism from 'prismjs'
 import LoadingOverlay from 'react-loading-overlay'
 import AppContext from '../context'
-import Error from './Error'
 import { EVENT_RUN_SNIPPET, EVENT_SHOW_SNIPPET, EVENT_SNIPPET_RUN, EVENT_SNIPPET_SHOWN } from '../constants'
 
 export default () => {
-    const [error, setError] = useState('')
     const [running, setRunning] = useState(false)
     const [code, setCode] = useState('')
     const [showCode, setShowCode] = useState(false)
@@ -24,7 +22,6 @@ export default () => {
 
     useEffect(() => {
         const listener = document.addEventListener(EVENT_SNIPPET_RUN, () => {
-            setError(error)
             setRunning(false)
         })
         return () => {
@@ -66,7 +63,6 @@ export default () => {
     return (
         <LoadingOverlay active={running} spinner text='Running snippet...'>
             <div className="snippet-show container-fluid">
-                <Error error={error} />
                 <button className="btn btn-primary float-right" disabled={!path} onClick={run}>Run</button>
                 <h2>{snippet.group}/{snippet.name}</h2>
                 <div><ReactMarkdown children={snippet.description} /></div>

@@ -3,8 +3,7 @@ import { EVENT_CHECK_DEPENDENCIES } from '../constants'
 
 export default () => {
     useEffect(() => {
-        const event = new CustomEvent(EVENT_CHECK_DEPENDENCIES, { detail: {} })
-        document.dispatchEvent(event)
+        document.dispatchEvent(new Event(EVENT_CHECK_DEPENDENCIES))
     })
 
     return (

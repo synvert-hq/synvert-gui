@@ -8,19 +8,19 @@ const snippetClassname = (snippet, currentSnippetId) =>
     currentSnippetId && `${snippet.group}/${snippet.name}` == currentSnippetId ? 'list-group-item active' : 'list-group-item'
 
 export default ({ setCurrentSnippetId }) => {
-    const [error, setError] = useState('')
+    const [error, setError] = useState(null)
     const [searchTerm, setSearchTerm] = useState('')
     const [loaded, setLoaded] = useState(false)
 
     const { currentSnippetId, snippetsStore } = useContext(AppContext)
 
     useEffect(() => {
-        setError('')
+        setError(null)
     }, [currentSnippetId])
 
     useEffect(() => {
         const listener = document.addEventListener(EVENT_SNIPPETS_LOADED, event => {
-            const { detail: { error = '' } } = event
+            const { detail: { error } } = event
             setError(error)
             setLoaded(true)
         })
