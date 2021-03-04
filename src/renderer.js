@@ -87,18 +87,23 @@ const checkDependencies = async () => {
             document.dispatchEvent(event)
             return
         }
-        ({ stdout, stderr } = await exec('docker image inspect xinminlabs/awesomecode-docker'))
-        if (!stderr) {
-            document.dispatchEvent(new Event(EVENT_DEPENDENCIES_CHECKED))
-            return
+        try {
+            ({ stdout, stderr } = await exec('docker image inspect xinminlabs/awesomecode-docker'))
+            if (!stderr) {
+                document.dispatchEvent(new Event(EVENT_DEPENDENCIES_CHECKED))
+                return
+            }
+            ({ stdout, stderr } = await exec('docker pull xinminlabs/awesomecode-docker'))
+            if (!stderr) {
+                document.dispatchEvent(new Event(EVENT_DEPENDENCIES_CHECKED))
+                return
+            }
+            const event = new CustomEvent(EVENT_DEPENDENCIES_CHECKED, { detail: { error: 'Please install docker image xinminlabs/awesomecode-docker' } })
+            document.dispatchEvent(event)
+        } catch (e) {
+            const event = new CustomEvent(EVENT_DEPENDENCIES_CHECKED, { detail: { error: 'Please start docker daemon' } })
+            document.dispatchEvent(event)
         }
-        ({ stdout, stderr } = await exec('docker pull xinminlabs/awesomecode-docker'))
-        if (!stderr) {
-            document.dispatchEvent(new Event(EVENT_DEPENDENCIES_CHECKED))
-            return
-        }
-        const event = new CustomEvent(EVENT_DEPENDENCIES_CHECKED, { detail: { error: 'Please install docker image xinminlabs/awesomecode-docker first' } })
-        document.dispatchEvent(event)
     } else {
         ({ stdout, stderr } = await exec('ruby -v'))
         if (stderr) {
