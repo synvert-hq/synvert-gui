@@ -46,40 +46,22 @@ import { dockerDependencySelected, convertSnippetsToStore } from './utils'
 const util = require('util')
 const exec = util.promisify(require('child_process').exec)
 
-const listSnippetsCommand = () => {
-    if (dockerDependencySelected()) {
-        return 'docker run xinminlabs/awesomecode-docker:latest synvert --list-all'
-    } else {
-        return 'synvert --list-all'
-    }
-}
-
-const showSnippetCommand = (snippetId) => {
-    if (dockerDependencySelected()) {
-        return `docker run xinminlabs/awesomecode-docker:latest synvert --show ${snippetId}`
-    } else {
-        return `synvert --show ${snippetId}`
-    }
-}
-
-const updateCommand = () => {
-    if (dockerDependencySelected()) {
-        return 'docker pull xinminlabs/awesomecode-docker:latest'
-    } else {
-        return 'gem install synvert synvert-core && synvert --sync'
-    }
-}
-
-const runSnippetCommand = (snippetId, path) => {
-    if (dockerDependencySelected()) {
-        return `docker run -v ${path}:/app xinminlabs/awesomecode-docker:latest synvert --run ${snippetId} /app`
-    } else {
-        return `synvert --run ${snippetId} ${path}`
+const runDockerCommand = async (command) => {
+    try {
+        const { stdout, stderr } = await exec(command)
+        return { result: true, stdout, stderr }
+    } catch (e) {
+        if (e.message.includes('Cannot connect to the Docker daemon')) {
+            const event = new CustomEvent(EVENT_DEPENDENCIES_CHECKED, { detail: { error: 'Please start docker daemon first!' } })
+            document.dispatchEvent(event)
+            return { result: false }
+        }
+        return { result: true, stdout: null, stderr: e.message }
     }
 }
 
 const checkDependencies = async () => {
-    let stdout, stderr
+    let result = true, stdout, stderr
     if (dockerDependencySelected()) {
         ({ stdout, stderr } = await exec('docker -v'))
         if (stderr) {
@@ -87,23 +69,20 @@ const checkDependencies = async () => {
             document.dispatchEvent(event)
             return
         }
-        try {
-            ({ stdout, stderr } = await exec('docker image inspect xinminlabs/awesomecode-docker'))
-            if (!stderr) {
-                document.dispatchEvent(new Event(EVENT_DEPENDENCIES_CHECKED))
-                return
-            }
-            ({ stdout, stderr } = await exec('docker pull xinminlabs/awesomecode-docker'))
-            if (!stderr) {
-                document.dispatchEvent(new Event(EVENT_DEPENDENCIES_CHECKED))
-                return
-            }
-            const event = new CustomEvent(EVENT_DEPENDENCIES_CHECKED, { detail: { error: 'Please install docker image xinminlabs/awesomecode-docker' } })
-            document.dispatchEvent(event)
-        } catch (e) {
-            const event = new CustomEvent(EVENT_DEPENDENCIES_CHECKED, { detail: { error: 'Please start docker daemon' } })
-            document.dispatchEvent(event)
+        ({ result, stdout, stderr } = await runDockerCommand('docker image inspect xinminlabs/awesomecode-docker'))
+        if (!result) return
+        if (!stderr) {
+            document.dispatchEvent(new Event(EVENT_DEPENDENCIES_CHECKED))
+            return
         }
+        ({ result, stdout, stderr } = await runDockerCommand('docker pull xinminlabs/awesomecode-docker'))
+        if (!result) return
+        if (!stderr) {
+            document.dispatchEvent(new Event(EVENT_DEPENDENCIES_CHECKED))
+            return
+        }
+        const event = new CustomEvent(EVENT_DEPENDENCIES_CHECKED, { detail: { error: 'Please install docker image xinminlabs/awesomecode-docker' } })
+        document.dispatchEvent(event)
     } else {
         ({ stdout, stderr } = await exec('ruby -v'))
         if (stderr) {
@@ -128,33 +107,57 @@ const checkDependencies = async () => {
 }
 
 const loadSnippets = async () => {
-    const { stdout, stderr } = await exec(listSnippetsCommand())
+    let result = true, stdout, stderr
+    if (dockerDependencySelected()) {
+        ({ result, stdout, stderr } = await runDockerCommand('docker run xinminlabs/awesomecode-docker synvert --list-all'))
+    } else {
+       ({ stdout, sterr } = await exec('synvert --list-all'))
+    }
+    if (!result) return
     try {
         const snippets = JSON.parse(stdout)
         const snippetsStore = convertSnippetsToStore(snippets)
         const event = new CustomEvent(EVENT_SNIPPETS_LOADED, { detail: { snippetsStore } })
         document.dispatchEvent(event)
     } catch (e) {
-        const event = new CustomEvent(EVENT_SNIPPETS_LOADED, { detail: { error: 'Failed to sync snippets!' } })
+        const event = new CustomEvent(EVENT_SNIPPETS_LOADED, { detail: { error: 'Failed to load snippets!' } })
         document.dispatchEvent(event)
     }
 }
 
-const update = async () => {
-    await exec(updateCommand())
-    document.dispatchEvent(new Event(EVENT_UPDATED))
-}
-
 const runSnippet = async (event) => {
     const { detail: { currentSnippetId, path } } = event
-    await exec(runSnippetCommand(currentSnippetId, path))
+    let result = true, stdout, stderr
+    if (dockerDependencySelected()) {
+        ({ result, stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app xinminlabs/awesomecode-docker:latest synvert --run ${currentSnippetId} /app`))
+    } else {
+        ({ stdout, stderr } = await exec(`synvert --run ${currentSnippetId} ${path}`))
+    }
+    if (!result) return
     document.dispatchEvent(new Event(EVENT_SNIPPET_RUN))
 }
 
 const showSnippet = async (event) => {
     const { detail: { currentSnippetId } } = event
-    const { stdout, stderr } = await exec(showSnippetCommand(currentSnippetId))
+    let result = true, stdout, stderr
+    if (dockerDependencySelected()) {
+        ({ result, stdout, stderr } = await runDockerCommand(`docker run xinminlabs/awesomecode-docker:latest synvert --show ${currentSnippetId}`))
+    } else {
+        ({ stdout, stderr } = await exec(`synvert --show ${currentSnippetId}`))
+    }
+    if (!result) return
     document.dispatchEvent(new CustomEvent(EVENT_SNIPPET_SHOWN, { detail: { code: stdout } }))
+}
+
+const update = async () => {
+    let result = true, stdout, stderr
+    if (dockerDependencySelected()) {
+        ({ result, stdout, stderr } = await runDockerCommand('docker pull xinminlabs/awesomecode-docker:latest'))
+    } else {
+        ({ stdout, stderr } = await exec('gem install synvert synvert-core && synvert --sync'))
+    }
+    if (!result) return
+    document.dispatchEvent(new Event(EVENT_UPDATED))
 }
 
 document.addEventListener(EVENT_CHECK_DEPENDENCIES, checkDependencies)
