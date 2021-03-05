@@ -45,6 +45,7 @@ import { dockerDependencySelected, convertSnippetsToStore } from './utils'
 
 const util = require('util')
 const exec = util.promisify(require('child_process').exec)
+require('fix-path')()
 
 const runDockerCommand = async (command) => {
     try {
@@ -129,7 +130,7 @@ const runSnippet = async (event) => {
     const { detail: { currentSnippetId, path } } = event
     let result = true, stdout, stderr
     if (dockerDependencySelected()) {
-        ({ result, stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app xinminlabs/awesomecode-docker:latest synvert --run ${currentSnippetId} /app`))
+        ({ result, stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app xinminlabs/awesomecode-docker synvert --run ${currentSnippetId} /app`))
     } else {
         ({ stdout, stderr } = await exec(`synvert --run ${currentSnippetId} ${path}`))
     }
@@ -141,7 +142,7 @@ const showSnippet = async (event) => {
     const { detail: { currentSnippetId } } = event
     let result = true, stdout, stderr
     if (dockerDependencySelected()) {
-        ({ result, stdout, stderr } = await runDockerCommand(`docker run xinminlabs/awesomecode-docker:latest synvert --show ${currentSnippetId}`))
+        ({ result, stdout, stderr } = await runDockerCommand(`docker run xinminlabs/awesomecode-docker synvert --show ${currentSnippetId}`))
     } else {
         ({ stdout, stderr } = await exec(`synvert --show ${currentSnippetId}`))
     }
@@ -152,7 +153,7 @@ const showSnippet = async (event) => {
 const update = async () => {
     let result = true, stdout, stderr
     if (dockerDependencySelected()) {
-        ({ result, stdout, stderr } = await runDockerCommand('docker pull xinminlabs/awesomecode-docker:latest'))
+        ({ result, stdout, stderr } = await runDockerCommand('docker pull xinminlabs/awesomecode-docker'))
     } else {
         ({ stdout, stderr } = await exec('gem install synvert synvert-core && synvert --sync'))
     }
