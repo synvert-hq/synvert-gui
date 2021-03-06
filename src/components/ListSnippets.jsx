@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react'
+import useEventListener from '@use-it/event-listener'
 import AppContext from '../context'
 import Error from './Error'
-import { searchSnippets, sortSnippets } from '../utils'
+import { triggerEvent, searchSnippets, sortSnippets } from '../utils'
 import { EVENT_LOAD_SNIPPETS, EVENT_SNIPPETS_LOADED } from '../constants';
 
 const snippetClassname = (snippet, currentSnippetId) =>
@@ -18,20 +19,14 @@ export default ({ setCurrentSnippetId }) => {
         setError(null)
     }, [currentSnippetId])
 
-    useEffect(() => {
-        const listener = document.addEventListener(EVENT_SNIPPETS_LOADED, event => {
-            const { detail: { error } } = event
-            setError(error)
-            setLoaded(true)
-        })
-        return () => {
-            document.removeEventListener(EVENT_SNIPPETS_LOADED, listener)
-        }
-    }, [])
+    useEventListener(EVENT_SNIPPETS_LOADED, ({ detail: { error } }) => {
+        setError(error)
+        setLoaded(true)
+    })
 
     useEffect(() => {
         if (!loaded) {
-            document.dispatchEvent(new Event(EVENT_LOAD_SNIPPETS))
+            triggerEvent(EVENT_LOAD_SNIPPETS)
         }
     }, [loaded])
 

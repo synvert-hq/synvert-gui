@@ -1,9 +1,11 @@
 import React, { useContext, useEffect, useState } from 'react'
+import useEventListener from '@use-it/event-listener'
 import ReactMarkdown from 'react-markdown'
 import Prism from 'prismjs'
 import LoadingOverlay from 'react-loading-overlay'
 import AppContext from '../context'
 import { EVENT_RUN_SNIPPET, EVENT_SHOW_SNIPPET, EVENT_SNIPPET_RUN, EVENT_SNIPPET_SHOWN } from '../constants'
+import { triggerEvent } from '../utils'
 
 export default () => {
     const [running, setRunning] = useState(false)
@@ -20,35 +22,22 @@ export default () => {
         setCode('')
     }, [currentSnippetId])
 
-    useEffect(() => {
-        const listener = document.addEventListener(EVENT_SNIPPET_RUN, () => {
-            setRunning(false)
-        })
-        return () => {
-            document.removeEventListener(EVENT_SNIPPET_RUN, listener)
-        }
-    }, [])
+    useEventListener(EVENT_SNIPPET_RUN, () => {
+        setRunning(false)
+    })
 
-    useEffect(() => {
-        const listener = document.addEventListener(EVENT_SNIPPET_SHOWN, event => {
-            const { detail: { code } } = event
-            setCode(code)
-        })
-        return () => {
-            document.removeEventListener(EVENT_SNIPPET_SHOWN, listener)
-        }
-    }, [])
+    useEventListener(EVENT_SNIPPET_SHOWN, ({ detail: { code }}) => {
+        setCode(code)
+    })
 
     const run = () => {
-        const event = new CustomEvent(EVENT_RUN_SNIPPET, { detail: { path, currentSnippetId } })
-        document.dispatchEvent(event)
+        triggerEvent(EVENT_RUN_SNIPPET, { path, currentSnippetId })
         setRunning(true)
     }
 
     const show = () => {
         if (code === '') {
-            const event = new CustomEvent(EVENT_SHOW_SNIPPET, { detail: { currentSnippetId } })
-            document.dispatchEvent(event)
+            triggerEvent(EVENT_SHOW_SNIPPET, { currentSnippetId })
         }
         setShowCode(true)
     }

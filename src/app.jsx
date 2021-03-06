@@ -5,6 +5,7 @@ const { dialog } = require('electron').remote
 
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
+import useEventListener from '@use-it/event-listener'
 
 import AppContext from './context'
 import SnippetHeader from './components/SnippetHeader'
@@ -40,28 +41,16 @@ const App = () => {
         currentSnippetId,
     }
 
-    useEffect(() => {
-        const listener = document.addEventListener(EVENT_DEPENDENCIES_CHECKED, event => {
-            const { detail: { error } = {} } = event
-            setError(error)
-            setChecked(true)
-        })
-        return () => {
-            document.removeEventListener(EVENT_DEPENDENCIES_CHECKED, listener)
-        }
-    }, [])
+    useEventListener(EVENT_DEPENDENCIES_CHECKED, ({ detail: { error } = {} }) => {
+        setError(error)
+        setChecked(true)
+    })
 
-    useEffect(() => {
-        const listener = document.addEventListener(EVENT_SNIPPETS_LOADED, event => {
-            const { detail: { snippetsStore } = {} } = event
-            if (snippetsStore) {
-                setSnippetsStore(snippetsStore)
-            }
-        })
-        return () => {
-            document.removeEventListener(EVENT_SNIPPETS_LOADED, listener)
+    useEventListener(EVENT_SNIPPETS_LOADED, ({ detail: { snippetsStore } = {} }) => {
+        if (snippetsStore) {
+            setSnippetsStore(snippetsStore)
         }
-    }, [])
+    })
 
     useEffect(() => {
         if (Object.keys(snippetsStore).length > 0 && !currentSnippetId) {

@@ -1,12 +1,17 @@
 import React, { useEffect } from 'react'
-import { EVENT_CHECK_DEPENDENCIES } from '../constants'
+import { EVENT_CHECKING_DEPENDENCIES, EVENT_CHECK_DEPENDENCIES } from '../constants'
+import ProgressLogs from './ProgressLogs'
+import { triggerEvent } from '../utils'
 
 export default () => {
     useEffect(() => {
-        document.dispatchEvent(new Event(EVENT_CHECK_DEPENDENCIES))
+        triggerEvent(EVENT_CHECK_DEPENDENCIES)
     })
 
     return (
-       <div className="alert text-center">Checking dependencies...</div>
+        <>
+            <h4 className="text-center">Checking dependencies</h4>
+            <ProgressLogs type={EVENT_CHECKING_DEPENDENCIES} />
+        </>
     )
 }

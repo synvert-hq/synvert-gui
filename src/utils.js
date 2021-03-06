@@ -26,3 +26,11 @@ export const sortSnippets = (snippets) =>
 
 export const searchSnippets = (snippets, term) =>
     snippets.filter(snippet => `${snippet.group}/${snippet.name}`.includes(term))
+
+export const triggerEvent = (name, detail) => {
+    if (detail) {
+        window.dispatchEvent(new CustomEvent(name, { detail }))
+    } else {
+        window.dispatchEvent(new Event(name))
+    }
+}
