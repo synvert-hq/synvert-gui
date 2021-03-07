@@ -53,11 +53,11 @@ const exec = util.promisify(require('child_process').exec)
 require('fix-path')()
 
 const runDockerCommand = async (command, { type, id, name } = {}) => {
+    if (type) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        triggerEvent(type, { id, name, status: 'started' })
+    }
     try {
-        if (type) {
-            await new Promise(resolve => setTimeout(resolve, 100));
-            triggerEvent(type, { id, name, status: 'started' })
-        }
         const { stdout, stderr } = await exec(command)
         if (type) {
             triggerEvent(type, { id, name, status: stderr ? 'failed' : 'done' })
@@ -82,11 +82,18 @@ const runCommand = async (command, { type, id, name } = {}) => {
         await new Promise(resolve => setTimeout(resolve, 100));
         triggerEvent(type, { id, name, status: 'started' })
     }
-    const { stdout, stderr } = await exec(command)
-    if (type) {
-        triggerEvent(type, { id, name, status: stderr ? 'failed' : 'done' })
+    try {
+        const { stdout, stderr } = await exec(command)
+        if (type) {
+            triggerEvent(type, { id, name, status: stderr ? 'failed' : 'done' })
+        }
+        return { stdout, stderr }
+    } catch (e) {
+        if (type) {
+            triggerEvent(type, { id, name, status: 'failed' })
+        }
+        return { stdout: null, stderr: e.message }
     }
-    return { stdout, stderr }
 }
 
 const checkDependencies = async () => {
