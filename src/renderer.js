@@ -41,6 +41,10 @@ import {
     EVENT_UPDATE,
     EVENT_UPDATED,
     EVENT_CHECKING_DEPENDENCIES,
+    EVENT_SHOW_SNIPPET_DIFF,
+    EVENT_SNIPPET_DIFF_SHOWN,
+    EVENT_COMMIT_DIFF,
+    EVENT_DIFF_COMMITTED,
 } from './constants';
 import { triggerEvent, dockerDependencySelected, convertSnippetsToStore } from './utils'
 
@@ -112,7 +116,6 @@ const checkDependencies = async () => {
             triggerEvent(EVENT_DEPENDENCIES_CHECKED, { error: 'Please install ruby first!' })
             return
         }
-        const rubyVersion = stdout
         ({ stdout, stderr } = await runCommand('synvert --version', { type: EVENT_CHECKING_DEPENDENCIES, id: 2, name: 'Checking synvert version...' }))
         if (stdout) {
             triggerEvent(EVENT_DEPENDENCIES_CHECKED)
@@ -123,7 +126,7 @@ const checkDependencies = async () => {
             triggerEvent(EVENT_DEPENDENCIES_CHECKED)
             return
         }
-        triggerEvent(EVENT_DEPENDENCIES_CHECKED, { error: 'Please install synvert gem first in your ' + rubyVersion })
+        triggerEvent(EVENT_DEPENDENCIES_CHECKED, { error: 'Please install synvert gem first!' })
     }
 }
 
@@ -132,7 +135,7 @@ const loadSnippets = async () => {
     if (dockerDependencySelected()) {
         ({ result, stdout, stderr } = await runDockerCommand('docker run xinminlabs/awesomecode-synvert synvert --list-all'))
     } else {
-       ({ stdout, sterr } = await runCommand('synvert --list-all'))
+       ({ stdout, stderr } = await runCommand('synvert --list-all'))
     }
     if (!result) return
     try {
@@ -153,7 +156,7 @@ const runSnippet = async (event) => {
         ({ stdout, stderr } = await runCommand(`synvert --run ${currentSnippetId} ${path}`))
     }
     if (!result) return
-    triggerEvent(EVENT_SNIPPET_RUN)
+    triggerEvent(EVENT_SNIPPET_RUN, { error: stderr })
 }
 
 const showSnippet = async (event) => {
@@ -165,7 +168,31 @@ const showSnippet = async (event) => {
         ({ stdout, stderr } = await runCommand(`synvert --show ${currentSnippetId}`))
     }
     if (!result) return
-    triggerEvent(EVENT_SNIPPET_SHOWN, { code: stdout })
+    triggerEvent(EVENT_SNIPPET_SHOWN, { code: stdout, error: stderr })
+}
+
+const showSnippetDiff = async (event) => {
+    const { detail: { path } } = event
+    let result = true, stdout, stderr
+    if (dockerDependencySelected()) {
+        ({ result, stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app xinminlabs/awesomecode-synvert /bin/sh -c 'cd /app && git diff'`))
+    } else {
+        ({ stdout, stderr } = await runCommand(`cd ${path}; git diff`))
+    }
+    if (!result) return
+    triggerEvent(EVENT_SNIPPET_DIFF_SHOWN, { diff: stdout, error: stderr })
+}
+
+const commitDiff = async (event) => {
+    const { detail: { path, commitMessage } } = event
+    let result = true, stdout, stderr
+    if (dockerDependencySelected()) {
+        ({ result, stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app -v ~/.gitconfig:/etc/gitconfig xinminlabs/awesomecode-synvert /bin/sh -c 'cd /app && git add . && git commit -m "${commitMessage}" --no-verify'`))
+    } else {
+        ({ stdout, stderr } = await runCommand(`cd ${path} && git add . && git commit -m "${commitMessage}" --no-verify`))
+    }
+    if (!result) return
+    triggerEvent(EVENT_DIFF_COMMITTED, { error: stderr })
 }
 
 const update = async () => {
@@ -183,4 +210,6 @@ window.addEventListener(EVENT_CHECK_DEPENDENCIES, checkDependencies)
 window.addEventListener(EVENT_LOAD_SNIPPETS, loadSnippets)
 window.addEventListener(EVENT_RUN_SNIPPET, runSnippet)
 window.addEventListener(EVENT_SHOW_SNIPPET, showSnippet)
+window.addEventListener(EVENT_SHOW_SNIPPET_DIFF, showSnippetDiff)
+window.addEventListener(EVENT_COMMIT_DIFF, commitDiff)
 window.addEventListener(EVENT_UPDATE, update)

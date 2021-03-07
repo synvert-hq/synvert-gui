@@ -1,16 +1,25 @@
+import 'diff2html/bundles/css/diff2html.min.css';
 import React, { useContext, useEffect, useState } from 'react'
 import useEventListener from '@use-it/event-listener'
 import ReactMarkdown from 'react-markdown'
 import Prism from 'prismjs'
+import * as Diff2Html from 'diff2html';
 import LoadingOverlay from 'react-loading-overlay'
+import Error from './Error'
 import AppContext from '../context'
-import { EVENT_RUN_SNIPPET, EVENT_SHOW_SNIPPET, EVENT_SNIPPET_RUN, EVENT_SNIPPET_SHOWN } from '../constants'
+import { EVENT_COMMIT_DIFF, EVENT_DIFF_COMMITTED, EVENT_RUN_SNIPPET, EVENT_SHOW_SNIPPET, EVENT_SHOW_SNIPPET_DIFF, EVENT_SNIPPET_DIFF_SHOWN, EVENT_SNIPPET_RUN, EVENT_SNIPPET_SHOWN } from '../constants'
 import { triggerEvent } from '../utils'
 
 export default () => {
+    const [error, setError] = useState(null)
     const [running, setRunning] = useState(false)
     const [code, setCode] = useState('')
     const [showCode, setShowCode] = useState(false)
+    const [diffHtml, setDiffHtml] = useState('')
+    const [showDiff, setShowDiff] = useState(false)
+    const [showCommit, setShowCommit] = useState(false)
+    const [commitMessage, setCommitMessage] = useState('')
+    const [committing, setCommitting] = useState(false)
 
     const { path, snippetsStore, currentSnippetId } = useContext(AppContext)
 
@@ -20,14 +29,42 @@ export default () => {
 
     useEffect(() => {
         setCode('')
+        setDiffHtml('')
     }, [currentSnippetId])
 
-    useEventListener(EVENT_SNIPPET_RUN, () => {
-        setRunning(false)
+    useEventListener(EVENT_SNIPPET_RUN, ({ detail: { error }}) => {
+        setError(error)
+        triggerEvent(EVENT_SHOW_SNIPPET_DIFF, { path })
     })
 
-    useEventListener(EVENT_SNIPPET_SHOWN, ({ detail: { code }}) => {
-        setCode(code)
+    useEventListener(EVENT_SNIPPET_DIFF_SHOWN, ({ detail: { diff, error } }) => {
+        setRunning(false)
+        setError(error)
+        if (error) return
+        if (diff) {
+            const diffHtml = Diff2Html.html(diff, {
+                    drawFileList: false,
+                    matching: 'lines',
+                    outputFormat: 'line-by-line',
+            });
+            setDiffHtml(diffHtml)
+            setShowDiff(true)
+        }
+    })
+
+    useEventListener(EVENT_DIFF_COMMITTED, ({ detail: { error } }) => {
+        setShowCommit(false)
+        setShowDiff(false)
+        setError(error)
+        setCommitMessage('')
+        setCommitting(false)
+    })
+
+    useEventListener(EVENT_SNIPPET_SHOWN, ({ detail: { code, error }}) => {
+        setError(error)
+        if (!error) {
+            setCode(code)
+        }
     })
 
     const run = () => {
@@ -35,15 +72,27 @@ export default () => {
         setRunning(true)
     }
 
-    const show = () => {
+    const showSourceCode = () => {
         if (code === '') {
             triggerEvent(EVENT_SHOW_SNIPPET, { currentSnippetId })
         }
         setShowCode(true)
+        setShowDiff(false)
     }
 
     const close = () => {
         setShowCode(false)
+        setShowDiff(false)
+        setShowCommit(false)
+    }
+
+    const commitNow = () => {
+        setShowCommit(true)
+    }
+
+    const confirmCommit = () => {
+        triggerEvent(EVENT_COMMIT_DIFF, { path, commitMessage })
+        setCommitting(true)
     }
 
     if (!currentSnippetId) return null
@@ -52,6 +101,7 @@ export default () => {
     return (
         <LoadingOverlay active={running} spinner text='Running snippet...'>
             <div className="snippet-show container-fluid">
+                <Error error={error} />
                 <button className="btn btn-primary float-right" disabled={!path} onClick={run}>Run</button>
                 <h2>{snippet.group}/{snippet.name}</h2>
                 <div><ReactMarkdown children={snippet.description} /></div>
@@ -66,7 +116,7 @@ export default () => {
                         )
                     })}
                 </ul>
-                <button className="btn btn-primary float-right" onClick={show}>Show Source Code</button>
+                <button className="btn btn-primary float-right" onClick={showSourceCode}>Show Source Code</button>
             </div>
             {showCode && (
                 <>
@@ -86,6 +136,33 @@ export default () => {
                                 </div>
                                 <div className="modal-footer">
                                     <button type="button" className="btn btn-secondary" onClick={close}>Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="modal-backdrop fade show"></div>
+                </>
+            )}
+            {showDiff && (
+                <>
+                    <div className="modal fade show" data-backdrop="static" style={{ display: 'block' }}>
+                        <div className="modal-dialog modal-lg modal-dialog-scrollable">
+                            <div className="modal-content">
+                                <div className="modal-body">
+                                    {diffHtml === '' ? 'Loading...' : (
+                                        <div dangerouslySetInnerHTML={{ __html: diffHtml }} />
+                                    )}
+                                </div>
+                                <div className="modal-footer">
+                                    {showCommit ? (
+                                        <>
+                                            <textarea className="commit-message-input" value={commitMessage} onChange={e => setCommitMessage(e.target.value)} />
+                                            <button type="button" className="btn btn-primary" disabled={committing} onClick={confirmCommit}>{committing ? 'Committing...' : 'Confirm Commit'}</button>
+                                        </>
+                                    ) : (
+                                        <button type="button" className="btn btn-primary" onClick={commitNow}>Commit Now</button>
+                                    )}
+                                    <button type="button" className="btn btn-secondary" onClick={close}>No, I'll commit by myself</button>
                                 </div>
                             </div>
                         </div>

@@ -17,3 +17,8 @@ body {
   height: calc(100vh - 126px);
   overflow-y: scroll;
 }
+
+.modal .commit-message-input {
+  height: 38px;
+  width: 400px;
+}
