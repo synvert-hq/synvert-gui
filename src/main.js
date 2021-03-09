@@ -1,4 +1,5 @@
-const { app, BrowserWindow } = require('electron');
+require('update-electron-app')()
+tconst { app, Menu, BrowserWindow } = require('electron');
 const isDev = require('electron-is-dev')
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.

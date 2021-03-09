@@ -3,6 +3,7 @@
   "productName": "Snippets",
   "version": "0.0.1",
   "description": "synvert client",
+  "repository": "github:xinminlabs/snippets",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
