@@ -1,8 +1,8 @@
 {
   "name": "snippets",
   "productName": "Snippets",
-  "version": "1.0.0",
-  "description": "My Electron application description",
+  "version": "0.0.1",
+  "description": "synvert client",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
@@ -52,6 +52,7 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-loading-overlay": "^1.0.1",
-    "react-markdown": "^5.0.3"
+    "react-markdown": "^5.0.3",
+    "update-electron-app": "^2.0.1"
   }
 }
