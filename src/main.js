@@ -1,11 +1,49 @@
 require('update-electron-app')()
-tconst { app, Menu, BrowserWindow } = require('electron');
+const { app, Menu, BrowserWindow } = require('electron');
 const isDev = require('electron-is-dev')
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
   app.quit();
 }
+
+const template = [
+  {
+    label: app.name,
+    submenu: [
+      { role: 'about' },
+      {
+        label: 'Check for updates...',
+        click: async () => {
+
+        }
+      },
+      { type: 'separator' },
+      { role: 'services' },
+      { type: 'separator' },
+      { role: 'hide' },
+      { role: 'hideothers' },
+      { role: 'unhide' },
+      { type: 'separator' },
+      { role: 'quit' }
+    ]
+  },
+  {
+    label: 'Help',
+    submenu: [
+      {
+        label: 'Learn More',
+        click: async () => {
+          const { shell } = require('electron')
+          await shell.openExternal('https://xinminlabs.github.io/synvert/')
+        }
+      }
+    ]
+  }
+]
+
+const menu = Menu.buildFromTemplate(template)
+Menu.setApplicationMenu(menu)
 
 const createWindow = () => {
   // Create the browser window.
