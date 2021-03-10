@@ -15,7 +15,7 @@ const config = {
     {
       "name": "@electron-forge/maker-squirrel",
       "config": {
-        "name": "snippets"
+        "name": "Snippets"
       }
     },
     {
@@ -79,8 +79,7 @@ function publishMaybe() {
         "config": {
           "repository": {
             "owner": "xinminlabs",
-            "name": "Snippets",
-            "draft": true
+            "name": "snippets"
           }
         }
       }
