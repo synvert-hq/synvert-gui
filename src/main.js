@@ -9,24 +9,19 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
 
 const template = [
   {
-    label: app.name,
-    submenu: [
-      { role: 'about' },
-      {
-        label: 'Check for updates...',
-        click: async () => {
-
-        }
-      },
-      { type: 'separator' },
-      { role: 'services' },
-      { type: 'separator' },
-      { role: 'hide' },
-      { role: 'hideothers' },
-      { role: 'unhide' },
-      { type: 'separator' },
-      { role: 'quit' }
-    ]
+    role: 'appMenu'
+  },
+  {
+    role: 'fileMenu'
+  },
+  {
+    role: 'editMenu'
+  },
+  {
+    role: 'viewMenu'
+  },
+  {
+    role: 'windowMenu'
   },
   {
     label: 'Help',
