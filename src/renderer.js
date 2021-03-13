@@ -140,9 +140,9 @@ const checkDependencies = async () => {
 const loadSnippets = async () => {
     let result = true, stdout, stderr
     if (dockerDependencySelected()) {
-        ({ result, stdout, stderr } = await runDockerCommand('docker run xinminlabs/awesomecode-synvert synvert --list-all'))
+        ({ result, stdout, stderr } = await runDockerCommand('docker run xinminlabs/awesomecode-synvert synvert --list --format json'))
     } else {
-       ({ stdout, stderr } = await runCommand('synvert --list-all'))
+       ({ stdout, stderr } = await runCommand('synvert --list --format json'))
     }
     if (!result) return
     try {
