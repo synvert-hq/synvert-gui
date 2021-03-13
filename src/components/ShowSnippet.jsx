@@ -34,7 +34,17 @@ export default () => {
 
     useEventListener(EVENT_SNIPPET_RUN, ({ detail: { error }}) => {
         setError(error)
-        triggerEvent(EVENT_SHOW_SNIPPET_DIFF, { path })
+        if (!error) {
+            // wait 1 sec for affected_files
+            setTimeout(() => {
+                const affected_files = snippetsStore[currentSnippetId].affected_files
+                if (affected_files.length > 0) {
+                    triggerEvent(EVENT_SHOW_SNIPPET_DIFF, { affected_files, path })
+                } else {
+                    setRunning(false)
+                }
+            }, 1000)
+        }
     })
 
     useEventListener(EVENT_SNIPPET_DIFF_SHOWN, ({ detail: { diff, error } }) => {
@@ -91,7 +101,8 @@ export default () => {
     }
 
     const confirmCommit = () => {
-        triggerEvent(EVENT_COMMIT_DIFF, { path, commitMessage })
+        const affected_files = snippetsStore[currentSnippetId].affected_files
+        triggerEvent(EVENT_COMMIT_DIFF, { path, commitMessage, affected_files })
         setCommitting(true)
     }
 

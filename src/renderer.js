@@ -158,12 +158,17 @@ const runSnippet = async (event) => {
     const { detail: { currentSnippetId, path } } = event
     let result = true, stdout, stderr
     if (dockerDependencySelected()) {
-        ({ result, stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app xinminlabs/awesomecode-synvert synvert --run ${currentSnippetId} /app`))
+        ({ result, stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app xinminlabs/awesomecode-synvert synvert --run ${currentSnippetId} --format json /app`))
     } else {
-        ({ stdout, stderr } = await runCommand(`synvert --run ${currentSnippetId} ${path}`))
+        ({ stdout, stderr } = await runCommand(`synvert --run ${currentSnippetId} --format json ${path}`))
     }
     if (!result) return
-    triggerEvent(EVENT_SNIPPET_RUN, { error: stderr })
+    try {
+        const output = JSON.parse(stdout)
+        triggerEvent(EVENT_SNIPPET_RUN, { snippetId: currentSnippetId, output, error: stderr })
+    } catch(e) {
+        triggerEvent(EVENT_SNIPPET_RUN, { error: 'Failed to run snippet!' })
+    }
 }
 
 const showSnippet = async (event) => {
@@ -179,24 +184,24 @@ const showSnippet = async (event) => {
 }
 
 const showSnippetDiff = async (event) => {
-    const { detail: { path } } = event
+    const { detail: { path, affected_files } } = event
     let result = true, stdout, stderr
     if (dockerDependencySelected()) {
-        ({ result, stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app xinminlabs/awesomecode-synvert /bin/sh -c 'cd /app && git diff'`))
+        ({ result, stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app xinminlabs/awesomecode-synvert /bin/sh -c 'cd /app && git add ${affected_files.join(' ')}; git diff --staged; git reset --quiet ${affected_files.join(' ')}'`))
     } else {
-        ({ stdout, stderr } = await runCommand(`cd ${path}; git diff`))
+        ({ stdout, stderr } = await runCommand(`cd ${path}; git add ${affected_files.join(' ')}; git diff --staged; git reset --quiet ${affected_files.join(' ')}`))
     }
     if (!result) return
     triggerEvent(EVENT_SNIPPET_DIFF_SHOWN, { diff: stdout, error: stderr })
 }
 
 const commitDiff = async (event) => {
-    const { detail: { path, commitMessage } } = event
+    const { detail: { path, commitMessage, affected_files } } = event
     let result = true, stdout, stderr
     if (dockerDependencySelected()) {
-        ({ result, stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app -v ~/.gitconfig:/etc/gitconfig xinminlabs/awesomecode-synvert /bin/sh -c 'cd /app && git add . && git commit -m "${commitMessage}" --no-verify'`))
+        ({ result, stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app -v ~/.gitconfig:/etc/gitconfig xinminlabs/awesomecode-synvert /bin/sh -c 'cd /app && git add ${affected_files.join(' ')} && git commit -m "${commitMessage}" --no-verify'`))
     } else {
-        ({ stdout, stderr } = await runCommand(`cd ${path} && git add . && git commit -m "${commitMessage}" --no-verify`))
+        ({ stdout, stderr } = await runCommand(`cd ${path} && git add ${affected_files.join(' ')} && git commit -m "${commitMessage}" --no-verify`))
     }
     if (!result) return
     triggerEvent(EVENT_DIFF_COMMITTED, { error: stderr })

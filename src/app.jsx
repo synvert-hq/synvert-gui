@@ -14,7 +14,7 @@ import ShowSnippet from './components/ShowSnippet'
 import SelectDependencies from './components/SelectDependencies'
 import CheckDependency from './components/CheckDependency'
 import Error from './components/Error'
-import { EVENT_DEPENDENCIES_CHECKED, EVENT_SNIPPETS_LOADED } from './constants'
+import { EVENT_DEPENDENCIES_CHECKED, EVENT_SNIPPETS_LOADED, EVENT_SNIPPET_RUN } from './constants'
 import { dependencySelected } from './utils'
 
 const App = () => {
@@ -50,6 +50,12 @@ const App = () => {
         if (snippetsStore) {
             setSnippetsStore(snippetsStore)
         }
+    })
+
+    useEventListener(EVENT_SNIPPET_RUN, ({ detail: { snippetId, output } = {} }) => {
+        const store = snippetsStore
+        store[snippetId].affected_files = output.affected_files
+        setSnippetsStore(store)
     })
 
     useEffect(() => {

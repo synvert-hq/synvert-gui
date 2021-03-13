@@ -5,7 +5,6 @@ const platform = os.platform() + '_' + os.arch();  // usually returns darwin_64
 
 const updaterFeedURL = 'https://update-electron.xinminlabs.com/update/'+platform+'/'+version;
 
-console.log(updaterFeedURL)
 function appUpdater() {
 	autoUpdater.setFeedURL(updaterFeedURL);
 	/* Log whats happening
