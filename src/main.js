@@ -1,6 +1,6 @@
-require('update-electron-app')()
 const { app, Menu, BrowserWindow } = require('electron');
 const isDev = require('electron-is-dev')
+const {appUpdater} = require('./autoupdater');
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
@@ -63,6 +63,15 @@ const createWindow = () => {
 
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
+
+  const page = mainWindow.webContents;
+
+  page.once('did-frame-finish-load', () => {
+    const checkOS = process.platform === 'darwin' || process.platform === 'win32';
+    if (checkOS && !isDev) {
+      // Initate auto-updates on macOs and windows
+      appUpdater();
+    }});
 };
 
 // This method will be called when Electron has finished
