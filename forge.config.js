@@ -71,25 +71,7 @@ function notarizeMaybe() {
   };
 }
 
-function publishMaybe() {
-  if (process.env.GITHUB_TOKEN) {
-    config.publishers = [
-      {
-        "name": "@electron-forge/publisher-github",
-        "config": {
-          "repository": {
-            "owner": "xinminlabs",
-            "name": "snippets"
-          }
-        }
-      }
-    ]
-  }
-}
-
 notarizeMaybe();
-
-publishMaybe();
 
 // Finally, export it
 module.exports = config;
