@@ -3,7 +3,7 @@ const { app, autoUpdater, dialog } = require('electron');
 const version = app.getVersion();
 const platform = os.platform() + '_' + os.arch();  // usually returns darwin_64
 
-const updaterFeedURL = 'https://update-electron.xinminlabs.com/update/'+platform+'/'+version;
+const updaterFeedURL = 'https://download-snippets.xinminlabs.com/update/'+platform+'/'+version;
 
 function appUpdater() {
 	autoUpdater.setFeedURL(updaterFeedURL);
