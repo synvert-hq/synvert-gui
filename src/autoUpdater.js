@@ -42,6 +42,4 @@ function appUpdater() {
 	autoUpdater.checkForUpdates();
 }
 
-exports = module.exports = {
-	appUpdater
-};
+module.exports = appUpdater;

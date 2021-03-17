@@ -1,4 +1,5 @@
 const { Menu } = require('electron');
+const preferences = require('./preferences');
 
 const template = [
   {
@@ -8,7 +9,10 @@ const template = [
     label: 'File',
     submenu: [
         {
-            label: 'Preferences...'
+            label: 'Preferences...',
+            click: async () => {
+                preferences.show()
+            }
         },
         {
             role: 'close'
@@ -40,6 +44,4 @@ const template = [
 
 const menu = Menu.buildFromTemplate(template)
 
-exports = module.exports = {
-    menu
-}
+module.exports = menu
