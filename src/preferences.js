@@ -1,5 +1,6 @@
 const { app } = require('electron');
 const path = require('path');
+const isDev = require('electron-is-dev')
 const ElectronPreferences = require('electron-preferences');
 
 const preferences = new ElectronPreferences({
@@ -8,7 +9,7 @@ const preferences = new ElectronPreferences({
         'dependency': 'docker'
     },
     'webPreferences': {
-        'devTools': true
+        'devTools': isDev
     },
     'browserWindowOverrides': {
         'title': 'Snippets Preferences',
