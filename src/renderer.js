@@ -128,7 +128,7 @@ const checkDependencies = async () => {
             triggerEvent(EVENT_DEPENDENCIES_CHECKED)
             return
         }
-        ({ stdout, stderr } = await runCommand('gem install synvert', { type: EVENT_CHECKING_DEPENDENCIES, id: 3, name: 'Installing synvert gem...' }))
+        ({ stdout, stderr } = await runCommand('gem install synvert && synvert --sync', { type: EVENT_CHECKING_DEPENDENCIES, id: 3, name: 'Installing synvert gem...' }))
         if (!stderr) {
             triggerEvent(EVENT_DEPENDENCIES_CHECKED)
             return
