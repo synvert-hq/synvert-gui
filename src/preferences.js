@@ -5,9 +5,6 @@ const ElectronPreferences = require('electron-preferences');
 
 const preferences = new ElectronPreferences({
     'dataStore': path.resolve(app.getPath('userData'), 'preferences.json'),
-    'defaults': {
-        'dependency': 'docker'
-    },
     'webPreferences': {
         'devTools': isDev
     },

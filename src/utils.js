@@ -1,12 +1,22 @@
-const DEPENDENCY = 'dependency'
+const { ipcRenderer } = require('electron');
+
 export const DOCKER_DEPENDENCY = 'docker'
 export const NATIVE_DEPENDENCY = 'native'
 
-export const selectDockerDependency = () => window.localStorage.setItem(DEPENDENCY, DOCKER_DEPENDENCY)
-export const selectNativeDependency = () => window.localStorage.setItem(DEPENDENCY, NATIVE_DEPENDENCY)
-export const dependencySelected = () => !!window.localStorage.getItem(DEPENDENCY)
-export const dockerDependencySelected = () => window.localStorage.getItem(DEPENDENCY) === DOCKER_DEPENDENCY
-export const nativeDependencySelected = () => window.localStorage.getItem(DEPENDENCY) === NATIVE_DEPENDENCY
+export const selectDockerDependency = () => ipcRenderer.sendSync('setPreferences', { settings: { dependency: DOCKER_DEPENDENCY } })
+export const selectNativeDependency = () => ipcRenderer.sendSync('setPreferences', { settings: { dependency: NATIVE_DEPENDENCY } })
+export const dependencySelected = () => {
+    const preferences = ipcRenderer.sendSync('getPreferences')
+    return !!(preferences && preferences.settings && preferences.settings.dependency)
+}
+export const dockerDependencySelected = () => {
+    const preferences = ipcRenderer.sendSync('getPreferences')
+    return preferences.settings.preferences === DOCKER_DEPENDENCY
+}
+export const nativeDependencySelected = () => {
+    const preferences = ipcRenderer.sendSync('getPreferences')
+    return preferences.settings.preferences === NATIVE_DEPENDENCY
+}
 
 export const convertSnippetsToStore = (snippets) =>
     snippets.reduce(
