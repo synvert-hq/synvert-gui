@@ -124,16 +124,22 @@ const checkDependencies = async () => {
             return
         }
         ({ stdout, stderr } = await runCommand('synvert --version', { type: EVENT_CHECKING_DEPENDENCIES, id: 2, name: 'Checking synvert version...' }))
-        if (stdout) {
-            triggerEvent(EVENT_DEPENDENCIES_CHECKED)
-            return
+        if (stderr) {
+            ({ stdout, stderr } = await runCommand('gem install synvert', { type: EVENT_CHECKING_DEPENDENCIES, id: 3, name: 'Installing synvert gem...' }))
+            if (stderr) {
+                triggerEvent(EVENT_DEPENDENCIES_CHECKED, { error: 'Please install synvert first!' })
+                return
+            }
         }
-        ({ stdout, stderr } = await runCommand('gem install synvert && synvert --sync', { type: EVENT_CHECKING_DEPENDENCIES, id: 3, name: 'Installing synvert gem...' }))
-        if (!stderr) {
-            triggerEvent(EVENT_DEPENDENCIES_CHECKED)
-            return
+        ({ stdout, stderr } = await runCommand('test -d ~/.synvert/.git || exit 1', { type: EVENT_CHECKING_DEPENDENCIES, id: 4, name: 'Checking synvert snippets...'}))
+        if (stderr) {
+            ({ stdout, stderr } = await runCommand('synvert --sync', { type: EVENT_CHECKING_DEPENDENCIES, id: 5, name: 'Syncing synvert snippets...' }))
+            if (stdout !== 'synvert snippets are synced') {
+                triggerEvent(EVENT_DEPENDENCIES_CHECKED, { error: 'Please sync synvert snippets first!' })
+                return
+            }
         }
-        triggerEvent(EVENT_DEPENDENCIES_CHECKED, { error: 'Please install synvert gem first!' })
+        triggerEvent(EVENT_DEPENDENCIES_CHECKED)
     }
 }
 
