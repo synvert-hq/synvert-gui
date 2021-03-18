@@ -14,7 +14,12 @@ module.exports = {
   plugins: [
     new CopyPlugin({
       patterns: [
-        { from: 'node_modules/electron-preferences/build', to: 'native_modules' }
+        { from: 'node_modules/electron-preferences/build/style.css', to: 'native_modules/style.css' },
+        { from: 'node_modules/electron-preferences/build/css/vendor.css', to: 'native_modules/css/vendor.css' },
+        { from: 'node_modules/electron-preferences/build/js/vendor.js', to: 'native_modules/js/vendor.js' },
+        { from: 'node_modules/electron-preferences/build/js/app.bundle.js', to: 'native_modules/js/app.bundle.js' },
+        { from: 'node_modules/electron-preferences/build/fonts', to: 'native_modules/fonts' },
+        { from: 'node_modules/electron-preferences/build/svg', to: 'native_modules/svg' },
       ]
     }),
   ]
