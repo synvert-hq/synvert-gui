@@ -52,6 +52,8 @@ const util = require('util')
 const exec = util.promisify(require('child_process').exec)
 require('fix-path')()
 
+const isRealError = stderr => stderr && !stderr.startsWith('warning:')
+
 const runDockerCommand = async (command, { type, id, name } = {}) => {
     if (type) {
         await new Promise(resolve => setTimeout(resolve, 100));
@@ -60,7 +62,7 @@ const runDockerCommand = async (command, { type, id, name } = {}) => {
     try {
         const { stdout, stderr } = await exec(command)
         if (type) {
-            triggerEvent(type, { id, name, status: stderr ? 'failed' : 'done' })
+            triggerEvent(type, { id, name, status: isRealError(stderr) ? 'failed' : 'done' })
         }
         return { result: true, stdout, stderr }
     } catch (e) {
@@ -85,7 +87,7 @@ const runCommand = async (command, { type, id, name } = {}) => {
     try {
         const { stdout, stderr } = await exec(command)
         if (type) {
-            triggerEvent(type, { id, name, status: stderr ? 'failed' : 'done' })
+            triggerEvent(type, { id, name, status: isRealError(stderr) ? 'failed' : 'done' })
         }
         return { stdout, stderr }
     } catch (e) {
@@ -124,7 +126,7 @@ const checkDependencies = async () => {
             return
         }
         ({ stdout, stderr } = await runCommand('synvert --version', { type: EVENT_CHECKING_DEPENDENCIES, id: 2, name: 'Checking synvert version...' }))
-        if (stderr) {
+        if (isRealError(stderr)) {
             ({ stdout, stderr } = await runCommand('gem install synvert', { type: EVENT_CHECKING_DEPENDENCIES, id: 3, name: 'Installing synvert gem...' }))
             if (stderr) {
                 triggerEvent(EVENT_DEPENDENCIES_CHECKED, { error: 'Please install synvert first!' })
@@ -134,7 +136,7 @@ const checkDependencies = async () => {
         ({ stdout, stderr } = await runCommand('test -d ~/.synvert/.git || exit 1', { type: EVENT_CHECKING_DEPENDENCIES, id: 4, name: 'Checking synvert snippets...'}))
         if (stderr) {
             ({ stdout, stderr } = await runCommand('synvert --sync', { type: EVENT_CHECKING_DEPENDENCIES, id: 5, name: 'Syncing synvert snippets...' }))
-            if (stdout !== 'synvert snippets are synced') {
+            if (isRealError(stderr)) {
                 triggerEvent(EVENT_DEPENDENCIES_CHECKED, { error: 'Please sync synvert snippets first!' })
                 return
             }
