@@ -4,7 +4,7 @@ const isDev = require('electron-is-dev')
 const ElectronPreferences = require('electron-preferences');
 
 const preferences = new ElectronPreferences({
-    'dataStore': path.resolve(app.getPath('userData'), 'preferences.json'),
+    'dataStore': path.join(app.getPath('userData'), 'preferences.json'),
     'webPreferences': {
         'devTools': isDev
     },
