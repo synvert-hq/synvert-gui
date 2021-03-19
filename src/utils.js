@@ -11,11 +11,11 @@ export const dependencySelected = () => {
 }
 export const dockerDependencySelected = () => {
     const preferences = ipcRenderer.sendSync('getPreferences')
-    return preferences.settings.preferences === DOCKER_DEPENDENCY
+    return preferences.settings.dependency === DOCKER_DEPENDENCY
 }
 export const nativeDependencySelected = () => {
     const preferences = ipcRenderer.sendSync('getPreferences')
-    return preferences.settings.preferences === NATIVE_DEPENDENCY
+    return preferences.settings.dependency === NATIVE_DEPENDENCY
 }
 
 export const convertSnippetsToStore = (snippets) =>
