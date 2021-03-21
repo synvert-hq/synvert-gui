@@ -38,13 +38,12 @@ import {
     EVENT_SNIPPET_RUN,
     EVENT_SHOW_SNIPPET,
     EVENT_SNIPPET_SHOWN,
-    EVENT_UPDATE,
-    EVENT_UPDATED,
     EVENT_CHECKING_DEPENDENCIES,
     EVENT_SHOW_SNIPPET_DIFF,
     EVENT_SNIPPET_DIFF_SHOWN,
     EVENT_COMMIT_DIFF,
     EVENT_DIFF_COMMITTED,
+    EVENT_SYNC_SNIPPETS,
 } from './constants';
 import { triggerEvent, dockerDependencySelected, convertSnippetsToStore } from './utils'
 
@@ -215,7 +214,7 @@ const commitDiff = async (event) => {
     triggerEvent(EVENT_DIFF_COMMITTED, { error: stderr })
 }
 
-const update = async () => {
+const syncSnippets = async () => {
     let result = true, stdout, stderr
     if (dockerDependencySelected()) {
         ({ result, stdout, stderr } = await runDockerCommand('docker pull xinminlabs/awesomecode-synvert'))
@@ -223,7 +222,7 @@ const update = async () => {
         ({ stdout, stderr } = await runCommand('gem install synvert synvert-core && synvert --sync'))
     }
     if (!result) return
-    triggerEvent(EVENT_UPDATED)
+    return await loadSnippets()
 }
 
 window.addEventListener(EVENT_CHECK_DEPENDENCIES, checkDependencies)
@@ -232,4 +231,4 @@ window.addEventListener(EVENT_RUN_SNIPPET, runSnippet)
 window.addEventListener(EVENT_SHOW_SNIPPET, showSnippet)
 window.addEventListener(EVENT_SHOW_SNIPPET_DIFF, showSnippetDiff)
 window.addEventListener(EVENT_COMMIT_DIFF, commitDiff)
-window.addEventListener(EVENT_UPDATE, update)
+window.addEventListener(EVENT_SYNC_SNIPPETS, syncSnippets)
