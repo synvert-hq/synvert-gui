@@ -61,6 +61,7 @@ export default () => {
             });
             setDiffHtml(diffHtml)
             setShowDiff(true)
+            setCommitMessage(snippetsStore[currentSnippetId].name.replaceAll(/(\d+)_(\d+)/g, `${1}.${2}`).replaceAll('_', ' '))
         }
     })
 
@@ -107,10 +108,10 @@ export default () => {
         triggerEvent(EVENT_COMMIT_DIFF, { path, commitMessage, affected_files })
         setCommitting(true)
     }
-
     if (!currentSnippetId) return null
 
     const snippet = snippetsStore[currentSnippetId]
+
     return (
         <LoadingOverlay active={running} spinner text='Running snippet...'>
             <div className="snippet-show container-fluid">
