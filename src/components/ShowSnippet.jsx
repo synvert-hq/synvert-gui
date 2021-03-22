@@ -34,7 +34,9 @@ export default () => {
 
     useEventListener(EVENT_SNIPPET_RUN, ({ detail: { error }}) => {
         setError(error)
-        if (!error) {
+        if (error) {
+            setRunning(false)
+        } else {
             // wait 1 sec for affected_files
             setTimeout(() => {
                 const affected_files = snippetsStore[currentSnippetId].affected_files
