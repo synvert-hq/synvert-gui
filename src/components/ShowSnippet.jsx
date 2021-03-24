@@ -118,6 +118,10 @@ export default () => {
                 <Error error={error} />
                 <button className="btn btn-primary float-right" disabled={!path} onClick={run}>Run</button>
                 <h2>{snippet.group}/{snippet.name}</h2>
+                <div className="float-right">
+                    {snippet.ruby_version && <span className="badge badge-info">ruby {snippet.ruby_version}</span>}
+                    {snippet.gem_spec && <span className="badge badge-info">{snippet.gem_spec.name} {snippet.gem_spec.version}</span>}
+                </div>
                 <div><ReactMarkdown children={snippet.description} /></div>
                 <ul>
                     {snippet.sub_snippets.map(subSnippetName => {
