@@ -42,8 +42,8 @@ const config = {
           "config": "./webpack.renderer.config.js",
           "entryPoints": [
             {
-              "html": "./src/index.html",
-              "js": "./src/renderer.js",
+              "html": "./src/renderer/index.html",
+              "js": "./src/renderer/renderer.js",
               "name": "main_window"
             }
           ]

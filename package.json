@@ -5,6 +5,7 @@
   "description": "synvert client",
   "repository": "github:xinminlabs/snippets",
   "main": ".webpack/main",
+  "private": true,
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
@@ -45,6 +46,7 @@
     "@use-it/event-listener": "^0.1.6",
     "bootstrap": "^4.6.0",
     "diff2html": "^3.3.0",
+    "electron-default-menu": "^1.0.2",
     "electron-is-dev": "^2.0.0",
     "electron-preferences": "^2.2.0",
     "electron-squirrel-startup": "^1.0.0",
