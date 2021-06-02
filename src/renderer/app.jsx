@@ -78,7 +78,9 @@ const App = () => {
     return (
         <AppContext.Provider value={value}>
             <div className="d-flex flex-row flex-grow-1">
-                <ListSnippets setCurrentSnippetId={setCurrentSnippetId} />
+                <div className="sidebar">
+                    <ListSnippets setCurrentSnippetId={setCurrentSnippetId} />
+                </div>
                 <div className="flex-grow-1">
                     <div className="d-flex flex-column">
                         <SnippetHeader selectPath={selectPath} />
