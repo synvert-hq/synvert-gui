@@ -34,7 +34,7 @@ export default ({ setCurrentSnippetId }) => {
 
     if (!loaded) {
         return (
-            <div className="ml-5 mr-5">Loading Snippets...</div>
+            <div className="sidebar text-center">Loading Snippets...</div>
         )
     }
 
@@ -44,7 +44,7 @@ export default ({ setCurrentSnippetId }) => {
     }
 
     return (
-        <div className="container-fluid">
+        <div className="sidebar container-fluid">
             <Error error={error} />
             <div className="d-flex">
                 <input className="flex-grow-1 form-control" type="text" value={searchTerm} placeholder="search snippets" onChange={(e) => setSearchTerm(e.target.value)} />
