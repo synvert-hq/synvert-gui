@@ -9,7 +9,6 @@ const getMainWindowOptions = () => {
     height: 900,
     minHeight: 600,
     minWidth: 600,
-    titleBarStyle: process.platform === 'darwin' ? 'hidden' : undefined,
     acceptFirstMouse: true,
     backgroundColor: '#1d2427',
     webPreferences: {
