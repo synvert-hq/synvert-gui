@@ -13,3 +13,7 @@ export const EVENT_COMMIT_DIFF = "event.commit_diff"
 export const EVENT_DIFF_COMMITTED = "event.diff_committed"
 export const EVENT_SYNC_SNIPPETS = "event.sync_snippets"
 // export const EVENT_SNIPPETS_SYNCED = "event.snippets_synced"
+
+export const SET_PATH = "SET_PATH"
+export const SET_SNIPPETS_STORE = "SET_SNIPPETS_STORE"
+export const SET_CURRENT_SNIPPET_ID = "SET_CURRENT_SNIPPET_ID"

@@ -8,13 +8,13 @@ import { EVENT_LOAD_SNIPPETS, EVENT_SNIPPETS_LOADED, EVENT_SYNC_SNIPPETS } from 
 const snippetClassname = (snippet, currentSnippetId) =>
     currentSnippetId && `${snippet.group}/${snippet.name}` == currentSnippetId ? 'list-group-item active' : 'list-group-item'
 
-export default ({ setCurrentSnippetId }) => {
+export default () => {
     const [error, setError] = useState(null)
     const [searchTerm, setSearchTerm] = useState('')
     const [loaded, setLoaded] = useState(false)
     const [syncing, setSyncing] = useState(false)
 
-    const { currentSnippetId, snippetsStore } = useContext(AppContext)
+    const { currentSnippetId, snippetsStore, dispatch } = useContext(AppContext)
 
     useEffect(() => {
         setError(null)
@@ -38,9 +38,13 @@ export default ({ setCurrentSnippetId }) => {
         )
     }
 
-    const sync = () => {
+    const syncSnippets = () => {
         setSyncing(true)
         triggerEvent(EVENT_SYNC_SNIPPETS)
+    }
+
+    const snippetClicked = (snippet) => {
+        dispatch({ type: SET_CURRENT_SNIPPET_ID, currentSnippetId: `${snippet.group}/${snippet.name}` });
     }
 
     return (
@@ -48,11 +52,11 @@ export default ({ setCurrentSnippetId }) => {
             <Error error={error} />
             <div className="d-flex">
                 <input className="flex-grow-1 form-control" type="text" value={searchTerm} placeholder="search snippets" onChange={(e) => setSearchTerm(e.target.value)} />
-                <button type="button" className="btn btn-primary btm-sm ml-2" onClick={sync} disabled={syncing}>{syncing ? 'Syncing...' : 'Sync'}</button>
+                <button type="button" className="btn btn-primary btm-sm ml-2" onClick={syncSnippets} disabled={syncing}>{syncing ? 'Syncing...' : 'Sync'}</button>
             </div>
             <ul className="snippets-list list-group list-group-flush mt-2">
                 {searchSnippets(sortSnippets(Object.values(snippetsStore)), searchTerm).map(snippet => (
-                    <li role="button" className={snippetClassname(snippet, currentSnippetId)} key={`${snippet.group}/${snippet.name}`} onClick={() => setCurrentSnippetId(`${snippet.group}/${snippet.name}`)}>
+                    <li role="button" className={snippetClassname(snippet, currentSnippetId)} key={`${snippet.group}/${snippet.name}`} onClick={() => snippetClicked(snippet)}>
                         {snippet.group}/{snippet.name}
                     </li>
                 ))}
