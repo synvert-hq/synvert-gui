@@ -4,15 +4,11 @@ import useEventListener from '@use-it/event-listener'
 import ReactMarkdown from 'react-markdown'
 import Prism from 'prismjs'
 import * as Diff2Html from 'diff2html';
-import LoadingOverlay from 'react-loading-overlay'
-import Error from './Error'
 import AppContext from '../context'
-import { EVENT_COMMIT_DIFF, EVENT_DIFF_COMMITTED, EVENT_RUN_SNIPPET, EVENT_SHOW_SNIPPET, EVENT_SHOW_SNIPPET_DIFF, EVENT_SNIPPET_DIFF_SHOWN, EVENT_SNIPPET_RUN, EVENT_SNIPPET_SHOWN } from '../constants'
+import { EVENT_COMMIT_DIFF, EVENT_DIFF_COMMITTED, EVENT_SHOW_SNIPPET, EVENT_SNIPPET_DIFF_SHOWN, EVENT_SNIPPET_SHOWN, SET_ERROR, SET_LOADING } from '../constants'
 import { triggerEvent } from '../utils'
 
 export default () => {
-    const [error, setError] = useState(null)
-    const [running, setRunning] = useState(false)
     const [code, setCode] = useState('')
     const [showCode, setShowCode] = useState(false)
     const [diffHtml, setDiffHtml] = useState('')
@@ -21,7 +17,7 @@ export default () => {
     const [commitMessage, setCommitMessage] = useState('')
     const [committing, setCommitting] = useState(false)
 
-    const { path, snippetsStore, currentSnippetId } = useContext(AppContext)
+    const { path, snippetsStore, currentSnippetId, dispatch } = useContext(AppContext)
 
     useEffect(() => {
         Prism.highlightAll();
@@ -32,26 +28,9 @@ export default () => {
         setDiffHtml('')
     }, [currentSnippetId])
 
-    useEventListener(EVENT_SNIPPET_RUN, ({ detail: { error }}) => {
-        setError(error)
-        if (error) {
-            setRunning(false)
-        } else {
-            // wait 1 sec for affected_files
-            setTimeout(() => {
-                const affected_files = snippetsStore[currentSnippetId].affected_files
-                if (affected_files.length > 0) {
-                    triggerEvent(EVENT_SHOW_SNIPPET_DIFF, { affected_files, path })
-                } else {
-                    setRunning(false)
-                }
-            }, 1000)
-        }
-    })
-
     useEventListener(EVENT_SNIPPET_DIFF_SHOWN, ({ detail: { diff, error } }) => {
-        setRunning(false)
-        setError(error)
+        dispatch({ type: SET_LOADING, loading: false })
+        dispatch({ type: SET_ERROR, loading: error })
         if (error) return
         if (diff) {
             const diffHtml = Diff2Html.html(diff, {
@@ -66,24 +45,19 @@ export default () => {
     })
 
     useEventListener(EVENT_DIFF_COMMITTED, ({ detail: { error } }) => {
+        dispatch({ type: SET_ERROR, loading: error })
         setShowCommit(false)
         setShowDiff(false)
-        setError(error)
         setCommitMessage('')
         setCommitting(false)
     })
 
     useEventListener(EVENT_SNIPPET_SHOWN, ({ detail: { code, error }}) => {
-        setError(error)
+        dispatch({ type: SET_ERROR, loading: error })
         if (!error) {
             setCode(code)
         }
     })
-
-    const run = () => {
-        triggerEvent(EVENT_RUN_SNIPPET, { path, currentSnippetId })
-        setRunning(true)
-    }
 
     const showSourceCode = () => {
         if (code === '') {
@@ -113,10 +87,8 @@ export default () => {
     const snippet = snippetsStore[currentSnippetId]
 
     return (
-        <LoadingOverlay active={running} spinner text='Running snippet...'>
+        <>
             <div className="snippet-show container-fluid">
-                <Error error={error} />
-                <button className="btn btn-primary float-right" disabled={!path} onClick={run}>Run</button>
                 <h2>{snippet.group}/{snippet.name}</h2>
                 <div className="float-right">
                     {snippet.ruby_version && <span className="badge badge-info">ruby {snippet.ruby_version}</span>}
@@ -188,6 +160,6 @@ export default () => {
                     <div className="modal-backdrop fade show"></div>
                 </>
             )}
-        </LoadingOverlay>
+        </>
     )
 }

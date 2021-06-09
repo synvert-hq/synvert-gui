@@ -7,6 +7,8 @@ const initialState = {
     path: localStorage.getItem('path') || '',
     snippetsStore: {},
     currentSnippetId: null,
+    loading: false,
+    error: null,
 }
 
 export default ({ children }) => {

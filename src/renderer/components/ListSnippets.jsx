@@ -3,7 +3,7 @@ import useEventListener from '@use-it/event-listener'
 import AppContext from '../context'
 import Error from './Error'
 import { triggerEvent, searchSnippets, sortSnippets } from '../utils'
-import { EVENT_LOAD_SNIPPETS, EVENT_SNIPPETS_LOADED, EVENT_SYNC_SNIPPETS } from '../constants';
+import { EVENT_LOAD_SNIPPETS, EVENT_SNIPPETS_LOADED, EVENT_SYNC_SNIPPETS, SET_CURRENT_SNIPPET_ID } from '../constants';
 
 const snippetClassname = (snippet, currentSnippetId) =>
     currentSnippetId && `${snippet.group}/${snippet.name}` == currentSnippetId ? 'list-group-item active' : 'list-group-item'

@@ -13,12 +13,12 @@ body {
 }
 
 .snippets-list {
-  height: calc(100vh - 172px);
+  height: calc(100vh - 94px);
   overflow-y: scroll;
 }
 
 .snippet-show {
-  height: calc(100vh - 126px);
+  height: calc(100vh - 94px);
   overflow-y: scroll;
 }
 

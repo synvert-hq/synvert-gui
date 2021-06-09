@@ -22,7 +22,7 @@ const getHelpItems = () => {
     },
   );
 
-  // on macOS, there's already the About Electron Fiddle menu item
+  // on macOS, there's already the About Synvert menu item
   // under the first submenu set by the electron-default-menu package
   if (process.platform !== 'darwin') {
     items.push(
@@ -30,7 +30,7 @@ const getHelpItems = () => {
         type: 'separator',
       },
       {
-        label: 'About Electron Fiddle',
+        label: 'About Synvert',
         click() {
           app.showAboutPanel();
         },
@@ -77,9 +77,16 @@ const getFileMenu = () => {
       click: () => createMainWindow(),
       accelerator: 'CmdOrCtrl+Shift+N',
     },
+    {
+      label: 'New Snippet',
+      click: () => {
+
+      },
+      accelerator: 'CmdOrCtrl+N',
+    },
   ];
 
-  // macOS has these items in the "Fiddle" menu
+  // macOS has these items in the "Synvert" menu
   if (process.platform !== 'darwin') {
     fileMenu.splice(
       fileMenu.length,
@@ -125,39 +132,3 @@ export const setupMenu = () => {
 
   Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
 }
-// const template = [
-//   { role: 'appMenu' },
-//   {
-//     label: 'File',
-//     submenu: [
-//         {
-//           label: 'New Snippet',
-//           click: async () => {
-//             getOrCreateMainWindow()
-//           }
-//         },
-//         {
-//             label: 'Preferences...',
-//             click: async () => {
-//                 preferences.show()
-//             }
-//         },
-//         { role: 'close' }
-//     ]
-//   },
-//   { role: 'editMenu' },
-//   { role: 'viewMenu' },
-//   { role: 'windowMenu' },
-//   {
-//     label: 'Help',
-//     submenu: [
-//       {
-//         label: 'Learn More',
-//         click: async () => {
-//           const { shell } = require('electron')
-//           await shell.openExternal('https://xinminlabs.github.io/synvert/')
-//         }
-//       }
-//     ]
-//   }
-// ]

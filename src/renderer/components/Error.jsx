@@ -1,6 +1,10 @@
-import React from 'react'
+import React, { useContext } from 'react'
 
-export default ({ error }) => {
+import AppContext from '../context'
+
+export default () => {
+    const { error } = useContext(AppContext)
+
     if (!error || error.length === 0) return null
     return <div className="alert alert-danger text-center">{error}</div>
 }

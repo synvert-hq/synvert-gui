@@ -1,40 +1,29 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-const { dialog } = require('electron').remote
-
 import React, { useContext, useEffect, useState } from 'react';
 import useEventListener from '@use-it/event-listener'
+import LoadingOverlay from 'react-loading-overlay'
 
 import AppContext from '../context'
-import SnippetHeader from './SnippetHeader'
 import ListSnippets from './ListSnippets'
 import ShowSnippet from './ShowSnippet'
+import RunSnippet from './RunSnippet'
+import NewSnippet from './NewSnippet'
 import SelectDependencies from './SelectDependencies'
 import CheckDependency from './CheckDependency'
 import Error from './Error'
-import { EVENT_DEPENDENCIES_CHECKED, EVENT_SNIPPETS_LOADED, EVENT_SNIPPET_RUN } from '../constants'
-import { SET_PATH, SET_SNIPPETS_STORE, SET_CURRENT_SNIPPET_ID } from '../constants'
+import { EVENT_DEPENDENCIES_CHECKED, EVENT_SNIPPETS_LOADED, EVENT_SNIPPET_RUN, SET_ERROR } from '../constants'
+import { SET_SNIPPETS_STORE, SET_CURRENT_SNIPPET_ID } from '../constants'
 import { dependencySelected } from '../utils'
 
 export default () => {
-    const { snippetsStore, currentSnippetId, dispatch } = useContext(AppContext)
+    const { snippetsStore, currentSnippetId, loading, dispatch } = useContext(AppContext)
 
     const [dependency, setDependency] = useState(dependencySelected())
-    const [error, setError] = useState(null)
     const [checked, setChecked] = useState(false)
 
-    const selectPath = () => {
-        const paths = dialog.showOpenDialogSync({
-            properties: ['openDirectory', 'openFile']
-        });
-        if (paths) {
-            dispatch({ type: SET_PATH, path: paths[0] });
-            localStorage.setItem('path', paths[0]);
-        }
-    }
-
     useEventListener(EVENT_DEPENDENCIES_CHECKED, ({ detail: { error } = {} }) => {
-        setError(error)
+        dispatch({ type: SET_ERROR, error })
         setChecked(true)
     })
 
@@ -59,25 +48,25 @@ export default () => {
         return <SelectDependencies setDependency={setDependency} />
     }
 
-    if (error) {
-        return <Error error={error} />
-    }
-
     if (!checked) {
         return <CheckDependency />
     }
 
     return (
-        <div className="d-flex flex-row flex-grow-1">
-            <div className="sidebar">
-                <ListSnippets />
-            </div>
-            <div className="flex-grow-1">
-                <div className="d-flex flex-column">
-                    <SnippetHeader selectPath={selectPath} />
-                    <ShowSnippet />
+        <LoadingOverlay active={loading} spinner>
+            <div className="d-flex flex-row">
+                <div className="sidebar">
+                    <ListSnippets />
+                </div>
+                <div className="flex-grow-1">
+                    {/* <NewSnippet /> */}
+                    <div className="d-flex flex-column">
+                        <Error />
+                        <ShowSnippet />
+                        <RunSnippet />
+                    </div>
                 </div>
             </div>
-        </div>
+        </LoadingOverlay>
     )
 }
