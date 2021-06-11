@@ -12,6 +12,10 @@ body {
   width: 450px;
 }
 
+.main-content {
+  height: 100%;
+}
+
 .snippets-list {
   height: calc(100vh - 94px);
   overflow-y: scroll;

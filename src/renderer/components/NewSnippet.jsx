@@ -47,7 +47,7 @@ export default () => {
     }
 
     return (
-        <div className="new-snippet container-fluid">
+        <div className="new-snippet container-fluid flex-grow-1">
             <h4 className="text-center">New Snippet</h4>
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="form-group">

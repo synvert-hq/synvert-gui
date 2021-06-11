@@ -63,7 +63,7 @@ export default () => {
                     <ListSnippets />
                 </div>
                 <div className="flex-grow-1">
-                    <div className="d-flex flex-column">
+                    <div className="d-flex flex-column main-content">
                         <Error />
                         {currentSnippetId === 'new' ? <NewSnippet /> : <ShowSnippet />}
                         <RunSnippet />
