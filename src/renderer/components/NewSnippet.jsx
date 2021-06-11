@@ -42,7 +42,8 @@ export default () => {
         setSnippetContent(composeNewSnippet(data, result))
     }
 
-    const addMoreInputOutput = () => {
+    const addMoreInputOutput = (e) => {
+        e.preventDefault()
         setInputOutputCount(inputOutputCount + 1)
     }
 
