@@ -55,12 +55,12 @@ export default () => {
                     <input className="form-control" defaultValue="**/*.rb" {...register("filePattern", { required: true })} />
                 </div>
                 <div className="form-group">
-                    <label>Ruby Version:</label>
-                    <input className="form-control" placeholder=">= 2.4.5" {...register("rubyVersion")} />
+                    <label>Minimum Ruby Version:</label>
+                    <input className="form-control" placeholder="e.g. 2.4.5" {...register("rubyVersion")} />
                 </div>
                 <div className="form-group">
                     <label>Gem Version:</label>
-                    <input className="form-control" placeholder="rails ~> 5.0.0" {...register("gemVersion")} />
+                    <input className="form-control" placeholder="e.g. rails ~> 5.0.0" {...register("gemVersion")} />
                 </div>
                 <div className="form-row">
                     <div className="form-group col-md-6">
