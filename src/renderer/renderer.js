@@ -44,9 +44,11 @@ import {
     EVENT_COMMIT_DIFF,
     EVENT_DIFF_COMMITTED,
     EVENT_SYNC_SNIPPETS,
+    EVENT_NEW_SNIPPET,
 } from './constants';
 import { triggerEvent, dockerDependencySelected, convertSnippetsToStore } from './utils'
 
+const { ipcRenderer } = require('electron')
 const util = require('util')
 const exec = util.promisify(require('child_process').exec)
 require('fix-path')()
@@ -232,3 +234,7 @@ window.addEventListener(EVENT_SHOW_SNIPPET, showSnippet)
 window.addEventListener(EVENT_SHOW_SNIPPET_DIFF, showSnippetDiff)
 window.addEventListener(EVENT_COMMIT_DIFF, commitDiff)
 window.addEventListener(EVENT_SYNC_SNIPPETS, syncSnippets)
+
+ipcRenderer.on(EVENT_NEW_SNIPPET, () => {
+    triggerEvent(EVENT_NEW_SNIPPET)
+})

@@ -12,7 +12,7 @@ import NewSnippet from './NewSnippet'
 import SelectDependencies from './SelectDependencies'
 import CheckDependency from './CheckDependency'
 import Error from './Error'
-import { EVENT_DEPENDENCIES_CHECKED, EVENT_SNIPPETS_LOADED, EVENT_SNIPPET_RUN, SET_ERROR } from '../constants'
+import { EVENT_DEPENDENCIES_CHECKED, EVENT_NEW_SNIPPET, EVENT_SNIPPETS_LOADED, EVENT_SNIPPET_RUN, SET_ERROR } from '../constants'
 import { SET_SNIPPETS_STORE, SET_CURRENT_SNIPPET_ID } from '../constants'
 import { dependencySelected } from '../utils'
 
@@ -38,6 +38,10 @@ export default () => {
         dispatch({ type: SET_SNIPPETS_STORE, snippetsStore })
     })
 
+    useEventListener(EVENT_NEW_SNIPPET, () => {
+        dispatch({ type: SET_CURRENT_SNIPPET_ID, currentSnippetId: 'new' })
+    })
+
     useEffect(() => {
         if (Object.keys(snippetsStore).length > 0 && !currentSnippetId) {
             dispatch({ type: SET_CURRENT_SNIPPET_ID, currentSnippetId: Object.keys(snippetsStore).sort()[0] })
@@ -59,10 +63,9 @@ export default () => {
                     <ListSnippets />
                 </div>
                 <div className="flex-grow-1">
-                    {/* <NewSnippet /> */}
                     <div className="d-flex flex-column">
                         <Error />
-                        <ShowSnippet />
+                        {currentSnippetId === 'new' ? <NewSnippet /> : <ShowSnippet />}
                         <RunSnippet />
                     </div>
                 </div>

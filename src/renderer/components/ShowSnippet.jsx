@@ -89,6 +89,7 @@ export default () => {
     return (
         <>
             <div className="snippet-show container-fluid">
+                <button className="btn btn-primary float-right" onClick={showSourceCode}>Show Source Code</button>
                 <h2>{snippet.group}/{snippet.name}</h2>
                 <div className="float-right">
                     {snippet.ruby_version && <span className="badge badge-info">ruby {snippet.ruby_version}</span>}
@@ -106,7 +107,6 @@ export default () => {
                         )
                     })}
                 </ul>
-                <button className="btn btn-primary float-right" onClick={showSourceCode}>Show Source Code</button>
             </div>
             {showCode && (
                 <>

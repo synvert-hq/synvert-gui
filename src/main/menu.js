@@ -1,7 +1,9 @@
-import { app, shell, Menu } from 'electron';
+import { app, ipcMain, shell, Menu } from 'electron';
 import defaultMenu from 'electron-default-menu';
+
 import preferences from './preferences';
 import { createMainWindow } from './window';
+import { EVENT_NEW_SNIPPET } from '../renderer/constants';
 
 const isSubmenu = (submenu) => {
   return !!submenu && Array.isArray(submenu);
@@ -80,7 +82,7 @@ const getFileMenu = () => {
     {
       label: 'New Snippet',
       click: () => {
-
+        ipcMain.emit(EVENT_NEW_SNIPPET)
       },
       accelerator: 'CmdOrCtrl+N',
     },
