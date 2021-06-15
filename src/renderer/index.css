@@ -5,6 +5,9 @@ html, body {
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   margin: auto;
+}
+
+.main-container {
   padding: 1rem 0;
 }
 

@@ -1,7 +1,11 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useForm } from "react-hook-form";
 
+import AppContext from '../context'
+import { SET_LOADING } from '../constants'
+
 export default () => {
+    const { dispatch } = useContext(AppContext)
     const [inputOutputCount, setInputOutputCount] = useState(1)
     const [snippetContent, setSnippetContent] = useState('')
     const { register, handleSubmit, watch, formState: { errors } } = useForm();
@@ -19,7 +23,7 @@ export default () => {
         }
         newSnippet += `  within_files '${data.filePattern}' do\n`
         if (result.snippet) {
-            newSnippet += "  "
+            newSnippet += "    "
             newSnippet += result.snippet.replace(/\n/g, "\n    ")
             newSnippet += "\n"
         }
@@ -29,6 +33,7 @@ export default () => {
     }
 
     const onSubmit = async(data) => {
+        dispatch({ type: SET_LOADING, loading: true })
         const { inputs, outputs } = data
         const response = await fetch('https://synvert.xinminlabs.com/api/v1/call', {
             method: 'POST',
@@ -40,6 +45,7 @@ export default () => {
         })
         const result = await response.json()
         setSnippetContent(composeNewSnippet(data, result))
+        dispatch({ type: SET_LOADING, loading: false })
     }
 
     const addMoreInputOutput = (e) => {
@@ -88,7 +94,7 @@ export default () => {
                     <input className="btn btn-primary" type="submit" value="Generate Snippet" />
                 </div>
                 <div className="form-group">
-                    <textarea className="form-control" rows="5" value={snippetContent} onChange={e => setSnippetContent(e.target.value)}></textarea>
+                    <textarea className="form-control" rows="10" value={snippetContent} onChange={e => setSnippetContent(e.target.value)}></textarea>
                 </div>
             </form>
         </div>

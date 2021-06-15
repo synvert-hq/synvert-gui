@@ -58,7 +58,7 @@ export default () => {
 
     return (
         <LoadingOverlay active={loading} spinner>
-            <div className="d-flex flex-row">
+            <div className="main-container d-flex flex-row">
                 <div className="sidebar">
                     <ListSnippets />
                 </div>
