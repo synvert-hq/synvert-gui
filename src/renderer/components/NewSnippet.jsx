@@ -59,15 +59,18 @@ export default () => {
             <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="form-group">
                     <label>File Pattern:</label>
-                    <input className="form-control" defaultValue="**/*.rb" {...register("filePattern", { required: true })} />
+                    <input className={`form-control ${errors.filePattern && 'is-invalid'}`} defaultValue="**/*.rb" {...register("filePattern", { required: true })} />
+                    {errors.filePattern && <div className="invalid-feedback">required</div>}
                 </div>
                 <div className="form-group">
                     <label>Minimum Ruby Version:</label>
-                    <input className="form-control" placeholder="e.g. 2.4.5" {...register("rubyVersion")} />
+                    <input className={`form-control ${errors.rubyVersion && 'is-invalid'}`} placeholder="e.g. 2.4.5" {...register("rubyVersion", { pattern: /\d\.\d\.\d/ })} />
+                    {errors.rubyVersion && <div className="invalid-feedback">format is incorrect</div>}
                 </div>
                 <div className="form-group">
                     <label>Gem Version:</label>
-                    <input className="form-control" placeholder="e.g. rails ~> 5.0.0" {...register("gemVersion")} />
+                    <input className={`form-control ${errors.gemVersion && 'is-invalid'}`} placeholder="e.g. rails ~> 5.0.0" {...register("gemVersion", { pattern: /\w+\ / })} />
+                    {errors.gemVersion && <div className="invalid-feedback">format is incorrect</div>}
                 </div>
                 <div className="form-row">
                     <div className="form-group col-md-6">
