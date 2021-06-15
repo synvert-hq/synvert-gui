@@ -1,4 +1,4 @@
-const { ipcRenderer } = require('electron');
+import { ipcRenderer } from 'electron';
 
 export const DOCKER_DEPENDENCY = 'docker'
 export const NATIVE_DEPENDENCY = 'native'
@@ -16,6 +16,30 @@ export const dockerDependencySelected = () => {
 export const nativeDependencySelected = () => {
     const preferences = ipcRenderer.sendSync('getPreferences')
     return preferences.settings.dependency === NATIVE_DEPENDENCY
+}
+
+export const SHOW_DIFFS_ALWAYS_SHOW = 'always_show'
+export const SHOW_DIFFS_NEVER_SHOW = 'never_show'
+export const SHOW_DIFFS_ASK_ME = 'ask_me'
+
+export const selectShowDiffsAlwaysShow = () => ipcRenderer.sendSync('setPreferences', { settings: { show_diffs: SHOW_DIFFS_ALWAYS_SHOW } })
+export const selectShowDiffsNeverShow = () => ipcRenderer.sendSync('setPreferences', { settings: { show_diffs: SHOW_DIFFS_DONT_SHOW } })
+export const selectShowDiffsAskMe = () => ipcRenderer.sendSync('setPreferences', { settings: { show_diffs: SHOW_DIFFS_ASK_ME } })
+export const showDiffsSelected = () => {
+    const preferences = ipcRenderer.sendSync('getPreferences')
+    return !!(preferences && preferences.settings && preferences.settings.show_diffs)
+}
+export const showDiffsAlwaysShowSelected = () => {
+    const preferences = ipcRenderer.sendSync('getPreferences')
+    return preferences.settings.show_diffs === SHOW_DIFFS_ALWAYS_SHOW
+}
+export const showDiffsNeverShowSelected = () => {
+    const preferences = ipcRenderer.sendSync('getPreferences')
+    return preferences.settings.show_diffs === SHOW_DIFFS_NEVER_SHOW
+}
+export const showDiffsAskMeSelected = () => {
+    const preferences = ipcRenderer.sendSync('getPreferences')
+    return preferences.settings.show_diffs === SHOW_DIFFS_ASK_ME
 }
 
 export const convertSnippetsToStore = (snippets) =>
