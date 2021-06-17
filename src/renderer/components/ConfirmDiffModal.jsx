@@ -1,6 +1,6 @@
 import React from "react";
 
-export default ({ close, triggerShowSnippetDiffEvent }) => {
+export default ({ close, showSnippetDiff, alwaysShowSnippetDiff, neverShowSnippetDiff }) => {
   return (
     <>
       <div
@@ -21,7 +21,14 @@ export default ({ close, triggerShowSnippetDiffEvent }) => {
               <button
                 type="button"
                 className="btn btn-primary"
-                onClick={triggerShowSnippetDiffEvent}
+                onClick={alwaysShowSnippetDiff}
+              >
+                Always
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={showSnippetDiff}
               >
                 Yes
               </button>
@@ -31,6 +38,13 @@ export default ({ close, triggerShowSnippetDiffEvent }) => {
                 onClick={close}
               >
                 No
+              </button>
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={neverShowSnippetDiff}
+              >
+                Never
               </button>
             </div>
           </div>

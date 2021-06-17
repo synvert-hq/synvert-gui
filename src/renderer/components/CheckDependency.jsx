@@ -9,7 +9,7 @@ export default () => {
     })
 
     return (
-        <div className="container">
+        <div className="main-container container">
             <h4 className="text-center">Checking dependencies</h4>
             <ProgressLogs type={EVENT_CHECKING_DEPENDENCIES} />
         </div>

@@ -5,7 +5,7 @@ import useEventListener from '@use-it/event-listener'
 
 import AppContext from '../context'
 import { EVENT_RUN_SNIPPET, EVENT_SNIPPET_RUN, EVENT_SHOW_SNIPPET_DIFF, EVENT_SNIPPET_DIFF_SHOWN, SET_PATH, SET_LOADING, SET_ERROR } from '../constants'
-import { triggerEvent, showDiffsSelected, showDiffsAskMeSelected, showDiffsAlwaysShowSelected, showDiffsNeverShowSelected } from '../utils'
+import { triggerEvent, showDiffsSelected, showDiffsAskMeSelected, showDiffsAlwaysShowSelected, selectShowDiffsAlwaysShow, selectShowDiffsNeverShow } from '../utils'
 import ConfirmDiffModal from './ConfirmDiffModal'
 import ShowDiffModal from './ShowDiffModal'
 
@@ -31,10 +31,11 @@ export default () => {
         setAffectedFiles(affectedFiles)
         dispatch({ type: SET_ERROR, error })
         dispatch({ type: SET_LOADING, loading: false })
-        if (affectedFiles.length == 0) return;
+        if (!affectedFiles || affectedFiles.length == 0) return;
         if (!error) {
             if (showDiffsAlwaysShowSelected()) {
-                triggerShowSnippetDiffEvent()
+                dispatch({ type: SET_LOADING, loading: true })
+                triggerEvent(EVENT_SHOW_SNIPPET_DIFF, { affectedFiles, path })
             } else if (!showDiffsSelected() || showDiffsAskMeSelected()) {
                 setShowConfirmDiff(true)
             }
@@ -61,12 +62,22 @@ export default () => {
         setShowDiff(false)
     }
 
-    const triggerShowSnippetDiffEvent = () => {
+    const showSnippetDiff = () => {
         close()
         if (affectedFiles.length > 0) {
             dispatch({ type: SET_LOADING, loading: true })
             triggerEvent(EVENT_SHOW_SNIPPET_DIFF, { affectedFiles, path })
         }
+    }
+
+    const alwaysShowSnippetDiff = () => {
+        selectShowDiffsAlwaysShow()
+        showSnippetDiff()
+    }
+
+    const neverShowSnippetDiff = () => {
+        selectShowDiffsNeverShow()
+        close()
     }
 
     return (
@@ -85,7 +96,7 @@ export default () => {
                 </div>
                 <button className="btn btn-primary ml-2" disabled={!path} onClick={run}>Run</button>
             </div>
-            {showConfirmDiff && <ConfirmDiffModal triggerShowSnippetDiffEvent={triggerShowSnippetDiffEvent} close={close} />}
+            {showConfirmDiff && <ConfirmDiffModal alwaysShowSnippetDiff={alwaysShowSnippetDiff} neverShowSnippetDiff={neverShowSnippetDiff} showSnippetDiff={showSnippetDiff} close={close} />}
             {showDiff && <ShowDiffModal snippet={snippet} affectedFiles={affectedFiles} diff={diff} close={close} />}
         </>
     )

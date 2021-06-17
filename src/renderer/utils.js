@@ -3,8 +3,16 @@ import { ipcRenderer } from 'electron';
 export const DOCKER_DEPENDENCY = 'docker'
 export const NATIVE_DEPENDENCY = 'native'
 
-export const selectDockerDependency = () => ipcRenderer.sendSync('setPreferences', { settings: { dependency: DOCKER_DEPENDENCY } })
-export const selectNativeDependency = () => ipcRenderer.sendSync('setPreferences', { settings: { dependency: NATIVE_DEPENDENCY } })
+export const selectDockerDependency = () => {
+    const preferences = ipcRenderer.sendSync('getPreferences')
+    preferences.settings.dependency = DOCKER_DEPENDENCY
+    ipcRenderer.sendSync('setPreferences', preferences)
+}
+export const selectNativeDependency = () => {
+    const preferences = ipcRenderer.sendSync('getPreferences')
+    preferences.settings.dependency = NATIVE_DEPENDENCY
+    ipcRenderer.sendSync('setPreferences', preferences)
+}
 export const dependencySelected = () => {
     const preferences = ipcRenderer.sendSync('getPreferences')
     return !!(preferences && preferences.settings && preferences.settings.dependency)
@@ -22,9 +30,21 @@ export const SHOW_DIFFS_ALWAYS_SHOW = 'always_show'
 export const SHOW_DIFFS_NEVER_SHOW = 'never_show'
 export const SHOW_DIFFS_ASK_ME = 'ask_me'
 
-export const selectShowDiffsAlwaysShow = () => ipcRenderer.sendSync('setPreferences', { settings: { show_diffs: SHOW_DIFFS_ALWAYS_SHOW } })
-export const selectShowDiffsNeverShow = () => ipcRenderer.sendSync('setPreferences', { settings: { show_diffs: SHOW_DIFFS_DONT_SHOW } })
-export const selectShowDiffsAskMe = () => ipcRenderer.sendSync('setPreferences', { settings: { show_diffs: SHOW_DIFFS_ASK_ME } })
+export const selectShowDiffsAlwaysShow = () => {
+    const preferences = ipcRenderer.sendSync('getPreferences')
+    preferences.settings.show_diffs = SHOW_DIFFS_ALWAYS_SHOW
+    ipcRenderer.sendSync('setPreferences', preferences)
+}
+export const selectShowDiffsNeverShow = () => {
+    const preferences = ipcRenderer.sendSync('getPreferences')
+    preferences.settings.show_diffs = SHOW_DIFFS_NEVER_SHOW
+    ipcRenderer.sendSync('setPreferences', preferences)
+}
+export const selectShowDiffsAskMe = () => {
+    const preferences = ipcRenderer.sendSync('getPreferences')
+    preferences.settings.show_diffs = SHOW_DIFFS_ASK_ME
+    ipcRenderer.sendSync('setPreferences', { settings: { show_diffs: SHOW_DIFFS_ASK_ME } })
+}
 export const showDiffsSelected = () => {
     const preferences = ipcRenderer.sendSync('getPreferences')
     return !!(preferences && preferences.settings && preferences.settings.show_diffs)
