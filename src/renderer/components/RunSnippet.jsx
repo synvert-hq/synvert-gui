@@ -1,29 +1,43 @@
 const { dialog } = require('electron').remote
 
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import useEventListener from '@use-it/event-listener'
 
 import AppContext from '../context'
-import { EVENT_RUN_SNIPPET, EVENT_SHOW_SNIPPET_DIFF, EVENT_SNIPPET_RUN, SET_LOADING, SET_ERROR } from '../constants'
-import { triggerEvent } from '../utils'
+import { EVENT_RUN_SNIPPET, EVENT_SNIPPET_RUN, EVENT_SHOW_SNIPPET_DIFF, EVENT_SNIPPET_DIFF_SHOWN, SET_PATH, SET_LOADING, SET_ERROR } from '../constants'
+import { triggerEvent, showDiffsSelected, showDiffsAskMeSelected, showDiffsAlwaysShowSelected, showDiffsNeverShowSelected } from '../utils'
+import ConfirmDiffModal from './ConfirmDiffModal'
+import ShowDiffModal from './ShowDiffModal'
 
 export default () => {
     const { path, snippetsStore, currentSnippetId, dispatch } = useContext(AppContext)
+    const [affectedFiles, setAffectedFiles] = useState([])
+    const [showConfirmDiff, setShowConfirmDiff] = useState(false)
+    const [showDiff, setShowDiff] = useState(false)
+    const [diff, setDiff] = useState('')
+    const snippet = snippetsStore[currentSnippetId]
 
-    useEventListener(EVENT_SNIPPET_RUN, ({ detail: { error }}) => {
+    useEventListener(EVENT_SNIPPET_DIFF_SHOWN, ({ detail: { diff, error } }) => {
+        dispatch({ type: SET_LOADING, loading: false })
+        dispatch({ type: SET_ERROR, loading: error })
+        if (error) return
+        if (diff) {
+            setDiff(diff)
+            setShowDiff(true)
+        }
+    })
+
+    useEventListener(EVENT_SNIPPET_RUN, ({ detail: { affectedFiles, error } = {} }) => {
+        setAffectedFiles(affectedFiles)
         dispatch({ type: SET_ERROR, error })
-        if (error) {
-            dispatch({ type: SET_LOADING, loading: false })
-        } else {
-            // wait 1 sec for affected_files
-            setTimeout(() => {
-                const affected_files = snippetsStore[currentSnippetId].affected_files
-                if (affected_files.length > 0) {
-                    triggerEvent(EVENT_SHOW_SNIPPET_DIFF, { affected_files, path })
-                } else {
-                    dispatch({ type: SET_LOADING, loading: false })
-                }
-            }, 1000)
+        dispatch({ type: SET_LOADING, loading: false })
+        if (affectedFiles.length == 0) return;
+        if (!error) {
+            if (showDiffsAlwaysShowSelected()) {
+                triggerShowSnippetDiffEvent()
+            } else if (!showDiffsSelected() || showDiffsAskMeSelected()) {
+                setShowConfirmDiff(true)
+            }
         }
     })
 
@@ -42,20 +56,37 @@ export default () => {
         dispatch({ type: SET_LOADING, loading: true })
     }
 
+    const close = () => {
+        setShowConfirmDiff(false)
+        setShowDiff(false)
+    }
+
+    const triggerShowSnippetDiffEvent = () => {
+        close()
+        if (affectedFiles.length > 0) {
+            dispatch({ type: SET_LOADING, loading: true })
+            triggerEvent(EVENT_SHOW_SNIPPET_DIFF, { affectedFiles, path })
+        }
+    }
+
     return (
-        <div className="container-fluid mt-4 d-flex flex-row">
-            <div className="input-group flex-grow-1">
-                <div className="input-group-prepend">
-                    <label className="input-group-text">Workspace</label>
+        <>
+            <div className="container-fluid mt-4 d-flex flex-row">
+                <div className="input-group flex-grow-1">
+                    <div className="input-group-prepend">
+                        <label className="input-group-text">Workspace</label>
+                    </div>
+                    <input type="text" className="form-control" placeholder="directory path" value={path} readOnly onClick={selectPath} />
+                    <div className="input-group-append">
+                        <button className="btn btn-outline-secondary" type="button" onClick={selectPath}>
+                            ...
+                        </button>
+                    </div>
                 </div>
-                <input type="text" className="form-control" placeholder="directory path" value={path} readOnly onClick={selectPath} />
-                <div className="input-group-append">
-                    <button className="btn btn-outline-secondary" type="button" onClick={selectPath}>
-                        ...
-                    </button>
-                </div>
+                <button className="btn btn-primary ml-2" disabled={!path} onClick={run}>Run</button>
             </div>
-            <button className="btn btn-primary ml-2" disabled={!path} onClick={run}>Run</button>
-        </div>
+            {showConfirmDiff && <ConfirmDiffModal triggerShowSnippetDiffEvent={triggerShowSnippetDiffEvent} close={close} />}
+            {showDiff && <ShowDiffModal snippet={snippet} affectedFiles={affectedFiles} diff={diff} close={close} />}
+        </>
     )
 }

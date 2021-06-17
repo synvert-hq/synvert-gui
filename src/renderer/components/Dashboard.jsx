@@ -12,7 +12,7 @@ import NewSnippet from './NewSnippet'
 import SelectDependencies from './SelectDependencies'
 import CheckDependency from './CheckDependency'
 import Error from './Error'
-import { EVENT_DEPENDENCIES_CHECKED, EVENT_NEW_SNIPPET, EVENT_SNIPPETS_LOADED, EVENT_SNIPPET_RUN, SET_ERROR } from '../constants'
+import { EVENT_DEPENDENCIES_CHECKED, EVENT_NEW_SNIPPET, EVENT_SNIPPETS_LOADED, SET_ERROR } from '../constants'
 import { SET_SNIPPETS_STORE, SET_CURRENT_SNIPPET_ID } from '../constants'
 import { dependencySelected } from '../utils'
 
@@ -31,11 +31,6 @@ export default () => {
         if (snippetsStore) {
             dispatch({ type: SET_SNIPPETS_STORE, snippetsStore })
         }
-    })
-
-    useEventListener(EVENT_SNIPPET_RUN, ({ detail: { snippetId, output } = {} }) => {
-        snippetsStore[snippetId].affected_files = output.affected_files
-        dispatch({ type: SET_SNIPPETS_STORE, snippetsStore })
     })
 
     useEventListener(EVENT_NEW_SNIPPET, () => {

@@ -18,9 +18,7 @@ export default ({ snippet, code, close }) => {
 						</button>
 					</div>
 					<div className="modal-body">
-						{code === '' ? 'Loading...' : (
 						<pre className="language-ruby"><code className="language-ruby">{code}</code></pre>
-						)}
 					</div>
 					<div className="modal-footer">
 						<button type="button" className="btn btn-secondary" onClick={close}>Close</button>

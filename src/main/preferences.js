@@ -36,7 +36,7 @@ const preferences = new ElectronPreferences({
                                 type: 'radio',
                                 options: [
                                     { label: 'Always show', value: 'always_show' },
-                                    { label: "Don't show", value: 'dont_show' },
+                                    { label: "Never show", value: 'never_show' },
                                     { label: 'Ask me every time', value: 'ask_me' }
                                 ]
                             }

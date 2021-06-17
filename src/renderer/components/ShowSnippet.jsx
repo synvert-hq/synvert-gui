@@ -3,32 +3,19 @@ import useEventListener from '@use-it/event-listener'
 import ReactMarkdown from 'react-markdown'
 
 import ShowCodeModal from './ShowCodeModal'
-import ShowDiffModal from './ShowDiffModal'
 import AppContext from '../context'
-import { EVENT_SHOW_SNIPPET, EVENT_SNIPPET_SHOWN, EVENT_SNIPPET_DIFF_SHOWN, SET_LOADING, SET_ERROR } from '../constants'
+import { EVENT_SHOW_SNIPPET, EVENT_SNIPPET_SHOWN, SET_LOADING, SET_ERROR } from '../constants'
 import { triggerEvent } from '../utils'
 
 export default () => {
     const [showCode, setShowCode] = useState(false)
-    const [showDiff, setShowDiff] = useState(false)
     const [code, setCode] = useState('')
-    const [diff, setDiff] = useState('')
     const { dispatch } = useContext(AppContext)
 
     const { snippetsStore, currentSnippetId } = useContext(AppContext)
 
     useEffect(() => {
         Prism.highlightAll();
-    })
-
-    useEventListener(EVENT_SNIPPET_DIFF_SHOWN, ({ detail: { diff, error } }) => {
-        dispatch({ type: SET_LOADING, loading: false })
-        dispatch({ type: SET_ERROR, loading: error })
-        if (error) return
-        if (diff) {
-            setDiff(diff)
-            setShowDiff(true)
-        }
     })
 
     useEventListener(EVENT_SNIPPET_SHOWN, ({ detail: { code, error }}) => {
@@ -47,7 +34,6 @@ export default () => {
 
     const close = () => {
         setShowCode(false)
-        setShowDiff(false)
     }
 
     if (!currentSnippetId) return null
@@ -77,7 +63,6 @@ export default () => {
                 </ul>
             </div>
             {showCode && <ShowCodeModal snippet={snippet} code={code} close={close} />}
-            {showDiff && <ShowDiffModal snippet={snippet} diff={diff} close={close} />}
         </>
     )
 }
