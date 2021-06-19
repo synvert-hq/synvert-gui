@@ -1,4 +1,4 @@
-import { SET_PATH, SET_SNIPPETS_STORE, SET_CURRENT_SNIPPET_ID, SET_LOADING } from './constants'
+import { SET_PATH, SET_SNIPPETS_STORE, SET_CURRENT_SNIPPET_ID, SET_LOADING, SET_ERROR } from './constants'
 
 export default (state = {}, action) => {
     switch (action.type) {
@@ -21,6 +21,11 @@ export default (state = {}, action) => {
             return {
                 ...state,
                 loading: action.loading,
+            }
+        case SET_ERROR:
+            return {
+                ...state,
+                error: action.error,
             }
         default:
             return state

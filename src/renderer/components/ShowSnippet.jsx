@@ -20,11 +20,13 @@ export default () => {
 
     useEventListener(EVENT_SNIPPET_SHOWN, ({ detail: { code, error }}) => {
         dispatch({ type: SET_LOADING, loading: false })
-        dispatch({ type: SET_ERROR, error })
-        if (!error) {
-            setCode(code)
-            setShowCode(true)
+        if (error) {
+            dispatch({ type: SET_ERROR, error })
+            return
         }
+
+        setCode(code)
+        setShowCode(true)
     })
 
     const showSourceCode = () => {

@@ -23,7 +23,9 @@ export default () => {
     const [checked, setChecked] = useState(false)
 
     useEventListener(EVENT_DEPENDENCIES_CHECKED, ({ detail: { error } = {} }) => {
-        dispatch({ type: SET_ERROR, error })
+        if (error) {
+            dispatch({ type: SET_ERROR, error })
+        }
         setChecked(true)
     })
 
@@ -54,12 +56,12 @@ export default () => {
     return (
         <LoadingOverlay active={loading} spinner>
             <div className="main-container d-flex flex-row">
+                <Error />
                 <div className="sidebar">
                     <ListSnippets />
                 </div>
                 <div className="flex-grow-1">
                     <div className="d-flex flex-column main-content">
-                        <Error />
                         {currentSnippetId === 'new' ? <NewSnippet /> : <ShowSnippet />}
                         <RunSnippet />
                     </div>

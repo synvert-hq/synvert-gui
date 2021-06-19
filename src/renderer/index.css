@@ -11,6 +11,13 @@ body {
   padding: 1rem 0;
 }
 
+.main-container .alert {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+}
+
 .sidebar {
   width: 450px;
 }

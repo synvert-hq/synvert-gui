@@ -33,7 +33,9 @@ export default ({ snippet, affectedFiles, diff, close }) => {
   });
 
   useEventListener(EVENT_DIFF_COMMITTED, ({ detail: { error } }) => {
-    dispatch({ type: SET_ERROR, loading: error });
+    if (error) {
+      dispatch({ type: SET_ERROR, loading: error });
+    }
     setShowCommit(false);
     setCommitMessage("");
     setCommitting(false);

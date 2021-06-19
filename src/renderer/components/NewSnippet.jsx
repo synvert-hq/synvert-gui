@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react'
 import { useForm } from "react-hook-form";
 
 import AppContext from '../context'
-import { SET_LOADING } from '../constants'
+import { SET_ERROR, SET_LOADING } from '../constants'
 
 export default () => {
     const { dispatch } = useContext(AppContext)
@@ -35,16 +35,24 @@ export default () => {
     const onSubmit = async(data) => {
         dispatch({ type: SET_LOADING, loading: true })
         const { inputs, outputs } = data
-        const response = await fetch('https://synvert.xinminlabs.com/api/v1/call', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ inputs, outputs })
-        })
-        const result = await response.json()
-        setSnippetContent(composeNewSnippet(data, result))
+        try {
+            const response = await fetch('https://synvert.xinminlabs.com/api/v1/call', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ inputs, outputs })
+            })
+            const result = await response.json()
+            if (result.error) {
+                dispatch({ type: SET_ERROR, error: result.error })
+            } else {
+                setSnippetContent(composeNewSnippet(data, result))
+            }
+        } catch (error) {
+            dispatch({ type: SET_ERROR, error: error.message })
+        }
         dispatch({ type: SET_LOADING, loading: false })
     }
 

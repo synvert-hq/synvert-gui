@@ -19,8 +19,10 @@ export default () => {
 
     useEventListener(EVENT_SNIPPET_DIFF_SHOWN, ({ detail: { diff, error } }) => {
         dispatch({ type: SET_LOADING, loading: false })
-        dispatch({ type: SET_ERROR, loading: error })
-        if (error) return
+        if (error) {
+            dispatch({ type: SET_ERROR, loading: error })
+            return
+        }
         if (diff) {
             setDiff(diff)
             setShowDiff(true)
@@ -29,16 +31,18 @@ export default () => {
 
     useEventListener(EVENT_SNIPPET_RUN, ({ detail: { affectedFiles, error } = {} }) => {
         setAffectedFiles(affectedFiles)
-        dispatch({ type: SET_ERROR, error })
         dispatch({ type: SET_LOADING, loading: false })
+        if (error) {
+            dispatch({ type: SET_ERROR, error })
+            return
+        }
         if (!affectedFiles || affectedFiles.length == 0) return;
-        if (!error) {
-            if (showDiffsAlwaysShowSelected()) {
-                dispatch({ type: SET_LOADING, loading: true })
-                triggerEvent(EVENT_SHOW_SNIPPET_DIFF, { affectedFiles, path })
-            } else if (!showDiffsSelected() || showDiffsAskMeSelected()) {
-                setShowConfirmDiff(true)
-            }
+
+        if (showDiffsAlwaysShowSelected()) {
+            dispatch({ type: SET_LOADING, loading: true })
+            triggerEvent(EVENT_SHOW_SNIPPET_DIFF, { affectedFiles, path })
+        } else if (!showDiffsSelected() || showDiffsAskMeSelected()) {
+            setShowConfirmDiff(true)
         }
     })
 
