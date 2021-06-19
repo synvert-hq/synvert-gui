@@ -5,8 +5,12 @@ import * as Diff2Html from "diff2html";
 import Prism from "prismjs";
 
 import AppContext from "../context";
-import { triggerEvent } from '../utils';
-import { EVENT_COMMIT_DIFF, EVENT_DIFF_COMMITTED, SET_ERROR } from "../constants";
+import { triggerEvent } from "../utils";
+import {
+  EVENT_COMMIT_DIFF,
+  EVENT_DIFF_COMMITTED,
+  SET_ERROR,
+} from "../constants";
 
 export default ({ snippet, affectedFiles, diff, close }) => {
   const [diffHtml, setDiffHtml] = useState("");

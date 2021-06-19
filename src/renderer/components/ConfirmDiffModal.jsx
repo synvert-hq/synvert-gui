@@ -1,6 +1,11 @@
 import React from "react";
 
-export default ({ close, showSnippetDiff, alwaysShowSnippetDiff, neverShowSnippetDiff }) => {
+export default ({
+  close,
+  showSnippetDiff,
+  alwaysShowSnippetDiff,
+  neverShowSnippetDiff,
+}) => {
   return (
     <>
       <div
