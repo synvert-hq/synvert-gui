@@ -48,15 +48,6 @@ export default () => {
     dispatch({ type: SET_CURRENT_SNIPPET_ID, currentSnippetId: "new" });
   });
 
-  useEffect(() => {
-    if (Object.keys(snippetsStore).length > 0 && !currentSnippetId) {
-      dispatch({
-        type: SET_CURRENT_SNIPPET_ID,
-        currentSnippetId: Object.keys(snippetsStore).sort()[0],
-      });
-    }
-  });
-
   if (!dependency) {
     return <SelectDependencies setDependency={setDependency} />;
   }

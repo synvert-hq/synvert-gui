@@ -41,7 +41,7 @@ export default () => {
     dispatch({ type: SET_LOADING, loading: true });
     const { inputs, outputs } = data;
     try {
-      const response = await fetch("https://synvert.xinminlabs.com/api/v1/call", {
+      const response = await fetch("http://localhost:9292/api/v1/call", {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -52,11 +52,13 @@ export default () => {
       const result = await response.json();
       if (result.error) {
         dispatch({ type: SET_ERROR, error: result.error });
+        setSnippetContent('');
       } else {
         setSnippetContent(composeNewSnippet(data, result));
       }
     } catch (error) {
       dispatch({ type: SET_ERROR, error: error.message });
+      setSnippetContent('');
     }
     dispatch({ type: SET_LOADING, loading: false });
   };

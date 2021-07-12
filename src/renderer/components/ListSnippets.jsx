@@ -45,6 +45,13 @@ export default () => {
     triggerEvent(EVENT_SYNC_SNIPPETS);
   };
 
+  const newSnippet = () => {
+    dispatch({
+      type: SET_CURRENT_SNIPPET_ID,
+      currentSnippetId: 'new',
+    });
+  }
+
   const snippetClicked = (snippet) => {
     dispatch({
       type: SET_CURRENT_SNIPPET_ID,
@@ -65,10 +72,9 @@ export default () => {
         <button
           type="button"
           className="btn btn-primary btm-sm ml-2"
-          onClick={syncSnippets}
-          disabled={syncing}
+          onClick={newSnippet}
         >
-          {syncing ? "Syncing..." : "Sync"}
+          New
         </button>
       </div>
       <ul className="snippets-list list-group list-group-flush mt-2">
