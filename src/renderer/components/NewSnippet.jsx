@@ -38,7 +38,7 @@ export default () => {
   };
 
   const onSubmit = async (data) => {
-    dispatch({ type: SET_LOADING, loading: true });
+    dispatch({ type: SET_LOADING, loading: true, loadingText: "Submitting..." });
     const { inputs, outputs } = data;
     try {
       const response = await fetch("http://localhost:9292/api/v1/call", {

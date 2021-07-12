@@ -5,7 +5,6 @@ import { triggerEvent, searchSnippets, sortSnippets } from "../utils";
 import {
   EVENT_LOAD_SNIPPETS,
   EVENT_SNIPPETS_LOADED,
-  EVENT_SYNC_SNIPPETS,
   SET_CURRENT_SNIPPET_ID,
   SET_ERROR,
 } from "../constants";
@@ -18,13 +17,11 @@ const snippetClassname = (snippet, currentSnippetId) =>
 export default () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loaded, setLoaded] = useState(false);
-  const [syncing, setSyncing] = useState(false);
 
   const { currentSnippetId, snippetsStore, dispatch } = useContext(AppContext);
 
   useEventListener(EVENT_SNIPPETS_LOADED, ({ detail: { error } }) => {
     setLoaded(true);
-    setSyncing(false);
     if (error) {
       dispatch({ type: SET_ERROR, error });
     }
@@ -39,11 +36,6 @@ export default () => {
   if (!loaded) {
     return <div className="text-center">Loading Snippets...</div>;
   }
-
-  const syncSnippets = () => {
-    setSyncing(true);
-    triggerEvent(EVENT_SYNC_SNIPPETS);
-  };
 
   const newSnippet = () => {
     dispatch({

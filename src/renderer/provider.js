@@ -8,6 +8,7 @@ const initialState = {
     snippetsStore: {},
     currentSnippetId: 'new',
     loading: false,
+    loadingText: 'Loading...',
     error: null,
 }
 

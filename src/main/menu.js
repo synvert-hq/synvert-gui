@@ -3,7 +3,7 @@ import defaultMenu from 'electron-default-menu';
 
 import preferences from './preferences';
 import { createMainWindow } from './window';
-import { EVENT_NEW_SNIPPET } from '../renderer/constants';
+import { EVENT_SYNC_SNIPPETS } from '../renderer/constants';
 
 const isSubmenu = (submenu) => {
   return !!submenu && Array.isArray(submenu);
@@ -80,11 +80,10 @@ const getFileMenu = () => {
       accelerator: 'CmdOrCtrl+Shift+N',
     },
     {
-      label: 'New Snippet',
+      label: 'Sync Snippets',
       click: () => {
-        ipcMain.emit(EVENT_NEW_SNIPPET)
+        ipcMain.emit(EVENT_SYNC_SNIPPETS)
       },
-      accelerator: 'CmdOrCtrl+N',
     },
   ];
 

@@ -14,15 +14,16 @@ import CheckDependency from "./CheckDependency";
 import Error from "./Error";
 import {
   EVENT_DEPENDENCIES_CHECKED,
-  EVENT_NEW_SNIPPET,
   EVENT_SNIPPETS_LOADED,
+  EVENT_SYNC_SNIPPETS,
   SET_ERROR,
+  SET_LOADING,
 } from "../constants";
-import { SET_SNIPPETS_STORE, SET_CURRENT_SNIPPET_ID } from "../constants";
+import { SET_SNIPPETS_STORE  } from "../constants";
 import { dependencySelected } from "../utils";
 
 export default () => {
-  const { snippetsStore, currentSnippetId, loading, dispatch } =
+  const { currentSnippetId, loading, loadingText, dispatch } =
     useContext(AppContext);
 
   const [dependency, setDependency] = useState(dependencySelected());
@@ -36,17 +37,19 @@ export default () => {
   });
 
   useEventListener(
+    EVENT_SYNC_SNIPPETS,
+    () => { dispatch({ type: SET_LOADING, loading: true, loadingText: 'Syncing Snippets...' }) }
+  );
+
+  useEventListener(
     EVENT_SNIPPETS_LOADED,
     ({ detail: { snippetsStore } = {} }) => {
+      dispatch({ type: SET_LOADING, loading: false });
       if (snippetsStore) {
         dispatch({ type: SET_SNIPPETS_STORE, snippetsStore });
       }
     }
   );
-
-  useEventListener(EVENT_NEW_SNIPPET, () => {
-    dispatch({ type: SET_CURRENT_SNIPPET_ID, currentSnippetId: "new" });
-  });
 
   if (!dependency) {
     return <SelectDependencies setDependency={setDependency} />;
@@ -57,7 +60,7 @@ export default () => {
   }
 
   return (
-    <LoadingOverlay active={loading} spinner>
+    <LoadingOverlay active={loading} text={loadingText} spinner>
       <div className="main-container d-flex flex-row">
         <Error />
         <div className="sidebar">

@@ -44,7 +44,6 @@ import {
     EVENT_COMMIT_DIFF,
     EVENT_DIFF_COMMITTED,
     EVENT_SYNC_SNIPPETS,
-    EVENT_NEW_SNIPPET,
 } from './constants';
 import { log, triggerEvent, dockerDependencySelected, convertSnippetsToStore } from './utils'
 
@@ -62,6 +61,7 @@ const runDockerCommand = async (command, { type, id, name } = {}) => {
     }
     try {
         const { stdout, stderr } = await exec(command)
+        log({ type: 'runDockerCommand', command, stdout, stderr })
         if (type) {
             triggerEvent(type, { id, name, status: isRealError(stderr) ? 'failed' : 'done' })
         }
@@ -87,6 +87,7 @@ const runCommand = async (command, { type, id, name } = {}) => {
     }
     try {
         const { stdout, stderr } = await exec(command)
+        log({ type: 'runCommand', command, stdout, stderr })
         if (type) {
             triggerEvent(type, { id, name, status: isRealError(stderr) ? 'failed' : 'done' })
         }
@@ -235,6 +236,6 @@ window.addEventListener(EVENT_SHOW_SNIPPET_DIFF, showSnippetDiff)
 window.addEventListener(EVENT_COMMIT_DIFF, commitDiff)
 window.addEventListener(EVENT_SYNC_SNIPPETS, syncSnippets)
 
-ipcRenderer.on(EVENT_NEW_SNIPPET, () => {
-    triggerEvent(EVENT_NEW_SNIPPET)
+ipcRenderer.on(EVENT_SYNC_SNIPPETS, () => {
+    triggerEvent(EVENT_SYNC_SNIPPETS)
 })

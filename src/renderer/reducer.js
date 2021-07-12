@@ -21,6 +21,7 @@ export default (state = {}, action) => {
             return {
                 ...state,
                 loading: action.loading,
+                loadingText: action.loadingText || "Loading...",
             }
         case SET_ERROR:
             return {

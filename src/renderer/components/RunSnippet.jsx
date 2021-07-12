@@ -77,7 +77,7 @@ export default () => {
 
   const run = () => {
     triggerEvent(EVENT_RUN_SNIPPET, { path, currentSnippetId });
-    dispatch({ type: SET_LOADING, loading: true });
+    dispatch({ type: SET_LOADING, loading: true, loadingText: 'Running...' });
   };
 
   const close = () => {
