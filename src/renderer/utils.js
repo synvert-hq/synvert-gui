@@ -83,8 +83,16 @@ export const searchSnippets = (snippets, term) =>
 
 export const triggerEvent = (name, detail) => {
     if (detail) {
+        log({ type: 'triggerEvent', name, detail })
         window.dispatchEvent(new CustomEvent(name, { detail }))
     } else {
+        log({ type: 'triggerEvent', name })
         window.dispatchEvent(new Event(name))
+    }
+}
+
+export const log = (...args) => {
+    if (process.env.DEBUG === 'true') {
+        console.log(...args)
     }
 }

@@ -46,7 +46,7 @@ import {
     EVENT_SYNC_SNIPPETS,
     EVENT_NEW_SNIPPET,
 } from './constants';
-import { triggerEvent, dockerDependencySelected, convertSnippetsToStore } from './utils'
+import { log, triggerEvent, dockerDependencySelected, convertSnippetsToStore } from './utils'
 
 const { ipcRenderer } = require('electron')
 const util = require('util')
@@ -65,7 +65,7 @@ const runDockerCommand = async (command, { type, id, name } = {}) => {
         if (type) {
             triggerEvent(type, { id, name, status: isRealError(stderr) ? 'failed' : 'done' })
         }
-        return { result: true, stdout, stderr }
+        return { result: true, stdout, stderr: isRealError(stderr) ? stderr : null }
     } catch (e) {
         if (type) {
             triggerEvent(type, { id, name, status: 'failed' })
@@ -90,7 +90,7 @@ const runCommand = async (command, { type, id, name } = {}) => {
         if (type) {
             triggerEvent(type, { id, name, status: isRealError(stderr) ? 'failed' : 'done' })
         }
-        return { stdout, stderr }
+        return { stdout, stderr: isRealError(stderr) ? stderr : null }
     } catch (e) {
         if (type) {
             triggerEvent(type, { id, name, status: 'failed' })
