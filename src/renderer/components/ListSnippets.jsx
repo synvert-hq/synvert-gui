@@ -2,7 +2,11 @@ import React, { useContext, useEffect, useState } from "react";
 import useEventListener from "@use-it/event-listener";
 import AppContext from "../context";
 import { triggerEvent, searchSnippets, sortSnippets } from "../utils";
+import ProgressLogs from "./ProgressLogs";
 import {
+  EVENT_CHECK_DEPENDENCIES,
+  EVENT_CHECKING_DEPENDENCIES,
+  EVENT_DEPENDENCIES_CHECKED,
   EVENT_LOAD_SNIPPETS,
   EVENT_SNIPPETS_LOADED,
   SET_CURRENT_SNIPPET_ID,
@@ -17,24 +21,48 @@ const snippetClassname = (snippet, currentSnippetId) =>
 export default () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loaded, setLoaded] = useState(false);
+  const [firstError, setFirstError] = useState(true);
+  const [checking, setChecking] = useState(false);
 
   const { currentSnippetId, snippetsStore, dispatch } = useContext(AppContext);
+
+  useEventListener(EVENT_DEPENDENCIES_CHECKED, ({ detail: { error } = {} }) => {
+    if (error) {
+      dispatch({ type: SET_ERROR, error });
+    } else {
+      setLoaded(false);
+      triggerEvent(EVENT_LOAD_SNIPPETS);
+    }
+    setChecking(false);
+  });
 
   useEventListener(EVENT_SNIPPETS_LOADED, ({ detail: { error } }) => {
     setLoaded(true);
     if (error) {
-      dispatch({ type: SET_ERROR, error });
+      if (firstError) {
+        setFirstError(false)
+        setChecking(true)
+        triggerEvent(EVENT_CHECK_DEPENDENCIES);
+      } else {
+        dispatch({ type: SET_ERROR, error });
+      }
     }
   });
 
   useEffect(() => {
     if (!loaded) {
-      triggerEvent(EVENT_LOAD_SNIPPETS);
+      setTimeout(() => {
+        triggerEvent(EVENT_LOAD_SNIPPETS);
+      }, 100)
     }
   }, [loaded]);
 
   if (!loaded) {
     return <div className="text-center">Loading Snippets...</div>;
+  }
+
+  if (checking) {
+    return <ProgressLogs type={EVENT_CHECKING_DEPENDENCIES} />
   }
 
   const newSnippet = () => {

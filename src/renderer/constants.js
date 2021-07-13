@@ -1,4 +1,4 @@
-export const EVENT_CHECK_DEPENDENCIES = "event.check_dependenies"
+export const EVENT_CHECK_DEPENDENCIES = "event.check_dependencies"
 export const EVENT_CHECKING_DEPENDENCIES = "event.checking_dependencies"
 export const EVENT_DEPENDENCIES_CHECKED = "event.dependencies_checked"
 export const EVENT_LOAD_SNIPPETS = "event.load_snippets"

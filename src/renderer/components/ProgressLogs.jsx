@@ -13,14 +13,16 @@ export default ({ type }) => {
   });
 
   return (
-    <ul className="mt-5 list-unstyled">
-      {Object.keys(logs)
-        .sort()
-        .map((id) => (
-          <li key={id} className="mt-2 mb-2">
-            {logs[id].name} {logs[id].status}
-          </li>
-        ))}
-    </ul>
+    <div className="main-container container">
+      <ul className="mt-5 list-unstyled">
+        {Object.keys(logs)
+          .sort()
+          .map((id) => (
+            <li key={id} className="mt-2 mb-2">
+              {logs[id].name} {logs[id].status}
+            </li>
+          ))}
+      </ul>
+    </div>
   );
 };
