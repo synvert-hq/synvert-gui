@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import AppContext from "../context";
-import { SET_ERROR, SET_LOADING } from "../constants";
+import { SET_ERROR, SET_LOADING, SET_NEW_SNIPPET } from "../constants";
 
 export default () => {
   const { dispatch } = useContext(AppContext);
@@ -37,6 +37,14 @@ export default () => {
     return newSnippet;
   };
 
+  const updateNewSnippet = (snippetContent) => {
+    setSnippetContent(snippetContent);
+    dispatch({
+      type: SET_NEW_SNIPPET,
+      newSnippet: snippetContent,
+    });
+  }
+
   const onSubmit = async (data) => {
     dispatch({ type: SET_LOADING, loading: true, loadingText: "Submitting..." });
     const { inputs, outputs } = data;
@@ -52,13 +60,13 @@ export default () => {
       const result = await response.json();
       if (result.error) {
         dispatch({ type: SET_ERROR, error: result.error });
-        setSnippetContent('');
+        updateNewSnippet('');
       } else {
-        setSnippetContent(composeNewSnippet(data, result));
+        updateNewSnippet(composeNewSnippet(data, result));
       }
     } catch (error) {
       dispatch({ type: SET_ERROR, error: error.message });
-      setSnippetContent('');
+      updateNewSnippet('');
     }
     dispatch({ type: SET_LOADING, loading: false });
   };
@@ -149,6 +157,7 @@ export default () => {
             rows="10"
             value={snippetContent}
             onChange={(e) => setSnippetContent(e.target.value)}
+            onBlur={(e) => updateNewSnippet(e.target.value)}
           ></textarea>
         </div>
       </form>

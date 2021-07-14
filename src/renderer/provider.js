@@ -7,6 +7,7 @@ const initialState = {
     path: localStorage.getItem('path') || '',
     snippetsStore: {},
     currentSnippetId: 'new',
+    newSnippet: '',
     loading: false,
     loadingText: 'Loading...',
     error: null,

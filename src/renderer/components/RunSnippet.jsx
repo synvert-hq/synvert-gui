@@ -12,6 +12,7 @@ import {
   SET_PATH,
   SET_LOADING,
   SET_ERROR,
+  EVENT_EXECUTE_SNIPPET,
 } from "../constants";
 import {
   triggerEvent,
@@ -25,7 +26,7 @@ import ConfirmDiffModal from "./ConfirmDiffModal";
 import ShowDiffModal from "./ShowDiffModal";
 
 export default () => {
-  const { path, snippetsStore, currentSnippetId, dispatch } =
+  const { path, snippetsStore, currentSnippetId, newSnippet, dispatch } =
     useContext(AppContext);
   const [affectedFiles, setAffectedFiles] = useState([]);
   const [showConfirmDiff, setShowConfirmDiff] = useState(false);
@@ -76,7 +77,11 @@ export default () => {
   };
 
   const run = () => {
-    triggerEvent(EVENT_RUN_SNIPPET, { path, currentSnippetId });
+    if (currentSnippetId === 'new') {
+      triggerEvent(EVENT_EXECUTE_SNIPPET, { path, newSnippet });
+    } else {
+      triggerEvent(EVENT_RUN_SNIPPET, { path, currentSnippetId });
+    }
     dispatch({ type: SET_LOADING, loading: true, loadingText: 'Running...' });
   };
 
@@ -128,7 +133,7 @@ export default () => {
             </button>
           </div>
         </div>
-        <button className="btn btn-primary ml-2" disabled={!path} onClick={run}>
+        <button className="btn btn-primary ml-2" disabled={!path || (currentSnippetId === 'new' && newSnippet.length === 0)} onClick={run}>
           Run
         </button>
       </div>

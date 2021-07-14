@@ -36,6 +36,7 @@ import {
     EVENT_SNIPPETS_LOADED,
     EVENT_RUN_SNIPPET,
     EVENT_SNIPPET_RUN,
+    EVENT_EXECUTE_SNIPPET,
     EVENT_SHOW_SNIPPET,
     EVENT_SNIPPET_SHOWN,
     EVENT_CHECKING_DEPENDENCIES,
@@ -60,13 +61,15 @@ const runDockerCommand = async (command, { type, id, name } = {}) => {
         triggerEvent(type, { id, name, status: 'started' })
     }
     try {
+        log({ type: 'runDockerCommand', command })
         const { stdout, stderr } = await exec(command)
-        log({ type: 'runDockerCommand', command, stdout, stderr })
+        log({ type: 'runDockerCommand', stdout, stderr })
         if (type) {
             triggerEvent(type, { id, name, status: isRealError(stderr) ? 'failed' : 'done' })
         }
         return { result: true, stdout, stderr: isRealError(stderr) ? stderr : null }
     } catch (e) {
+        log({ type: 'runDockerCommand error', e })
         if (type) {
             triggerEvent(type, { id, name, status: 'failed' })
         }
@@ -86,13 +89,15 @@ const runCommand = async (command, { type, id, name } = {}) => {
         triggerEvent(type, { id, name, status: 'started' })
     }
     try {
+        log({ type: 'runCommand', command })
         const { stdout, stderr } = await exec(command)
-        log({ type: 'runCommand', command, stdout, stderr })
+        log({ type: 'runCommand', stdout, stderr })
         if (type) {
             triggerEvent(type, { id, name, status: isRealError(stderr) ? 'failed' : 'done' })
         }
         return { stdout, stderr: isRealError(stderr) ? stderr : null }
     } catch (e) {
+        log({ type: 'runCommand error', e })
         if (type) {
             triggerEvent(type, { id, name, status: 'failed' })
         }
@@ -181,6 +186,23 @@ const runSnippet = async (event) => {
     }
 }
 
+const executeSnippet = async (event) => {
+    const { detail: { newSnippet, path } } = event
+    let result = true, stdout, stderr
+    if (dockerDependencySelected()) {
+        ({ result, stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app xinminlabs/awesomecode-synvert echo "${newSnippet}" | synvert --execute --format json /app`))
+    } else {
+        ({ stdout, stderr } = await runCommand(`echo "${newSnippet}" | synvert --execute --format json ${path}`))
+    }
+    if (!result) return
+    try {
+        const output = JSON.parse(stdout)
+        triggerEvent(EVENT_SNIPPET_RUN, { affectedFiles: output.affected_files, error: stderr })
+    } catch(e) {
+        triggerEvent(EVENT_SNIPPET_RUN, { error: 'Failed to run snippet!' })
+    }
+}
+
 const showSnippet = async (event) => {
     const { detail: { currentSnippetId } } = event
     let result = true, stdout, stderr
@@ -231,6 +253,7 @@ const syncSnippets = async () => {
 window.addEventListener(EVENT_CHECK_DEPENDENCIES, checkDependencies)
 window.addEventListener(EVENT_LOAD_SNIPPETS, loadSnippets)
 window.addEventListener(EVENT_RUN_SNIPPET, runSnippet)
+window.addEventListener(EVENT_EXECUTE_SNIPPET, executeSnippet)
 window.addEventListener(EVENT_SHOW_SNIPPET, showSnippet)
 window.addEventListener(EVENT_SHOW_SNIPPET_DIFF, showSnippetDiff)
 window.addEventListener(EVENT_COMMIT_DIFF, commitDiff)
