@@ -71,9 +71,14 @@ export default () => {
     dispatch({ type: SET_LOADING, loading: false });
   };
 
-  const addMoreInputOutput = (e) => {
+  const addInputOutput = (e) => {
     e.preventDefault();
     setInputOutputCount(inputOutputCount + 1);
+  };
+
+  const removeInputOutput = (e) => {
+    e.preventDefault();
+    setInputOutputCount(inputOutputCount - 1);
   };
 
   return (
@@ -138,11 +143,12 @@ export default () => {
                 placeholder="create(:user)"
                 {...register(`outputs.${index}`)}
               ></textarea>
+              {index > 0 && (<button className="btn btn-link float-right" onClick={removeInputOutput}>x</button>)}
             </div>
           </div>
         ))}
         <div className="form-group d-flex justify-content-between">
-          <button className="btn btn-link" onClick={addMoreInputOutput}>
+          <button className="btn btn-link" onClick={addInputOutput}>
             Add More Input/Output
           </button>
           <input

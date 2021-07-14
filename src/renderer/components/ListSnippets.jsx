@@ -58,7 +58,7 @@ export default () => {
   }, [loaded]);
 
   if (!loaded) {
-    return <div className="text-center">Loading Snippets...</div>;
+    return <div className="text-center">Loading Official Snippets...</div>;
   }
 
   if (checking) {
