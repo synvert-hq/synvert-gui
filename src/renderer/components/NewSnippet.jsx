@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import AppContext from "../context";
+import { log } from '../utils'
 import { SET_LOADING, SET_NEW_SNIPPET } from "../constants";
 
 export default () => {
@@ -60,7 +61,8 @@ export default () => {
       });
       const result = await response.json();
       if (result.error) {
-        setSnippetError(result.error);
+        setSnippetError('Failed to generate snippet');
+        log(result.error);
         updateNewSnippet('');
       } else if (!result.snippet) {
         setSnippetError('Failed to generate snippet');
@@ -69,7 +71,8 @@ export default () => {
         updateNewSnippet(composeNewSnippet(data, result));
       }
     } catch (error) {
-      setSnippetError(error.message);
+      setSnippetError('Failed to generate snippet');
+      log(error.message);
       updateNewSnippet('');
     }
     dispatch({ type: SET_LOADING, loading: false });
@@ -85,7 +88,6 @@ export default () => {
     setInputOutputCount(inputOutputCount - 1);
   };
 
-  console.log('snippet error', snippetError)
   return (
     <div className="new-snippet container-fluid flex-grow-1">
       <h4 className="text-center">New Snippet</h4>
