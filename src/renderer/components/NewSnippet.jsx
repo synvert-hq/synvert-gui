@@ -2,12 +2,13 @@ import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import AppContext from "../context";
-import { SET_ERROR, SET_LOADING, SET_NEW_SNIPPET } from "../constants";
+import { SET_LOADING, SET_NEW_SNIPPET } from "../constants";
 
 export default () => {
   const { dispatch } = useContext(AppContext);
   const [inputOutputCount, setInputOutputCount] = useState(1);
   const [snippetContent, setSnippetContent] = useState("");
+  const [snippetError, setSnippetError] = useState("");
   const {
     register,
     handleSubmit,
@@ -59,13 +60,16 @@ export default () => {
       });
       const result = await response.json();
       if (result.error) {
-        dispatch({ type: SET_ERROR, error: result.error });
+        setSnippetError(result.error);
         updateNewSnippet('');
+      } else if (!result.snippet) {
+        setSnippetError('Failed to generate snippet');
       } else {
+        setSnippetError('');
         updateNewSnippet(composeNewSnippet(data, result));
       }
     } catch (error) {
-      dispatch({ type: SET_ERROR, error: error.message });
+      setSnippetError(error.message);
       updateNewSnippet('');
     }
     dispatch({ type: SET_LOADING, loading: false });
@@ -81,6 +85,7 @@ export default () => {
     setInputOutputCount(inputOutputCount - 1);
   };
 
+  console.log('snippet error', snippetError)
   return (
     <div className="new-snippet container-fluid flex-grow-1">
       <h4 className="text-center">New Snippet</h4>
@@ -158,6 +163,7 @@ export default () => {
           />
         </div>
         <div className="form-group">
+          {snippetError.length > 0 && (<div className="text-danger">{snippetError}</div>)}
           <textarea
             className="form-control"
             rows="10"
