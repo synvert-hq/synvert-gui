@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 
 import AppContext from "../context";
 import { host, log } from '../utils'
@@ -7,15 +7,10 @@ import { SET_LOADING, SET_NEW_SNIPPET } from "../constants";
 
 export default () => {
   const { dispatch } = useContext(AppContext);
-  const [inputOutputCount, setInputOutputCount] = useState(1);
   const [snippetContent, setSnippetContent] = useState("");
   const [snippetError, setSnippetError] = useState("");
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm();
+  const { register, control, handleSubmit, formState: { errors } } = useForm({ defaultValues: { inputs_outputs: [{ input: '', output: '' }] } });
+  const { fields, append, remove } = useFieldArray({ control, name: 'inputs_outputs' });
 
   const composeNewSnippet = (data, result) => {
     let newSnippet = "Synvert::Rewriter.execute do\n";
@@ -49,7 +44,9 @@ export default () => {
 
   const onSubmit = async (data) => {
     dispatch({ type: SET_LOADING, loading: true, loadingText: "Submitting..." });
-    const { inputs, outputs } = data;
+    const { inputs_outputs } = data;
+    const inputs = inputs_outputs.map(input_output => input_output.input);
+    const outputs = inputs_outputs.map(input_output => input_output.output);
     try {
       const response = await fetch(`${host()}/api/v1/call`, {
         method: "POST",
@@ -76,16 +73,6 @@ export default () => {
       updateNewSnippet('');
     }
     dispatch({ type: SET_LOADING, loading: false });
-  };
-
-  const addInputOutput = (e) => {
-    e.preventDefault();
-    setInputOutputCount(inputOutputCount + 1);
-  };
-
-  const removeInputOutput = (e) => {
-    e.preventDefault();
-    setInputOutputCount(inputOutputCount - 1);
   };
 
   return (
@@ -133,15 +120,15 @@ export default () => {
             <label>Outputs</label>
           </div>
         </div>
-        {[...Array(inputOutputCount)].map((_i, index) => (
-          <div className="form-row position-relative" key={index}>
-            {index > 0 && (<button className="btn btn-link remove-btn position-absolute" onClick={removeInputOutput}>x</button>)}
+        {fields.map((item, index) => (
+          <div className="form-row position-relative" key={item.id}>
+            {index > 0 && (<button type="button" className="btn btn-link remove-btn position-absolute" onClick={() => remove(index)}>x</button>)}
             <div className="form-group col-md-6">
               <textarea
                 className="form-control"
                 rows="3"
                 placeholder="FactoryBot.create(:user)"
-                {...register(`inputs.${index}`)}
+                {...register(`inputs_outputs.${index}.input`)}
               ></textarea>
             </div>
             <div className="form-group col-md-6">
@@ -149,13 +136,13 @@ export default () => {
                 className="form-control"
                 rows="3"
                 placeholder="create(:user)"
-                {...register(`outputs.${index}`)}
+                {...register(`inputs_outputs.${index}.output`)}
               ></textarea>
             </div>
           </div>
         ))}
         <div className="form-group d-flex justify-content-between">
-          <button className="btn btn-link" onClick={addInputOutput}>
+          <button type="button" className="btn btn-link" onClick={() => append({ input: '', output: '' })}>
             Add More Input/Output
           </button>
           <input
