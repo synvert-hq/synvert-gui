@@ -134,7 +134,8 @@ export default () => {
           </div>
         </div>
         {[...Array(inputOutputCount)].map((_i, index) => (
-          <div className="form-row" key={index}>
+          <div className="form-row position-relative" key={index}>
+            {index > 0 && (<button className="btn btn-link remove-btn position-absolute" onClick={removeInputOutput}>x</button>)}
             <div className="form-group col-md-6">
               <textarea
                 className="form-control"
@@ -150,7 +151,6 @@ export default () => {
                 placeholder="create(:user)"
                 {...register(`outputs.${index}`)}
               ></textarea>
-              {index > 0 && (<button className="btn btn-link float-right" onClick={removeInputOutput}>x</button>)}
             </div>
           </div>
         ))}
