@@ -66,6 +66,8 @@ export const triggerEvent = (name, detail) => {
     }
 }
 
+export const host = () => process.env.DEBUG ? 'http://localhost:9292' : 'https://synvert.xinminlabs.com'
+
 export const log = (...args) => {
     if (process.env.DEBUG === 'true') {
         console.log(...args)

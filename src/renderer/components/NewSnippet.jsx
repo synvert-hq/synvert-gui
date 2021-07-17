@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import AppContext from "../context";
-import { log } from '../utils'
+import { host, log } from '../utils'
 import { SET_LOADING, SET_NEW_SNIPPET } from "../constants";
 
 export default () => {
@@ -51,7 +51,7 @@ export default () => {
     dispatch({ type: SET_LOADING, loading: true, loadingText: "Submitting..." });
     const { inputs, outputs } = data;
     try {
-      const response = await fetch("http://localhost:9292/api/v1/call", {
+      const response = await fetch(`${host()}/api/v1/call`, {
         method: "POST",
         headers: {
           Accept: "application/json",
