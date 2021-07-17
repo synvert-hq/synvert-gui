@@ -36,6 +36,11 @@ body {
   overflow-y: scroll;
 }
 
+.new-snippet {
+  height: calc(100vh - 94px);
+  overflow-y: scroll;
+}
+
 .new-snippet .form-row .remove-btn {
   z-index: 999;
   top: 0;
