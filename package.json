@@ -1,9 +1,9 @@
 {
-  "name": "snippets",
-  "productName": "Snippets",
-  "version": "0.0.6",
-  "description": "synvert client",
-  "repository": "github:xinminlabs/snippets",
+  "name": "synvert",
+  "productName": "Synvert",
+  "version": "0.0.7",
+  "description": "Synvert GUI",
+  "repository": "github:xinminlabs/synvert-gui",
   "main": ".webpack/main",
   "private": true,
   "scripts": {

@@ -9,7 +9,7 @@ const preferences = new ElectronPreferences({
         devTools: isDev
     },
     browserWindowOverrides: {
-        title: 'Snippets Preferences',
+        title: 'Synvert GUI Preferences',
     },
     sections: [
         {
