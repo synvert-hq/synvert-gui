@@ -165,7 +165,7 @@ const loadSnippets = async () => {
         const snippetsStore = convertSnippetsToStore(snippets)
         triggerEvent(EVENT_SNIPPETS_LOADED, { snippetsStore })
     } catch (e) {
-        triggerEvent(EVENT_SNIPPETS_LOADED, { error: 'Failed to load snippets!' })
+        triggerEvent(EVENT_SNIPPETS_LOADED, { error: 'Failed to load snippets! Try sync snippets to fix it.' })
     }
 }
 

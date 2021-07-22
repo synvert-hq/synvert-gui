@@ -8,6 +8,7 @@ import { SET_LOADING, SET_NEW_SNIPPET } from "../constants";
 export default () => {
   const { dispatch } = useContext(AppContext);
   const [snippetId, setSnippetId] = useState(null);
+  const [reported, setReported] = useState(false);
   const [snippetContent, setSnippetContent] = useState("");
   const [snippetError, setSnippetError] = useState("");
   const { register, control, handleSubmit, formState: { errors } } = useForm({ defaultValues: { inputs_outputs: [{ input: '', output: '' }] } });
@@ -58,25 +59,38 @@ export default () => {
         body: JSON.stringify({ inputs, outputs }),
       });
       const result = await response.json();
+      setReported(false);
+      setSnippetId(result.id);
       if (result.error) {
         setSnippetError('Failed to generate snippet');
         log(result.error);
-        setSnippetId(null);
         updateNewSnippet('');
       } else if (!result.snippet) {
-        setSnippetId(result.id);
         setSnippetError('Failed to generate snippet');
       } else {
         setSnippetError('');
-        setSnippetId(result.id);
         updateNewSnippet(composeNewSnippet(data, result));
       }
     } catch (error) {
       setSnippetError('Failed to generate snippet');
       log(error.message);
-      setSnippetId(result.id);
       updateNewSnippet('');
     }
+    dispatch({ type: SET_LOADING, loading: false });
+  };
+
+  const report = async () => {
+    dispatch({ type: SET_LOADING, loading: true, loadingText: "Submitting..." });
+    const response = await fetch(`${host()}/api/v1/report`, {
+      method: 'POST',
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id: snippetId }),
+    });
+    await response.json();
+    setReported(true);
     dispatch({ type: SET_LOADING, loading: false });
   };
 
@@ -157,7 +171,10 @@ export default () => {
           />
         </div>
         <div className="form-group">
-          {snippetError.length > 0 && (<div className="text-danger">{snippetError}</div>)}
+          {snippetError.length > 0 && (<span className="text-danger">{snippetError}</span>)}
+          {snippetError.length > 0 && snippetId && (
+            reported ? <span className="ml-2">Reported</span> : <button className="btn btn-link" type="button" onClick={report}>Report</button>
+          )}
           <textarea
             className="form-control"
             rows="10"
