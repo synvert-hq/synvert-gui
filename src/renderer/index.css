@@ -23,7 +23,9 @@ body {
 }
 
 .main-content {
+  width: calc(100vw - 450px);
   height: 100%;
+  overflow-x: scroll;
 }
 
 .snippets-list {
