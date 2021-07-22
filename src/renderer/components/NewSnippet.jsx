@@ -7,6 +7,7 @@ import { SET_LOADING, SET_NEW_SNIPPET } from "../constants";
 
 export default () => {
   const { dispatch } = useContext(AppContext);
+  const [snippetId, setSnippetId] = useState(null);
   const [snippetContent, setSnippetContent] = useState("");
   const [snippetError, setSnippetError] = useState("");
   const { register, control, handleSubmit, formState: { errors } } = useForm({ defaultValues: { inputs_outputs: [{ input: '', output: '' }] } });
@@ -60,16 +61,20 @@ export default () => {
       if (result.error) {
         setSnippetError('Failed to generate snippet');
         log(result.error);
+        setSnippetId(null);
         updateNewSnippet('');
       } else if (!result.snippet) {
+        setSnippetId(result.id);
         setSnippetError('Failed to generate snippet');
       } else {
         setSnippetError('');
+        setSnippetId(result.id);
         updateNewSnippet(composeNewSnippet(data, result));
       }
     } catch (error) {
       setSnippetError('Failed to generate snippet');
       log(error.message);
+      setSnippetId(result.id);
       updateNewSnippet('');
     }
     dispatch({ type: SET_LOADING, loading: false });

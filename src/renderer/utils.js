@@ -33,7 +33,7 @@ export const selectShowDiffsAlwaysShow = () => savePreference(PREFERENCE_SHOW_DI
 export const selectShowDiffsNeverShow = () => savePreference(PREFERENCE_SHOW_DIFFS, SHOW_DIFFS_NEVER_SHOW)
 export const selectShowDiffsAskMe = () => savePreference(PREFERENCE_SHOW_DIFFS, SHOW_DIFFS_ASK_ME)
 export const showDiffsSelected = () => !!getPreference(PREFERENCE_SHOW_DIFFS)
-export const showDiffsAlwaysShowSelected = () => getPreference(PREFERENCE_SHOW_DIFFS, SHOW_DDIFFS_ALWAYS_SHOW)
+export const showDiffsAlwaysShowSelected = () => getPreference(PREFERENCE_SHOW_DIFFS, SHOW_DIFFS_ALWAYS_SHOW)
 export const showDiffsNeverShowSelected = () => getPreference(PREFERENCE_SHOW_DIFFS, SHOW_DIFFS_NEVER_SHOW)
 export const showDiffsAskMeSelected = () => getPreference(PREFERENCE_SHOW_DIFFS, SHOW_DIFFS_ASK_ME)
 
