@@ -27,9 +27,11 @@ export default ({ snippet, affectedFiles, diff, close }) => {
     });
     setDiffHtml(diffHtml);
     setShowCommit(false);
-    setCommitMessage(
-      snippet.name.replaceAll(/(\d+)_(\d+)/g, `${1}.${2}`).replaceAll("_", " ")
-    );
+    if (snippet) {
+      setCommitMessage(
+        snippet.name.replaceAll(/(\d+)_(\d+)/g, `${1}.${2}`).replaceAll("_", " ")
+      );
+    }
   }, []);
 
   useEffect(() => {
