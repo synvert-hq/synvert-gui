@@ -4,11 +4,12 @@ import { useForm, useFieldArray } from "react-hook-form";
 import AppContext from "../context";
 import { host, log } from '../utils'
 import { SET_LOADING, SET_NEW_SNIPPET } from "../constants";
+import ShowReportModal from "./ShowReportModal";
 
 export default () => {
   const { dispatch } = useContext(AppContext);
   const [snippetId, setSnippetId] = useState(null);
-  const [reported, setReported] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
   const [snippetContent, setSnippetContent] = useState("");
   const [snippetError, setSnippetError] = useState("");
   const { register, control, handleSubmit, formState: { errors } } = useForm({ defaultValues: { inputs_outputs: [{ input: '', output: '' }] } });
@@ -59,7 +60,6 @@ export default () => {
         body: JSON.stringify({ inputs, outputs }),
       });
       const result = await response.json();
-      setReported(false);
       setSnippetId(result.id);
       if (result.error) {
         setSnippetError('Failed to generate snippet');
@@ -79,112 +79,104 @@ export default () => {
     dispatch({ type: SET_LOADING, loading: false });
   };
 
-  const report = async () => {
-    dispatch({ type: SET_LOADING, loading: true, loadingText: "Submitting..." });
-    const response = await fetch(`${host()}/api/v1/report`, {
-      method: 'POST',
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id: snippetId }),
-    });
-    await response.json();
-    setReported(true);
-    dispatch({ type: SET_LOADING, loading: false });
-  };
+  const close = () => {
+    setShowReportModal(false);
+  }
 
   return (
-    <div className="new-snippet container-fluid flex-grow-1">
-      <h4 className="text-center">New Snippet</h4>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="form-group">
-          <label>File Pattern:</label>
-          <input
-            className={`form-control ${errors.filePattern && "is-invalid"}`}
-            defaultValue="**/*.rb"
-            {...register("filePattern", { required: true })}
-          />
-          {errors.filePattern && (
-            <div className="invalid-feedback">required</div>
-          )}
-        </div>
-        <div className="form-group">
-          <label>Minimum Ruby Version:</label>
-          <input
-            className={`form-control ${errors.rubyVersion && "is-invalid"}`}
-            placeholder="e.g. 2.4.5"
-            {...register("rubyVersion", { pattern: /\d\.\d\.\d/ })}
-          />
-          {errors.rubyVersion && (
-            <div className="invalid-feedback">format is incorrect</div>
-          )}
-        </div>
-        <div className="form-group">
-          <label>Gem Version:</label>
-          <input
-            className={`form-control ${errors.gemVersion && "is-invalid"}`}
-            placeholder="e.g. rails ~> 5.0.0"
-            {...register("gemVersion", { pattern: /\w+\ / })}
-          />
-          {errors.gemVersion && (
-            <div className="invalid-feedback">format is incorrect</div>
-          )}
-        </div>
-        <div className="form-row">
-          <div className="form-group col-md-6">
-            <label>Inputs</label>
+    <>
+      <div className="new-snippet container-fluid flex-grow-1">
+        <h4 className="text-center">New Snippet</h4>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="form-group">
+            <label>File Pattern:</label>
+            <input
+              className={`form-control ${errors.filePattern && "is-invalid"}`}
+              defaultValue="**/*.rb"
+              {...register("filePattern", { required: true })}
+            />
+            {errors.filePattern && (
+              <div className="invalid-feedback">required</div>
+            )}
           </div>
-          <div className="form-group col-md-6">
-            <a href="https://xinminlabs.github.io/synvert/gui/#how-to-write-inputsoutputs" class="float-right" target="_blank">How to write inputs/outpus?</a>
-            <label>Outputs</label>
+          <div className="form-group">
+            <label>Minimum Ruby Version:</label>
+            <input
+              className={`form-control ${errors.rubyVersion && "is-invalid"}`}
+              placeholder="e.g. 2.4.5"
+              {...register("rubyVersion", { pattern: /\d\.\d\.\d/ })}
+            />
+            {errors.rubyVersion && (
+              <div className="invalid-feedback">format is incorrect</div>
+            )}
           </div>
-        </div>
-        {fields.map((item, index) => (
-          <div className="form-row position-relative" key={item.id}>
-            {index > 0 && (<button type="button" className="btn btn-link remove-btn position-absolute" onClick={() => remove(index)}>x</button>)}
+          <div className="form-group">
+            <label>Gem Version:</label>
+            <input
+              className={`form-control ${errors.gemVersion && "is-invalid"}`}
+              placeholder="e.g. rails ~> 5.0.0"
+              {...register("gemVersion", { pattern: /\w+\ / })}
+            />
+            {errors.gemVersion && (
+              <div className="invalid-feedback">format is incorrect</div>
+            )}
+          </div>
+          <div className="form-row">
             <div className="form-group col-md-6">
-              <textarea
-                className="form-control"
-                rows="3"
-                placeholder="FactoryBot.create(:user)"
-                {...register(`inputs_outputs.${index}.input`)}
-              ></textarea>
+              <label>Inputs</label>
             </div>
             <div className="form-group col-md-6">
-              <textarea
-                className="form-control"
-                rows="3"
-                placeholder="create(:user)"
-                {...register(`inputs_outputs.${index}.output`)}
-              ></textarea>
+              <a href="https://xinminlabs.github.io/synvert/gui/#how-to-write-inputsoutputs" className="float-right" target="_blank">How to write inputs/outpus?</a>
+              <label>Outputs</label>
             </div>
           </div>
-        ))}
-        <div className="form-group d-flex justify-content-between">
-          <button type="button" className="btn btn-link" onClick={() => append({ input: '', output: '' })}>
-            Add More Input/Output
-          </button>
-          <input
-            className="btn btn-primary"
-            type="submit"
-            value="Generate Snippet"
-          />
-        </div>
-        <div className="form-group">
-          {snippetError.length > 0 && (<span className="text-danger">{snippetError}</span>)}
-          {snippetError.length > 0 && snippetId && (
-            reported ? <span className="ml-2">Reported</span> : <button className="btn btn-link" type="button" onClick={report}>Report</button>
-          )}
-          <textarea
-            className="form-control"
-            rows="10"
-            value={snippetContent}
-            onChange={(e) => setSnippetContent(e.target.value)}
-            onBlur={(e) => updateNewSnippet(e.target.value)}
-          ></textarea>
-        </div>
-      </form>
-    </div>
+          {fields.map((item, index) => (
+            <div className="form-row position-relative" key={item.id}>
+              {index > 0 && (<button type="button" className="btn btn-link remove-btn position-absolute" onClick={() => remove(index)}>x</button>)}
+              <div className="form-group col-md-6">
+                <textarea
+                  className="form-control"
+                  rows="3"
+                  placeholder="FactoryBot.create(:user)"
+                  {...register(`inputs_outputs.${index}.input`)}
+                ></textarea>
+              </div>
+              <div className="form-group col-md-6">
+                <textarea
+                  className="form-control"
+                  rows="3"
+                  placeholder="create(:user)"
+                  {...register(`inputs_outputs.${index}.output`)}
+                ></textarea>
+              </div>
+            </div>
+          ))}
+          <div className="form-group d-flex justify-content-between">
+            <button type="button" className="btn btn-link" onClick={() => append({ input: '', output: '' })}>
+              Add More Input/Output
+            </button>
+            <input
+              className="btn btn-primary"
+              type="submit"
+              value="Generate Snippet"
+            />
+          </div>
+          <div className="form-group">
+            {snippetError !== '' && (<span className="text-danger">{snippetError}</span>)}
+            {snippetError !== '' && snippetId && (
+              <button className="btn btn-link" type="button" onClick={() => setShowReportModal(true)}>Report</button>
+            )}
+            <textarea
+              className="form-control"
+              rows="10"
+              value={snippetContent}
+              onChange={(e) => setSnippetContent(e.target.value)}
+              onBlur={(e) => updateNewSnippet(e.target.value)}
+            ></textarea>
+          </div>
+        </form>
+      </div>
+      {showReportModal && <ShowReportModal id={snippetId} defaultReason={snippetError !== '' ? 'The snippet is not generated.' : ''} close={close} />}
+    </>
   );
 };
