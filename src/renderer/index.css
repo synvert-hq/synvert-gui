@@ -56,5 +56,5 @@ body {
 
 .modal .commit-message-input {
   height: 38px;
-  width: 400px;
+  width: auto;
 }

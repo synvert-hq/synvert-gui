@@ -29,7 +29,7 @@ export default ({ snippet, affectedFiles, diff, close }) => {
     setShowCommit(false);
     if (snippet) {
       setCommitMessage(
-        snippet.name.replaceAll(/(\d+)_(\d+)/g, `${1}.${2}`).replaceAll("_", " ")
+        snippet.name.replaceAll(/(\d+)_(\d+)/g, '$1.$2').replaceAll("_", " ")
       );
     }
   }, []);
@@ -64,16 +64,16 @@ export default ({ snippet, affectedFiles, diff, close }) => {
         data-backdrop="static"
         style={{ display: "block" }}
       >
-        <div className="modal-dialog modal-lg modal-dialog-scrollable">
+        <div className="modal-dialog modal-xl modal-dialog-scrollable">
           <div className="modal-content">
             <div className="modal-body">
               <div dangerouslySetInnerHTML={{ __html: diffHtml }} />
             </div>
-            <div className="modal-footer">
+            <div className="modal-footer d-flex flex-row">
               {showCommit ? (
                 <>
                   <textarea
-                    className="commit-message-input"
+                    className="commit-message-input form-control flex-grow-1"
                     value={commitMessage}
                     onChange={(e) => setCommitMessage(e.target.value)}
                   />
