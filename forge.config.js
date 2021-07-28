@@ -2,6 +2,7 @@ require('dotenv').config()
 
 const config = {
   packagerConfig: {
+    "icon": "./src/icons/mac/icon.icns",
     "osxSign": {
       "identity": "Developer ID Application: Zhimin Huang (9S5K3LWH74)",
       "hardened-runtime": true,
