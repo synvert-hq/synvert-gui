@@ -18,7 +18,6 @@
     "name": "Richard Huang",
     "email": "flyerhzm@gmail.com"
   },
-  "license": "MIT",
   "config": {
     "forge": "./forge.config.js"
   },
