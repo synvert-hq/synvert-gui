@@ -4,7 +4,7 @@ const isDev = require('electron-is-dev');
 const version = app.getVersion();
 const platform = os.platform() + '_' + os.arch();  // usually returns darwin_64
 
-const updaterFeedURL = 'https://download-snippets.xinminlabs.com/update/'+platform+'/'+version;
+const updaterFeedURL = 'https://download-synvert.xinminlabs.com/update/'+platform+'/'+version;
 
 export const setupUpdates = () => {
   const checkOS = process.platform === 'darwin' || process.platform === 'win32';
