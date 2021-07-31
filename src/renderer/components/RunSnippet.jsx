@@ -28,7 +28,6 @@ import ShowDiffModal from "./ShowDiffModal";
 export default () => {
   const { path, snippetsStore, currentSnippetId, newSnippet, dispatch } =
     useContext(AppContext);
-  const [affectedFiles, setAffectedFiles] = useState([]);
   const [showConfirmDiff, setShowConfirmDiff] = useState(false);
   const [showDiff, setShowDiff] = useState(false);
   const [diff, setDiff] = useState("");
@@ -49,7 +48,6 @@ export default () => {
   useEventListener(
     EVENT_SNIPPET_RUN,
     ({ detail: { affectedFiles, error } = {} }) => {
-      setAffectedFiles(affectedFiles);
       dispatch({ type: SET_LOADING, loading: false });
       if (error) {
         dispatch({ type: SET_ERROR, error });
@@ -59,7 +57,7 @@ export default () => {
 
       if (showDiffsAlwaysShowSelected()) {
         dispatch({ type: SET_LOADING, loading: true });
-        triggerEvent(EVENT_SHOW_SNIPPET_DIFF, { affectedFiles, path });
+        triggerEvent(EVENT_SHOW_SNIPPET_DIFF, { path });
       } else if (!showDiffsSelected() || showDiffsAskMeSelected()) {
         setShowConfirmDiff(true);
       }
@@ -92,10 +90,8 @@ export default () => {
 
   const showSnippetDiff = () => {
     close();
-    if (affectedFiles.length > 0) {
-      dispatch({ type: SET_LOADING, loading: true });
-      triggerEvent(EVENT_SHOW_SNIPPET_DIFF, { affectedFiles, path });
-    }
+    dispatch({ type: SET_LOADING, loading: true });
+    triggerEvent(EVENT_SHOW_SNIPPET_DIFF, { path });
   };
 
   const alwaysShowSnippetDiff = () => {
@@ -148,7 +144,6 @@ export default () => {
       {showDiff && (
         <ShowDiffModal
           snippet={snippet}
-          affectedFiles={affectedFiles}
           diff={diff}
           close={close}
         />

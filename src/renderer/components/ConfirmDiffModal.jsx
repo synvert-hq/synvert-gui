@@ -20,7 +20,7 @@ export default ({
             </div>
             <div className="modal-body">
               Some of your files have been changed after running the snippet, do
-              you want to review the code diffs?
+              you want to review the git diff result?
             </div>
             <div className="modal-footer">
               <button

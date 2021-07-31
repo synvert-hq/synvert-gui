@@ -216,24 +216,24 @@ const showSnippet = async (event) => {
 }
 
 const showSnippetDiff = async (event) => {
-    const { detail: { path, affectedFiles } } = event
+    const { detail: { path } } = event
     let result = true, stdout, stderr
     if (dockerDependencySelected()) {
-        ({ result, stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app xinminlabs/awesomecode-synvert /bin/sh -c 'cd /app && git add ${affectedFiles.join(' ')}; git diff --staged; git reset --quiet ${affectedFiles.join(' ')}'`))
+        ({ result, stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app xinminlabs/awesomecode-synvert /bin/sh -c 'cd /app && git diff'`))
     } else {
-        ({ stdout, stderr } = await runCommand(`cd ${path}; git add ${affectedFiles.join(' ')}; git diff --staged; git reset --quiet ${affectedFiles.join(' ')}`))
+        ({ stdout, stderr } = await runCommand(`cd ${path}; git diff`))
     }
     if (!result) return
     triggerEvent(EVENT_SNIPPET_DIFF_SHOWN, { diff: stdout, error: stderr })
 }
 
 const commitDiff = async (event) => {
-    const { detail: { path, commitMessage, affectedFiles } } = event
+    const { detail: { path, commitMessage } } = event
     let result = true, stdout, stderr
     if (dockerDependencySelected()) {
-        ({ result, stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app -v ~/.gitconfig:/etc/gitconfig xinminlabs/awesomecode-synvert /bin/sh -c 'cd /app && git add ${affectedFiles.join(' ')} && git commit -m "${commitMessage}" --no-verify'`))
+        ({ result, stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app -v ~/.gitconfig:/etc/gitconfig xinminlabs/awesomecode-synvert /bin/sh -c 'cd /app && git add . && git commit -m "${commitMessage}" --no-verify'`))
     } else {
-        ({ stdout, stderr } = await runCommand(`cd ${path} && git add ${affectedFiles.join(' ')} && git commit -m "${commitMessage}" --no-verify`))
+        ({ stdout, stderr } = await runCommand(`cd ${path} && git add . && git commit -m "${commitMessage}" --no-verify`))
     }
     if (!result) return
     triggerEvent(EVENT_DIFF_COMMITTED, { error: stderr })

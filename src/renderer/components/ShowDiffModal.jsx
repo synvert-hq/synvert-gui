@@ -12,7 +12,7 @@ import {
   SET_ERROR,
 } from "../constants";
 
-export default ({ snippet, affectedFiles, diff, close }) => {
+export default ({ snippet, diff, close }) => {
   const [diffHtml, setDiffHtml] = useState("");
   const [showCommit, setShowCommit] = useState(false);
   const [commitMessage, setCommitMessage] = useState("");
@@ -53,7 +53,7 @@ export default ({ snippet, affectedFiles, diff, close }) => {
   };
 
   const confirmCommit = () => {
-    triggerEvent(EVENT_COMMIT_DIFF, { path, commitMessage, affectedFiles });
+    triggerEvent(EVENT_COMMIT_DIFF, { path, commitMessage });
     setCommitting(true);
   };
 
