@@ -1,12 +1,13 @@
 const { app } = require('electron');
 const path = require('path');
-const isDev = require('electron-is-dev')
 const ElectronPreferences = require('electron-preferences');
+
+const { showDevTools } = require('./utils');
 
 const preferences = new ElectronPreferences({
     dataStore: path.join(app.getPath('userData'), 'preferences.json'),
     webPreferences: {
-        devTools: isDev
+        devTools: showDevTools()
     },
     browserWindowOverrides: {
         title: 'Synvert GUI Preferences',

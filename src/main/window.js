@@ -1,5 +1,6 @@
 const { BrowserWindow, shell } = require('electron');
-const isDev = require('electron-is-dev')
+
+const { showDevTools } = require('./utils');
 
 let browserWindows = []
 
@@ -13,7 +14,7 @@ const getMainWindowOptions = () => {
     backgroundColor: '#1d2427',
     webPreferences: {
       contextIsolation: false,
-      devTools: isDev,
+      devTools: showDevTools(),
       enableRemoteModule: true,
       nodeIntegration: true,
       webviewTag: false

@@ -1,6 +1,6 @@
 const os = require('os');
 const { app, autoUpdater, dialog } = require('electron');
-const isDev = require('electron-is-dev');
+
 const version = app.getVersion();
 const platform = os.platform() + '_' + os.arch();  // usually returns darwin_64
 
@@ -8,8 +8,8 @@ const updaterFeedURL = 'https://download-synvert.xinminlabs.com/update/'+platfor
 
 export const setupUpdates = () => {
   const checkOS = process.platform === 'darwin' || process.platform === 'win32';
-  if (!checkOS || isDev) {
-	return;
+  if (!checkOS || process.env.DEBUG) {
+    return;
   }
 
   autoUpdater.setFeedURL(updaterFeedURL);
