@@ -23,27 +23,18 @@ export const setupUpdates = () => {
 
   // Ask the user if update is available
   autoUpdater.on('update-downloaded', (event, releaseNotes, releaseName) => {
-    let message = app.getName() + ' ' + releaseName + ' is now available. It will be installed the next time you restart the application.';
-    if (releaseNotes) {
-      const splitNotes = releaseNotes.split(/[^\r]\n/);
-      message += '\n\nRelease notes:\n';
-      splitNotes.forEach(notes => {
-        message += notes + '\n\n';
-      });
-    }
     // Ask user to update the app
     dialog.showMessageBox({
-      type: 'question',
-      buttons: ['Install and Relaunch', 'Later'],
-      defaultId: 0,
-      message: 'A new version of ' + app.getName() + ' has been downloaded',
-      detail: message
-    }, response => {
-      if (response === 0) {
-        setTimeout(() => autoUpdater.quitAndInstall(), 1);
-      }
+      type: 'info',
+      buttons: ['Restart', 'Later'],
+      title: 'Application Update',
+      message: process.platform === 'win32' ? releaseNotes : releaseName,
+      detail: 'A new version has been downloaded. Restart the application to apply the updates.'
+    }).then((response) => {
+      if (response === 0) autoUpdater.quitAndInstall();
     });
   });
-  // init for updates
-  autoUpdater.checkForUpdates();
+
+  autoUpdater.checkForUpdates()
+  setInterval(() => { autoUpdater.checkForUpdates() }, 600000)
 }
