@@ -11,7 +11,7 @@ const savePreference = (key, value) => {
 
 const getPreference = (key) => {
     const preferences = ipcRenderer.sendSync('getPreferences')
-    return !!(preferences && preferences.settings && preferences.settings[key])
+    return preferences && preferences.settings && preferences.settings[key]
 }
 
 const PREFERENCE_DEPENDENCY = 'dependency'
