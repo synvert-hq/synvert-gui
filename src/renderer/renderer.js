@@ -190,7 +190,7 @@ const executeSnippet = async (event) => {
     const { detail: { newSnippet, path } } = event
     let result = true, stdout, stderr
     if (dockerDependencySelected()) {
-        ({ result, stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app xinminlabs/awesomecode-synvert echo "${newSnippet}" | synvert --execute --format json /app`))
+        ({ result, stdout, stderr } = await runDockerCommand(`echo "${newSnippet}" | docker run -i -v ${path}:/app xinminlabs/awesomecode-synvert synvert --execute --format json /app`))
     } else {
         ({ stdout, stderr } = await runCommand(`echo "${newSnippet}" | synvert --execute --format json ${path}`))
     }
