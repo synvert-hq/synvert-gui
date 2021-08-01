@@ -8,7 +8,7 @@ const updaterFeedURL = 'https://download-synvert.xinminlabs.com/update/'+platfor
 
 export const setupUpdates = () => {
   const checkOS = process.platform === 'darwin' || process.platform === 'win32';
-  if (!checkOS || process.env.DEBUG) {
+  if (!checkOS || process.env.DEBUG === 'true') {
     return;
   }
 
