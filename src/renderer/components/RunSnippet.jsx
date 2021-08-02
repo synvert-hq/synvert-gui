@@ -2,6 +2,7 @@ const { dialog } = require("electron").remote;
 
 import React, { useContext, useState } from "react";
 import useEventListener from "@use-it/event-listener";
+import toast from 'react-hot-toast';
 
 import AppContext from "../context";
 import {
@@ -11,7 +12,6 @@ import {
   EVENT_SNIPPET_DIFF_SHOWN,
   SET_PATH,
   SET_LOADING,
-  SET_ERROR,
   EVENT_EXECUTE_SNIPPET,
 } from "../constants";
 import {
@@ -36,7 +36,7 @@ export default () => {
   useEventListener(EVENT_SNIPPET_DIFF_SHOWN, ({ detail: { diff, error } }) => {
     dispatch({ type: SET_LOADING, loading: false });
     if (error) {
-      dispatch({ type: SET_ERROR, loading: error });
+      toast.error(error);
       return;
     }
     if (diff) {
@@ -50,7 +50,7 @@ export default () => {
     ({ detail: { affectedFiles, error } = {} }) => {
       dispatch({ type: SET_LOADING, loading: false });
       if (error) {
-        dispatch({ type: SET_ERROR, error });
+        toast.error(error);
         return;
       }
       if (!affectedFiles || affectedFiles.length == 0) return;

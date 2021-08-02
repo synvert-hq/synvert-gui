@@ -1,5 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import useEventListener from "@use-it/event-listener";
+import toast from 'react-hot-toast';
+
 import AppContext from "../context";
 import { triggerEvent, searchSnippets, sortSnippets } from "../utils";
 import ProgressLogs from "./ProgressLogs";
@@ -10,7 +12,6 @@ import {
   EVENT_LOAD_SNIPPETS,
   EVENT_SNIPPETS_LOADED,
   SET_CURRENT_SNIPPET_ID,
-  SET_ERROR,
 } from "../constants";
 
 const snippetClassname = (snippet, currentSnippetId) =>
@@ -28,7 +29,7 @@ export default () => {
 
   useEventListener(EVENT_DEPENDENCIES_CHECKED, ({ detail: { error } = {} }) => {
     if (error) {
-      dispatch({ type: SET_ERROR, error });
+      toast.error(error);
     } else {
       setLoaded(false);
       triggerEvent(EVENT_LOAD_SNIPPETS);
@@ -44,7 +45,7 @@ export default () => {
         setChecking(true)
         triggerEvent(EVENT_CHECK_DEPENDENCIES);
       } else {
-        dispatch({ type: SET_ERROR, error });
+        toast.error(error);
       }
     }
   });

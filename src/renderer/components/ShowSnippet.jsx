@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import useEventListener from "@use-it/event-listener";
 import ReactMarkdown from "react-markdown";
+import toast from 'react-hot-toast';
 
 import ShowCodeModal from "./ShowCodeModal";
 import AppContext from "../context";
@@ -8,16 +9,13 @@ import {
   EVENT_SHOW_SNIPPET,
   EVENT_SNIPPET_SHOWN,
   SET_LOADING,
-  SET_ERROR,
 } from "../constants";
 import { triggerEvent } from "../utils";
 
 export default () => {
   const [showCode, setShowCode] = useState(false);
   const [code, setCode] = useState("");
-  const { dispatch } = useContext(AppContext);
-
-  const { snippetsStore, currentSnippetId } = useContext(AppContext);
+  const { dispatch, snippetsStore, currentSnippetId } = useContext(AppContext);
 
   useEffect(() => {
     Prism.highlightAll();
@@ -26,7 +24,7 @@ export default () => {
   useEventListener(EVENT_SNIPPET_SHOWN, ({ detail: { code, error } }) => {
     dispatch({ type: SET_LOADING, loading: false });
     if (error) {
-      dispatch({ type: SET_ERROR, error });
+      toast.error(error);
       return;
     }
 

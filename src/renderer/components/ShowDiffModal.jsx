@@ -3,13 +3,13 @@ import React, { useContext, useState, useEffect } from "react";
 import useEventListener from "@use-it/event-listener";
 import * as Diff2Html from "diff2html";
 import Prism from "prismjs";
+import toast from 'react-hot-toast';
 
 import AppContext from "../context";
 import { triggerEvent } from "../utils";
 import {
   EVENT_COMMIT_DIFF,
   EVENT_DIFF_COMMITTED,
-  SET_ERROR,
 } from "../constants";
 
 export default ({ snippet, diff, close }) => {
@@ -17,7 +17,7 @@ export default ({ snippet, diff, close }) => {
   const [showCommit, setShowCommit] = useState(false);
   const [commitMessage, setCommitMessage] = useState("");
   const [committing, setCommitting] = useState(false);
-  const { path, dispatch } = useContext(AppContext);
+  const { path } = useContext(AppContext);
 
   useEffect(() => {
     const diffHtml = Diff2Html.html(diff, {
@@ -40,7 +40,7 @@ export default ({ snippet, diff, close }) => {
 
   useEventListener(EVENT_DIFF_COMMITTED, ({ detail: { error } }) => {
     if (error) {
-      dispatch({ type: SET_ERROR, loading: error });
+      toast.error(error);
     }
     setShowCommit(false);
     setCommitMessage("");

@@ -10,7 +10,6 @@ const initialState = {
     newSnippet: '',
     loading: false,
     loadingText: 'Loading...',
-    error: null,
 }
 
 export default ({ children }) => {

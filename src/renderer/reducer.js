@@ -29,11 +29,6 @@ export default (state = {}, action) => {
                 loading: action.loading,
                 loadingText: action.loadingText || "Loading...",
             }
-        case SET_ERROR:
-            return {
-                ...state,
-                error: action.error,
-            }
         default:
             return state
     }
