@@ -31,7 +31,10 @@ export const setupUpdates = () => {
       message: process.platform === 'win32' ? releaseNotes : releaseName,
       detail: 'A new version has been downloaded. Restart the application to apply the updates.'
     }).then((response) => {
-      if (response === 0) autoUpdater.quitAndInstall();
+      if (response === 0) {
+        app.removeAllListeners("window-all-closed");
+        autoUpdater.quitAndInstall();
+      }
     });
   });
 
