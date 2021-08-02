@@ -53,7 +53,10 @@ export default () => {
         toast.error(error);
         return;
       }
-      if (!affectedFiles || affectedFiles.length == 0) return;
+      if (!affectedFiles || affectedFiles.length == 0) {
+        toast('No files affected by this snippet');
+        return;
+      }
 
       if (showDiffsAlwaysShowSelected()) {
         dispatch({ type: SET_LOADING, loading: true });

@@ -47,6 +47,8 @@ export default () => {
       } else {
         toast.error(error);
       }
+    } else {
+      toast.success('Snippets are loaded successfully.')
     }
   });
 
