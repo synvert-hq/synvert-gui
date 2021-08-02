@@ -1,1 +1,1 @@
-export const showDevTools = () => process.env.DEBUG === 'env'
+export const showDevTools = () => process.env.DEBUG === 'true'
