@@ -83,7 +83,7 @@ export default () => {
     } else {
       triggerEvent(EVENT_RUN_SNIPPET, { path, currentSnippetId });
     }
-    dispatch({ type: SET_LOADING, loading: true, loadingText: 'Running...' });
+    dispatch({ type: SET_LOADING, loading: true, loadingText: 'Running... it may take a while' });
   };
 
   const close = () => {
