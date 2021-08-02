@@ -10,7 +10,6 @@ import ShowSnippet from "./ShowSnippet";
 import RunSnippet from "./RunSnippet";
 import NewSnippet from "./NewSnippet";
 import SelectDependencies from "./SelectDependencies";
-import Error from "./Error";
 import {
   EVENT_SNIPPETS_LOADED,
   EVENT_SYNC_SNIPPETS,
@@ -47,7 +46,6 @@ export default () => {
   return (
     <LoadingOverlay active={loading} text={loadingText} spinner>
       <div className="main-container d-flex flex-row">
-        <Error />
         <div className="sidebar">
           <ListSnippets />
         </div>
