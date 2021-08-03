@@ -46,7 +46,7 @@ import {
     EVENT_DIFF_COMMITTED,
     EVENT_SYNC_SNIPPETS,
 } from './constants';
-import { log, triggerEvent, dockerDependencySelected, convertSnippetsToStore } from './utils'
+import { log, triggerEvent, dockerDependencySelected, convertSnippetsToStore, dependencySelected } from './utils'
 
 const { ipcRenderer } = require('electron')
 const util = require('util')
@@ -241,6 +241,10 @@ const commitDiff = async (event) => {
 
 const syncSnippets = async () => {
     let result = true, stdout, stderr
+    if (!dependencySelected()) {
+        return
+    }
+
     if (dockerDependencySelected()) {
         ({ result, stdout, stderr } = await runDockerCommand('docker pull xinminlabs/awesomecode-synvert'))
     } else {
@@ -259,6 +263,10 @@ window.addEventListener(EVENT_SHOW_SNIPPET_DIFF, showSnippetDiff)
 window.addEventListener(EVENT_COMMIT_DIFF, commitDiff)
 window.addEventListener(EVENT_SYNC_SNIPPETS, syncSnippets)
 
+// sync snippets from menu
 ipcRenderer.on(EVENT_SYNC_SNIPPETS, () => {
     triggerEvent(EVENT_SYNC_SNIPPETS)
 })
+
+// sync snippets every time app starts
+syncSnippets()
