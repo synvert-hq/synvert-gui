@@ -1,4 +1,4 @@
-const { dialog } = require("electron").remote;
+const { dialog } = require("@electron/remote");
 
 import React, { useContext, useState } from "react";
 import useEventListener from "@use-it/event-listener";

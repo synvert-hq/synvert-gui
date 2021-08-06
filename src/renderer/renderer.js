@@ -29,6 +29,7 @@
 import './index.css';
 import './app.jsx';
 
+import { ipcRenderer } from 'electron';
 import {
     EVENT_CHECK_DEPENDENCIES,
     EVENT_DEPENDENCIES_CHECKED,
@@ -48,7 +49,6 @@ import {
 } from './constants';
 import { log, triggerEvent, dockerDependencySelected, convertSnippetsToStore, dependencySelected } from './utils'
 
-const { ipcRenderer } = require('electron')
 const util = require('util')
 const exec = util.promisify(require('child_process').exec)
 require('fix-path')()

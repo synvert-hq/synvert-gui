@@ -45,9 +45,13 @@ const config = {
             {
               "html": "./src/renderer/index.html",
               "js": "./src/renderer/renderer.js",
-              "name": "main_window"
+              "name": "main_window",
+              "webpackConfig": {
+                devtool: "nosources-source-map"
+              }
             }
-          ]
+          ],
+          nodeIntegration: true // defaults to false
         }
       }
     ]

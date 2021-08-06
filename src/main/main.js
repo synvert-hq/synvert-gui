@@ -1,3 +1,5 @@
+require('@electron/remote/main').initialize()
+
 import { app, BrowserWindow, ipcMain } from 'electron';
 import { getOrCreateMainWindow } from './window';
 import { setupAboutPanel } from './about-panel';
