@@ -62,7 +62,7 @@ export default () => {
       const result = await response.json();
       setSnippetId(result.id);
       if (result.error) {
-        setSnippetError('Failed to generate snippet');
+        setSnippetError(result.error);
         log(result.error);
         updateNewSnippet('');
       } else if (!result.snippet) {
@@ -72,7 +72,7 @@ export default () => {
         updateNewSnippet(composeNewSnippet(data, result));
       }
     } catch (error) {
-      setSnippetError('Failed to generate snippet');
+      setSnippetError('Failed to send request, please check your network setting.');
       log(error.message);
       updateNewSnippet('');
     }
