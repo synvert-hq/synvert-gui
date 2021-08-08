@@ -2,7 +2,6 @@ require('dotenv').config()
 
 const config = {
   packagerConfig: {
-    "icon": "./src/icons/mac/icon.icns",
     "osxSign": {
       "identity": "Developer ID Application: Zhimin Huang (9S5K3LWH74)",
       "hardened-runtime": true,
@@ -78,7 +77,17 @@ function notarizeMaybe() {
   };
 }
 
+function updateIcon() {
+  if (process.platform === 'darwin') {
+    config.packagerConfig.icon = "./src/icons/mac/icon.icns"
+  }
+  if (process.platform === 'win32') {
+    config.packagerConfig.icon = "./src/icons/win/icon.ico"
+  }
+}
+
 notarizeMaybe();
+updateIcon();
 
 // Finally, export it
 module.exports = config;
