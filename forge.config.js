@@ -21,8 +21,7 @@ const config = {
     {
       "name": "@electron-forge/maker-zip",
       "platforms": [
-        "darwin",
-        "win32"
+        "darwin"
       ]
     },
     {
