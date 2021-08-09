@@ -22,6 +22,7 @@ const snippetClassname = (snippet, currentSnippetId) =>
 export default () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loaded, setLoaded] = useState(false);
+  const [error, setError] = useState(null);
   const [firstError, setFirstError] = useState(true);
   const [checking, setChecking] = useState(false);
 
@@ -29,7 +30,8 @@ export default () => {
 
   useEventListener(EVENT_DEPENDENCIES_CHECKED, ({ detail: { error } = {} }) => {
     if (error) {
-      toast.error(error);
+      setLoaded(true);
+      setError(error);
     } else {
       setLoaded(false);
       triggerEvent(EVENT_LOAD_SNIPPETS);
@@ -60,6 +62,14 @@ export default () => {
 
   if (!loaded) {
     return <div className="text-center">Loading Official Snippets...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="main-container container">
+        <p>{error}</p>
+      </div>
+    )
   }
 
   if (checking) {
