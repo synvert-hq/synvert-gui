@@ -25,7 +25,7 @@ export default ({ setDependency }) => {
               <h5 className="card-title">Docker (recommended)</h5>
               <div className="card-text">
                 <p>It will use docker image for all dependencies.</p>
-                <p>Make sure you can connect docker daemon.</p>
+                <p>Make sure you can connect to docker daemon.</p>
               </div>
               <div className="text-right">
                 <button onClick={selectDocker} className="btn btn-primary">
