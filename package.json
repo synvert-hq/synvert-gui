@@ -43,6 +43,7 @@
     "style-loader": "^3.2.1"
   },
   "dependencies": {
+    "@forevolve/bootstrap-dark": "^1.2.0-g6c89781692",
     "@use-it/event-listener": "^0.1.6",
     "bootstrap": "^4.6.0",
     "diff2html": "^3.4.8",

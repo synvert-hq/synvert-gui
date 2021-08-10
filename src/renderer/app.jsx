@@ -1,4 +1,5 @@
 import "bootstrap/dist/css/bootstrap.min.css";
+import "@forevolve/bootstrap-dark/dist/css/bootstrap-dark.min.css";
 
 import React from "react";
 import ReactDOM from "react-dom";

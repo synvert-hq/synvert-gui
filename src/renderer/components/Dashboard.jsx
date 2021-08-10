@@ -1,5 +1,3 @@
-import "bootstrap/dist/css/bootstrap.min.css";
-
 import React, { useContext, useState } from "react";
 import useEventListener from "@use-it/event-listener";
 import LoadingOverlay from "react-loading-overlay";
