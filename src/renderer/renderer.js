@@ -215,9 +215,9 @@ const showSnippetDiff = async (event) => {
     const { detail: { path } } = event
     let stdout, stderr
     if (dockerDependencySelected()) {
-        ({ stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app xinminlabs/awesomecode-synvert /bin/sh -c "cd /app && git diff"`))
+        ({ stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app xinminlabs/awesomecode-synvert /bin/sh -c "cd /app && git diff --ignore-space-at-eol"`))
     } else {
-        ({ stdout, stderr } = await runCommand(`cd ${path}; git diff`))
+        ({ stdout, stderr } = await runCommand(`cd ${path}; git diff --ignore-space-at-eol`))
     }
     triggerEvent(EVENT_SNIPPET_DIFF_SHOWN, { diff: stdout, error: stderr })
 }
