@@ -215,7 +215,7 @@ const showSnippetDiff = async (event) => {
     const { detail: { path } } = event
     let stdout, stderr
     if (dockerDependencySelected()) {
-        ({ stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app xinminlabs/awesomecode-synvert /bin/sh -c 'cd /app && git diff'`))
+        ({ stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app xinminlabs/awesomecode-synvert /bin/sh -c "cd /app && git diff"`))
     } else {
         ({ stdout, stderr } = await runCommand(`cd ${path}; git diff`))
     }
@@ -226,9 +226,9 @@ const commitDiff = async (event) => {
     const { detail: { path, commitMessage } } = event
     let stdout, stderr
     if (dockerDependencySelected()) {
-        ({ stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app -v ~/.gitconfig:/etc/gitconfig xinminlabs/awesomecode-synvert /bin/sh -c 'cd /app && git add . && git commit -m "${commitMessage}" --no-verify'`))
+        ({ stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app -v ~/.gitconfig:/etc/gitconfig xinminlabs/awesomecode-synvert /bin/sh -c "cd /app && git add . && git commit -m ${`\\"${commitMessage.replace(/"/g, '\\\\\\"')}\\"`} --no-verify"`))
     } else {
-        ({ stdout, stderr } = await runCommand(`cd ${path} && git add . && git commit -m "${commitMessage}" --no-verify`))
+        ({ stdout, stderr } = await runCommand(`cd ${path} && git add . && git commit -m "${commitMessage.replace(/"/g, '\\"')}" --no-verify`))
     }
     triggerEvent(EVENT_DIFF_COMMITTED, { error: stderr })
 }
