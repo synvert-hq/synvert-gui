@@ -25,22 +25,22 @@ body {
 .main-content {
   width: calc(100vw - 450px);
   height: 100%;
-  overflow-x: scroll;
+  overflow-x: auto;
 }
 
 .snippets-list {
   height: calc(100vh - 94px);
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .snippet-show {
   height: calc(100vh - 94px);
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .new-snippet {
   height: calc(100vh - 94px);
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .new-snippet .form-row .remove-btn {
