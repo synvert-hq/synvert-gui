@@ -3,7 +3,7 @@
     ["prismjs", {
         "languages": ["erb", "ruby"],
         "plugins": [],
-        "theme": "default",
+        "theme": "tomorrow",
         "css": true
     }]
   ]
