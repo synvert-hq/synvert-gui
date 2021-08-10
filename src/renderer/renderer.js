@@ -168,7 +168,7 @@ const runSnippet = async (event) => {
     } else {
         ({ stdout, stderr } = await runCommand(`synvert --run ${currentSnippetId} --format json ${path}`))
     }
-    if (sterr) {
+    if (stderr) {
         triggerEvent(EVENT_SNIPPET_RUN, { error: 'Failed to run snippet!' })
         return
     }
