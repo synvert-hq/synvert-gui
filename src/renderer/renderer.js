@@ -248,7 +248,7 @@ const syncSnippets = async () => {
     } else {
         ({ stdout, stderr } = await runCommand('gem install synvert && synvert --sync'))
     }
-    if (stderr) return
+    // ignore stderr, always load snippets
     return await loadSnippets()
 }
 
