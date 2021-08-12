@@ -144,8 +144,7 @@ const checkDependencies = async () => {
     }
 }
 
-const loadSnippets = async (event) => {
-    const { detail: { firstError } } = event
+const loadSnippets = async () => {
     let stdout, stderr
     if (dockerDependencySelected()) {
         ({ stdout, stderr } = await runDockerCommand('docker run xinminlabs/awesomecode-synvert synvert --list --format json'))
@@ -254,7 +253,7 @@ const syncSnippets = async () => {
         ({ stdout, stderr } = await runCommand('gem install synvert && synvert --sync'))
     }
     // ignore stderr, always load snippets
-    return await loadSnippets({ detail: { firstError: true } })
+    return await loadSnippets()
 }
 
 window.addEventListener(EVENT_CHECK_DEPENDENCIES, checkDependencies)

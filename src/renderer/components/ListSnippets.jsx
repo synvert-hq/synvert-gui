@@ -34,7 +34,7 @@ export default () => {
       setError(error);
     } else {
       setLoaded(false);
-      triggerEvent(EVENT_LOAD_SNIPPETS, { firstError });
+      triggerEvent(EVENT_LOAD_SNIPPETS);
     }
     setChecking(false);
   });
@@ -55,7 +55,7 @@ export default () => {
   useEffect(() => {
     if (!loaded) {
       setTimeout(() => {
-        triggerEvent(EVENT_LOAD_SNIPPETS, { firstError });
+        triggerEvent(EVENT_LOAD_SNIPPETS);
       }, 100)
     }
   }, [loaded]);
