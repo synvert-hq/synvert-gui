@@ -66,7 +66,7 @@ export default () => {
 
   if (error) {
     return (
-      <div className="main-container container">
+      <div className="ml-4 mr-4">
         <p>{error}</p>
       </div>
     )

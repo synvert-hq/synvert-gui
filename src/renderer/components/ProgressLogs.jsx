@@ -13,8 +13,8 @@ export default ({ type }) => {
   });
 
   return (
-    <div className="main-container container">
-      <ul className="mt-5 list-unstyled">
+    <div className="ml-4 mr-4">
+      <ul className="list-unstyled">
         {Object.keys(logs)
           .sort()
           .map((id) => (
