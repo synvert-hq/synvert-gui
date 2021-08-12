@@ -53,7 +53,7 @@ const util = require('util')
 const exec = util.promisify(require('child_process').exec)
 require('fix-path')()
 
-const isRealError = stderr => stderr && !stderr.startsWith('warning:')
+const isRealError = stderr => stderr && !stderr.startsWith('warning:') && !stderr.startsWith('Cloning into ')
 
 const runDockerCommand = async (command, { type, id, name } = {}) => {
     if (type) {
