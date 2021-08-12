@@ -152,11 +152,8 @@ const loadSnippets = async (event) => {
     } else {
         ({ stdout, stderr } = await runCommand('synvert --list --format json'))
     }
-    if (stderr && !firstError) {
+    if (stderr) {
         triggerEvent(EVENT_SNIPPETS_LOADED, { error: stderr })
-        return
-    }
-    if (stdout.startsWith("There is no snippet")) {
         return
     }
     try {
@@ -275,4 +272,4 @@ ipcRenderer.on(EVENT_SYNC_SNIPPETS, () => {
 })
 
 // sync snippets every time app starts
-syncSnippets()
+setTimeout(syncSnippets, 10000)
