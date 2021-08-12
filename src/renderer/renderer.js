@@ -144,12 +144,20 @@ const checkDependencies = async () => {
     }
 }
 
-const loadSnippets = async () => {
+const loadSnippets = async (event) => {
+    const { detail: { firstError } } = event
     let stdout, stderr
     if (dockerDependencySelected()) {
         ({ stdout, stderr } = await runDockerCommand('docker run xinminlabs/awesomecode-synvert synvert --list --format json'))
     } else {
         ({ stdout, stderr } = await runCommand('synvert --list --format json'))
+    }
+    if (stderr && !firstError) {
+        triggerEvent(EVENT_SNIPPETS_LOADED, { error: stderr })
+        return
+    }
+    if (stdout.startsWith("There is no snippet")) {
+        return
     }
     try {
         const snippets = JSON.parse(stdout)
@@ -249,7 +257,7 @@ const syncSnippets = async () => {
         ({ stdout, stderr } = await runCommand('gem install synvert && synvert --sync'))
     }
     // ignore stderr, always load snippets
-    return await loadSnippets()
+    return await loadSnippets({ detail: { firstError: true } })
 }
 
 window.addEventListener(EVENT_CHECK_DEPENDENCIES, checkDependencies)
