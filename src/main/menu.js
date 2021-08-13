@@ -22,6 +22,12 @@ const getHelpItems = () => {
         shell.openExternal('https://xinminlabs.github.io/synvert/')
       }
     },
+    {
+      label: 'Contact Us',
+      click() {
+        shell.openExternal('https://xinminlabs.github.io/synvert/contact_us/')
+      }
+    }
   );
 
   // on macOS, there's already the About Synvert menu item
