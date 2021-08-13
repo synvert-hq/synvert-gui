@@ -5,12 +5,12 @@ import { machineIdSync } from 'node-machine-id';
 import AppContext from "../context";
 import { host, log } from '../utils'
 import { SET_LOADING, SET_NEW_SNIPPET } from "../constants";
-import ShowReportModal from "./ShowReportModal";
+import ShowNeedHelpModal from "./ShowNeedHelpModal";
 
 export default () => {
   const { dispatch } = useContext(AppContext);
   const [snippetId, setSnippetId] = useState(null);
-  const [showReportModal, setShowReportModal] = useState(false);
+  const [showNeedHelpModal, setShowNeedHelpModal] = useState(false);
   const [snippetContent, setSnippetContent] = useState("");
   const [snippetError, setSnippetError] = useState("");
   const { register, control, handleSubmit, formState: { errors } } = useForm({ defaultValues: { inputs_outputs: [{ input: '', output: '' }] } });
@@ -83,7 +83,7 @@ export default () => {
   };
 
   const close = () => {
-    setShowReportModal(false);
+    setShowNeedHelpModal(false);
   }
 
   return (
@@ -167,7 +167,7 @@ export default () => {
           <div className="form-group">
             {snippetError !== '' && (<span className="text-danger">{snippetError}</span>)}
             {snippetError !== '' && snippetId && (
-              <button className="btn btn-link" type="button" onClick={() => setShowReportModal(true)}>Report</button>
+              <button className="btn btn-link" type="button" onClick={() => setShowNeedHelpModal(true)}>Need Help?</button>
             )}
             <textarea
               className="form-control"
@@ -179,7 +179,7 @@ export default () => {
           </div>
         </form>
       </div>
-      {showReportModal && <ShowReportModal id={snippetId} defaultReason={snippetError !== '' ? 'The snippet is not generated.' : ''} close={close} />}
+      {showNeedHelpModal && <ShowNeedHelpModal id={snippetId} defaultReason={snippetError !== '' ? 'The snippet is not generated.' : ''} close={close} />}
     </>
   );
 };

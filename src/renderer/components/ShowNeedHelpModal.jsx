@@ -5,10 +5,10 @@ import { host } from '../utils'
 export default ({ id, defaultReason, close }) => {
   const [email, setEmail] = useState('');
   const [reason, setReason] = useState(defaultReason);
-  const [reporting, setReporting] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  const report = async () => {
-    setReporting(true)
+  const submit = async () => {
+    setSubmitting(true)
     const response = await fetch(`${host()}/api/v1/report`, {
       method: 'POST',
       headers: {
@@ -18,7 +18,7 @@ export default ({ id, defaultReason, close }) => {
       body: JSON.stringify({ id, email, reason }),
     });
     await response.json();
-    setReporting(false)
+    setSubmitting(false)
     close();
   };
 
@@ -32,14 +32,14 @@ export default ({ id, defaultReason, close }) => {
         <div className="modal-dialog modal-dialog-scrollable">
           <div className="modal-content">
             <div className="modal-header">
-              <h4 className="modal-title">Report</h4>
+              <h4 className="modal-title">Need Help</h4>
               <button type="button" className="close" onClick={close}>
                 <span>&times;</span>
               </button>
             </div>
             <div className="modal-body">
               <div className="form-group">
-                <label>Email: <small className="text-muted">(We will let you know after we improve our algorithm)</small></label>
+                <label>Email: <small className="text-muted">(We will let you know after we improved our algorithm)</small></label>
                 <input type="email" className="form-control" value={email} onChange={e => setEmail(e.target.value)} />
               </div>
               <div className="form-group">
@@ -51,10 +51,10 @@ export default ({ id, defaultReason, close }) => {
               <button
                 type="button"
                 className="btn btn-primary"
-                disabled={email === '' || reason === '' || reporting}
-                onClick={report}
+                disabled={email === '' || reason === '' || submitting}
+                onClick={submit}
               >
-                {reporting ? 'Reporting...' : 'Rerpot'}
+                {submitting ? 'Submitting...' : 'Submit'}
               </button>
               <button
                 type="button"
