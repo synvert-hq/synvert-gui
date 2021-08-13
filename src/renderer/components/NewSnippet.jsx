@@ -59,6 +59,7 @@ export default () => {
           Accept: "application/json",
           "Content-Type": "application/json",
           "X-SYNVERT-TOKEN": token,
+          "X-SYNVERT-PLATFORM": process.platform,
         },
         body: JSON.stringify({ inputs, outputs }),
       });
