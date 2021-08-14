@@ -2,7 +2,6 @@ import "diff2html/bundles/css/diff2html.min.css";
 import React, { useContext, useState, useEffect } from "react";
 import useEventListener from "@use-it/event-listener";
 import * as Diff2Html from "diff2html";
-import Prism from "prismjs";
 import toast from 'react-hot-toast';
 
 import AppContext from "../context";
@@ -33,10 +32,6 @@ export default ({ snippet, diff, close }) => {
       );
     }
   }, []);
-
-  useEffect(() => {
-    Prism.highlightAll();
-  });
 
   useEventListener(EVENT_DIFF_COMMITTED, ({ detail: { error } }) => {
     if (error) {
