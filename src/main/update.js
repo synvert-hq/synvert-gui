@@ -46,5 +46,5 @@ export const setupUpdates = () => {
   });
 
   autoUpdater.checkForUpdates()
-  setInterval(() => { autoUpdater.checkForUpdates() }, 600000)
+  setInterval(() => { autoUpdater.checkForUpdates() }, 3600 * 1000)
 }
