@@ -24,6 +24,10 @@ export const setupUpdates = () => {
     console.log('The autoUpdater has not found any updates :(')
   });
 
+  autoUpdater.on('error', (error) => {
+    console.log('error', error); // ignore the error
+  });
+
   // Ask the user if update is available
   autoUpdater.on('update-downloaded', (event, notes, name, date) => {
     console.log('The autoUpdater has downloaded an update!')
