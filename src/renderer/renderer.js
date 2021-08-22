@@ -124,7 +124,7 @@ const checkDependencies = async () => {
             triggerEvent(EVENT_DEPENDENCIES_CHECKED, { error: stderr })
             return
         }
-        ({ stdout, stderr } = await runCommand('synvert --version', { type: EVENT_CHECKING_DEPENDENCIES, id: 2, name: 'Checking synvert version...' }))
+        ({ stdout, stderr } = await runCommand('synvert-ruby --version', { type: EVENT_CHECKING_DEPENDENCIES, id: 2, name: 'Checking synvert version...' }))
         if (isRealError(stderr)) {
             ({ stdout, stderr } = await runCommand('gem install synvert', { type: EVENT_CHECKING_DEPENDENCIES, id: 3, name: 'Installing synvert gem...' }))
             if (stderr) {
@@ -132,9 +132,9 @@ const checkDependencies = async () => {
                 return
             }
         }
-        ({ stdout, stderr } = await runCommand('test -d ~/.synvert/.git || exit 1', { type: EVENT_CHECKING_DEPENDENCIES, id: 4, name: 'Checking synvert snippets...'}))
+        ({ stdout, stderr } = await runCommand('test -d ~/.synvert-ruby/.git || exit 1', { type: EVENT_CHECKING_DEPENDENCIES, id: 4, name: 'Checking synvert snippets...'}))
         if (stderr) {
-            ({ stdout, stderr } = await runCommand('synvert --sync', { type: EVENT_CHECKING_DEPENDENCIES, id: 5, name: 'Syncing synvert snippets...' }))
+            ({ stdout, stderr } = await runCommand('synvert-ruby --sync', { type: EVENT_CHECKING_DEPENDENCIES, id: 5, name: 'Syncing synvert snippets...' }))
             if (isRealError(stderr)) {
                 triggerEvent(EVENT_DEPENDENCIES_CHECKED, { error: stderr })
                 return
@@ -147,9 +147,9 @@ const checkDependencies = async () => {
 const loadSnippets = async () => {
     let stdout, stderr
     if (dockerDependencySelected()) {
-        ({ stdout, stderr } = await runDockerCommand('docker run xinminlabs/awesomecode-synvert synvert --list --format json'))
+        ({ stdout, stderr } = await runDockerCommand('docker run xinminlabs/awesomecode-synvert synvert-ruby --list --format json'))
     } else {
-        ({ stdout, stderr } = await runCommand('synvert --list --format json'))
+        ({ stdout, stderr } = await runCommand('synvert-ruby --list --format json'))
     }
     if (stderr) {
         triggerEvent(EVENT_SNIPPETS_LOADED, { error: stderr })
@@ -168,9 +168,9 @@ const runSnippet = async (event) => {
     const { detail: { currentSnippetId, path } } = event
     let stdout, stderr
     if (dockerDependencySelected()) {
-        ({ stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app xinminlabs/awesomecode-synvert synvert --run ${currentSnippetId} --format json /app`))
+        ({ stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app xinminlabs/awesomecode-synvert synvert-ruby --run ${currentSnippetId} --format json /app`))
     } else {
-        ({ stdout, stderr } = await runCommand(`synvert --run ${currentSnippetId} --format json ${path}`))
+        ({ stdout, stderr } = await runCommand(`synvert-ruby --run ${currentSnippetId} --format json ${path}`))
     }
     if (stderr) {
         triggerEvent(EVENT_SNIPPET_RUN, { error: 'Failed to run snippet!' })
@@ -188,9 +188,9 @@ const executeSnippet = async (event) => {
     const { detail: { newSnippet, path } } = event
     let stdout, stderr
     if (dockerDependencySelected()) {
-        ({ stdout, stderr } = await runDockerCommand(`echo "${newSnippet}" | docker run -i -v ${path}:/app xinminlabs/awesomecode-synvert synvert --execute --format json /app`))
+        ({ stdout, stderr } = await runDockerCommand(`echo "${newSnippet}" | docker run -i -v ${path}:/app xinminlabs/awesomecode-synvert synvert-ruby --execute --format json /app`))
     } else {
-        ({ stdout, stderr } = await runCommand(`echo "${newSnippet}" | synvert --execute --format json ${path}`))
+        ({ stdout, stderr } = await runCommand(`echo "${newSnippet}" | synvert-ruby --execute --format json ${path}`))
     }
     if (stderr) {
         triggerEvent(EVENT_SNIPPET_RUN, { error: 'Failed to execute snippet!' })
@@ -208,9 +208,9 @@ const showSnippet = async (event) => {
     const { detail: { currentSnippetId } } = event
     let stdout, stderr
     if (dockerDependencySelected()) {
-        ({ stdout, stderr } = await runDockerCommand(`docker run xinminlabs/awesomecode-synvert synvert --show ${currentSnippetId}`))
+        ({ stdout, stderr } = await runDockerCommand(`docker run xinminlabs/awesomecode-synvert synvert-ruby --show ${currentSnippetId}`))
     } else {
-        ({ stdout, stderr } = await runCommand(`synvert --show ${currentSnippetId}`))
+        ({ stdout, stderr } = await runCommand(`synvert-ruby --show ${currentSnippetId}`))
     }
     triggerEvent(EVENT_SNIPPET_SHOWN, { code: stdout, error: stderr })
 }
@@ -250,7 +250,7 @@ const syncSnippets = async () => {
     if (dockerDependencySelected()) {
         ({ stdout, stderr } = await runDockerCommand('docker pull xinminlabs/awesomecode-synvert'))
     } else {
-        ({ stdout, stderr } = await runCommand('gem install synvert && synvert --sync'))
+        ({ stdout, stderr } = await runCommand('gem install synvert && synvert-ruby --sync'))
     }
     // ignore stderr, always load snippets
     return await loadSnippets()
