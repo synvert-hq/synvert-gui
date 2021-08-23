@@ -19,13 +19,13 @@ const getHelpItems = () => {
     {
       label: 'Learn More',
       click() {
-        shell.openExternal('https://xinminlabs.github.io/synvert/')
+        shell.openExternal('https://synvert.xinminlabs.com')
       }
     },
     {
       label: 'Contact Us',
       click() {
-        shell.openExternal('https://xinminlabs.github.io/synvert/contact_us/')
+        shell.openExternal('https://synvert.xinminlabs.com/contact_us/')
       }
     }
   );

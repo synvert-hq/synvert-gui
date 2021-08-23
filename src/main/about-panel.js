@@ -12,6 +12,6 @@ export const setupAboutPanel = () => {
     authors: [{ name: 'Richrd Huang' }],
     copyright: '© Xinmin Labs',
     version: process.versions.electron,
-    website: 'https://xinminlabs.github.io/synvert/',
+    website: 'https://synvert.xinminlabs.com',
   });
 }
