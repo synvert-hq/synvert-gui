@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { machineIdSync } from 'node-machine-id';
+import isReachable from "is-reachable";
 
 import AppContext from "../context";
 import { host, log } from '../utils'
@@ -52,7 +53,8 @@ export default () => {
     const inputs = inputs_outputs.map(input_output => input_output.input);
     const outputs = inputs_outputs.map(input_output => input_output.output);
     const token = machineIdSync({original: true});
-    try {
+    const reachable = await isReachable(host());
+    if (reachable) {
       const response = await fetch(`${host()}/api/v1/call`, {
         method: "POST",
         headers: {
@@ -75,9 +77,8 @@ export default () => {
         setSnippetError('');
         updateNewSnippet(composeNewSnippet(data, result));
       }
-    } catch (error) {
+    } else {
       setSnippetError('Failed to send request, please check your network setting.');
-      log(error.message);
       updateNewSnippet('');
     }
     dispatch({ type: SET_LOADING, loading: false });

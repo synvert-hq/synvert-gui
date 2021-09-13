@@ -52,6 +52,7 @@
     "electron-squirrel-startup": "^1.0.0",
     "fix-path": "^3.0.0",
     "fs-extra": "^10.0.0",
+    "is-reachable": "^5.1.0",
     "jsonfile": "^6.1.0",
     "node-machine-id": "^1.1.12",
     "prismjs": "^1.24.1",
