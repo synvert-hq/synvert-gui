@@ -52,7 +52,7 @@ const config = {
           ],
           nodeIntegration: true // defaults to false
         },
-        devContentSecurityPolicy: "script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://synvert.test https://synvert-api.xinminlabs.com; img-src 'self' https://synvert.test https://synvert-api.xinminlabs.com; default-src 'self' https://synvert.test https://synvert-api.xinminlabs.com;"
+        devContentSecurityPolicy: "script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self' https://synvert-api.test https://synvert-api.xinminlabs.com; img-src 'self' https://synvert-api.test https://synvert-api.xinminlabs.com; default-src 'self' https://synvert-api.test https://synvert-api.xinminlabs.com;"
       }
     ]
   ]
