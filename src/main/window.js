@@ -1,6 +1,6 @@
-const { BrowserWindow, shell } = require('electron');
+import { BrowserWindow, shell } from 'electron'
 
-const { showDevTools } = require('./utils');
+import { showDevTools } from './utils'
 
 let browserWindows = []
 

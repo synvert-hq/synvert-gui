@@ -49,7 +49,7 @@ import {
 } from './constants';
 import { log, triggerEvent, dockerDependencySelected, convertSnippetsToStore, dependencySelected } from './utils'
 
-const util = require('util')
+import util from 'util'
 const exec = util.promisify(require('child_process').exec)
 require('fix-path')()
 

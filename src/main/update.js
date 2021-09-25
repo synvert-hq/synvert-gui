@@ -1,5 +1,5 @@
-const os = require('os');
-const { app, autoUpdater, dialog } = require('electron');
+import os from 'os'
+import { app, autoUpdater, dialog } from 'electron'
 
 const version = app.getVersion();
 const platform = os.platform() + '_' + os.arch();  // usually returns darwin_64

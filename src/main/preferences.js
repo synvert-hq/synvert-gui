@@ -1,8 +1,8 @@
-const { app } = require('electron');
-const path = require('path');
-const ElectronPreferences = require('electron-preferences');
+import { app } from 'electron'
+import path from 'path'
+import ElectronPreferences from 'electron-preferences'
 
-const { showDevTools } = require('./utils');
+import { showDevTools } from './utils'
 
 const preferences = new ElectronPreferences({
     dataStore: path.join(app.getPath('userData'), 'preferences.json'),
@@ -49,4 +49,4 @@ const preferences = new ElectronPreferences({
     ]
 });
 
-module.exports = preferences
+export default preferences
