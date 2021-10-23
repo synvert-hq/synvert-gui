@@ -107,12 +107,12 @@ const checkDependencies = async () => {
             triggerEvent(EVENT_CHECKING_DEPENDENCIES, { error: stderr })
             return
         }
-        ({ stdout, stderr } = await runDockerCommand('docker image inspect xinminlabs/awesomecode-synvert', { type: EVENT_CHECKING_DEPENDENCIES, id: 2, name: 'Checking docker image xinminlabs/awesomecode-synvert...'}))
+        ({ stdout, stderr } = await runDockerCommand('docker image inspect xinminlabs/awesomecode-synvert-ruby', { type: EVENT_CHECKING_DEPENDENCIES, id: 2, name: 'Checking docker image xinminlabs/awesomecode-synvert-ruby...'}))
         if (!stderr) {
             triggerEvent(EVENT_DEPENDENCIES_CHECKED, { error: stderr })
             return
         }
-        ({ stdout, stderr } = await runDockerCommand('docker pull xinminlabs/awesomecode-synvert', { type: EVENT_CHECKING_DEPENDENCIES, id: 3, name: 'Pulling docker image xinminlabs/awesomecode-synvert...' }))
+        ({ stdout, stderr } = await runDockerCommand('docker pull xinminlabs/awesomecode-synvert-ruby', { type: EVENT_CHECKING_DEPENDENCIES, id: 3, name: 'Pulling docker image xinminlabs/awesomecode-synvert-ruby...' }))
         if (!stderr) {
             triggerEvent(EVENT_DEPENDENCIES_CHECKED, { error: stderr })
             return
@@ -147,7 +147,7 @@ const checkDependencies = async () => {
 const loadSnippets = async () => {
     let stdout, stderr
     if (dockerDependencySelected()) {
-        ({ stdout, stderr } = await runDockerCommand('docker run xinminlabs/awesomecode-synvert synvert-ruby --list --format json'))
+        ({ stdout, stderr } = await runDockerCommand('docker run xinminlabs/awesomecode-synvert-ruby synvert-ruby --list --format json'))
     } else {
         ({ stdout, stderr } = await runCommand('synvert-ruby --list --format json'))
     }
@@ -168,7 +168,7 @@ const runSnippet = async (event) => {
     const { detail: { currentSnippetId, path } } = event
     let stdout, stderr
     if (dockerDependencySelected()) {
-        ({ stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app xinminlabs/awesomecode-synvert synvert-ruby --run ${currentSnippetId} --format json /app`))
+        ({ stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app xinminlabs/awesomecode-synvert-ruby synvert-ruby --run ${currentSnippetId} --format json /app`))
     } else {
         ({ stdout, stderr } = await runCommand(`synvert-ruby --run ${currentSnippetId} --format json ${path}`))
     }
@@ -188,7 +188,7 @@ const executeSnippet = async (event) => {
     const { detail: { newSnippet, path } } = event
     let stdout, stderr
     if (dockerDependencySelected()) {
-        ({ stdout, stderr } = await runDockerCommand(`echo "${newSnippet}" | docker run -i -v ${path}:/app xinminlabs/awesomecode-synvert synvert-ruby --execute --format json /app`))
+        ({ stdout, stderr } = await runDockerCommand(`echo "${newSnippet}" | docker run -i -v ${path}:/app xinminlabs/awesomecode-synvert-ruby synvert-ruby --execute --format json /app`))
     } else {
         ({ stdout, stderr } = await runCommand(`echo "${newSnippet}" | synvert-ruby --execute --format json ${path}`))
     }
@@ -208,7 +208,7 @@ const showSnippet = async (event) => {
     const { detail: { currentSnippetId } } = event
     let stdout, stderr
     if (dockerDependencySelected()) {
-        ({ stdout, stderr } = await runDockerCommand(`docker run xinminlabs/awesomecode-synvert synvert-ruby --show ${currentSnippetId}`))
+        ({ stdout, stderr } = await runDockerCommand(`docker run xinminlabs/awesomecode-synvert-ruby synvert-ruby --show ${currentSnippetId}`))
     } else {
         ({ stdout, stderr } = await runCommand(`synvert-ruby --show ${currentSnippetId}`))
     }
@@ -219,7 +219,7 @@ const showSnippetDiff = async (event) => {
     const { detail: { path } } = event
     let stdout, stderr
     if (dockerDependencySelected()) {
-        ({ stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app xinminlabs/awesomecode-synvert /bin/sh -c "cd /app && git add .; git diff --cached --ignore-space-at-eol; git reset ."`))
+        ({ stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app xinminlabs/awesomecode-synvert-ruby /bin/sh -c "cd /app && git add .; git diff --cached --ignore-space-at-eol; git reset ."`))
     } else {
         ({ stdout, stderr } = await runCommand(`cd ${path}; git add .; git diff --cached --ignore-space-at-eol; git reset .`))
     }
@@ -234,7 +234,7 @@ const commitDiff = async (event) => {
         if (process.platform === 'win32') {
             gitConfigPath = '%USERPROFILE%\\.gitconfig'
         }
-        ({ stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app -v ${gitConfigPath}:/etc/gitconfig xinminlabs/awesomecode-synvert /bin/sh -c "cd /app && git add . && git commit -m ${`\\"${commitMessage.replace(/"/g, '\\\\\\"')}\\"`} --no-verify"`))
+        ({ stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app -v ${gitConfigPath}:/etc/gitconfig xinminlabs/awesomecode-synvert-ruby /bin/sh -c "cd /app && git add . && git commit -m ${`\\"${commitMessage.replace(/"/g, '\\\\\\"')}\\"`} --no-verify"`))
     } else {
         ({ stdout, stderr } = await runCommand(`cd ${path} && git add . && git commit -m "${commitMessage.replace(/"/g, '\\"')}" --no-verify`))
     }
@@ -248,7 +248,7 @@ const syncSnippets = async () => {
     }
 
     if (dockerDependencySelected()) {
-        ({ stdout, stderr } = await runDockerCommand('docker pull xinminlabs/awesomecode-synvert'))
+        ({ stdout, stderr } = await runDockerCommand('docker pull xinminlabs/awesomecode-synvert-ruby'))
     } else {
         ({ stdout, stderr } = await runCommand('gem install synvert && synvert-ruby --sync'))
     }
