@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import Prism from "prismjs";
 
-export default ({ snippet, code, close }) => {
+export default ({ snippet, close }) => {
   useEffect(() => {
     Prism.highlightAll();
   });
@@ -25,7 +25,7 @@ export default ({ snippet, code, close }) => {
             </div>
             <div className="modal-body">
               <pre className="language-ruby">
-                <code className="language-ruby">{code}</code>
+                <code className="language-ruby">{snippet.code}</code>
               </pre>
             </div>
             <div className="modal-footer">

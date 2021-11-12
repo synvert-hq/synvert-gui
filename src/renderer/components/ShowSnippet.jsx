@@ -8,13 +8,13 @@ import AppContext from "../context";
 import {
   EVENT_SHOW_SNIPPET,
   EVENT_SNIPPET_SHOWN,
+  SET_CODE,
   SET_LOADING,
 } from "../constants";
 import { triggerEvent } from "../utils";
 
-export default () => {
+export default ({ edit }) => {
   const [showCode, setShowCode] = useState(false);
-  const [code, setCode] = useState("");
   const { dispatch, snippetsStore, currentSnippetId } = useContext(AppContext);
 
   useEffect(() => {
@@ -23,27 +23,27 @@ export default () => {
 
   useEventListener(EVENT_SNIPPET_SHOWN, ({ detail: { code, error } }) => {
     dispatch({ type: SET_LOADING, loading: false });
+    dispatch({ type: SET_CODE, code });
     if (error) {
       toast.error(error);
       return;
     }
 
-    setCode(code);
     setShowCode(true);
   });
 
+  const snippet = snippetsStore[currentSnippetId];
+
   const showSourceCode = () => {
-    triggerEvent(EVENT_SHOW_SNIPPET, { currentSnippetId });
-    dispatch({ type: SET_LOADING, loading: true });
+    if (!snippet.code) {
+      triggerEvent(EVENT_SHOW_SNIPPET, { currentSnippetId });
+      dispatch({ type: SET_LOADING, loading: true });
+    }
   };
 
   const close = () => {
     setShowCode(false);
   };
-
-  if (!currentSnippetId) return null;
-
-  const snippet = snippetsStore[currentSnippetId];
 
   return (
     <>
@@ -52,7 +52,13 @@ export default () => {
           className="btn btn-primary float-right"
           onClick={showSourceCode}
         >
-          Show Source Code
+          Show
+        </button>
+        <button
+          className="btn btn-secondary float-right mr-2"
+          onClick={edit}
+        >
+          Edit
         </button>
         <h2>
           {snippet.group}/{snippet.name}
@@ -88,7 +94,7 @@ export default () => {
         </ul>
       </div>
       {showCode && (
-        <ShowCodeModal snippet={snippet} code={code} close={close} />
+        <ShowCodeModal snippet={snippet} close={close} />
       )}
     </>
   );

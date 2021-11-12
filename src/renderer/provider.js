@@ -10,6 +10,7 @@ const initialState = {
     newSnippet: '',
     loading: false,
     loadingText: 'Loading...',
+    form: 'new',
 }
 
 export default ({ children }) => {

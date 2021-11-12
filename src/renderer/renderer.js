@@ -38,6 +38,8 @@ import {
     EVENT_RUN_SNIPPET,
     EVENT_SNIPPET_RUN,
     EVENT_EXECUTE_SNIPPET,
+    EVENT_EDIT_SNIPPET,
+    EVENT_SNIPPET_EDIT,
     EVENT_SHOW_SNIPPET,
     EVENT_SNIPPET_SHOWN,
     EVENT_CHECKING_DEPENDENCIES,
@@ -215,6 +217,17 @@ const showSnippet = async (event) => {
     triggerEvent(EVENT_SNIPPET_SHOWN, { code: stdout, error: stderr })
 }
 
+const editSnippet = async (event) => {
+    const { detail: { currentSnippetId } } = event
+    let stdout, stderr
+    if (dockerDependencySelected()) {
+        ({ stdout, stderr } = await runDockerCommand(`docker run xinminlabs/awesomecode-synvert-ruby synvert-ruby --show ${currentSnippetId}`))
+    } else {
+        ({ stdout, stderr } = await runCommand(`synvert-ruby --show ${currentSnippetId}`))
+    }
+    triggerEvent(EVENT_SNIPPET_EDIT, { code: stdout, error: stderr })
+}
+
 const showSnippetDiff = async (event) => {
     const { detail: { path } } = event
     let stdout, stderr
@@ -260,6 +273,7 @@ window.addEventListener(EVENT_CHECK_DEPENDENCIES, checkDependencies)
 window.addEventListener(EVENT_LOAD_SNIPPETS, loadSnippets)
 window.addEventListener(EVENT_RUN_SNIPPET, runSnippet)
 window.addEventListener(EVENT_EXECUTE_SNIPPET, executeSnippet)
+window.addEventListener(EVENT_EDIT_SNIPPET, editSnippet)
 window.addEventListener(EVENT_SHOW_SNIPPET, showSnippet)
 window.addEventListener(EVENT_SHOW_SNIPPET_DIFF, showSnippetDiff)
 window.addEventListener(EVENT_COMMIT_DIFF, commitDiff)

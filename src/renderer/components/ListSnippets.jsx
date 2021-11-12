@@ -12,6 +12,7 @@ import {
   EVENT_LOAD_SNIPPETS,
   EVENT_SNIPPETS_LOADED,
   SET_CURRENT_SNIPPET_ID,
+  SET_FORM,
 } from "../constants";
 
 const snippetClassname = (snippet, currentSnippetId) =>
@@ -78,12 +79,20 @@ export default () => {
 
   const newSnippet = () => {
     dispatch({
+      type: SET_FORM,
+      form: 'new',
+    });
+    dispatch({
       type: SET_CURRENT_SNIPPET_ID,
-      currentSnippetId: 'new',
+      currentSnippetId: null,
     });
   }
 
   const snippetClicked = (snippet) => {
+    dispatch({
+      type: SET_FORM,
+      form: null,
+    });
     dispatch({
       type: SET_CURRENT_SNIPPET_ID,
       currentSnippetId: `${snippet.group}/${snippet.name}`,

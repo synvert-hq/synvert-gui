@@ -9,10 +9,10 @@ import { SET_LOADING, SET_NEW_SNIPPET } from "../constants";
 import ShowNeedHelpModal from "./ShowNeedHelpModal";
 
 export default () => {
-  const { dispatch } = useContext(AppContext);
+  const { dispatch, snippetsStore, currentSnippetId, form } = useContext(AppContext);
   const [snippetId, setSnippetId] = useState(null);
   const [showNeedHelpModal, setShowNeedHelpModal] = useState(false);
-  const [snippetContent, setSnippetContent] = useState("");
+  const [snippetContent, setSnippetContent] = useState(snippetsStore[currentSnippetId]?.code || "");
   const [snippetError, setSnippetError] = useState("");
   const { register, control, handleSubmit, formState: { errors } } = useForm({ defaultValues: { inputs_outputs: [{ input: '', output: '' }] } });
   const { fields, append, remove } = useFieldArray({ control, name: 'inputs_outputs' });
@@ -88,10 +88,12 @@ export default () => {
     setShowNeedHelpModal(false);
   }
 
+  const title = form === "new" ? "New Snippet" : "Edit Snippet";
+
   return (
     <>
       <div className="new-snippet container-fluid flex-grow-1">
-        <h4 className="text-center">New Snippet</h4>
+        <h4 className="text-center">{title}</h4>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="form-group">
             <label>File Pattern:</label>
