@@ -6,8 +6,8 @@ import AppContext from './context'
 const initialState = {
     path: localStorage.getItem('path') || '',
     snippetsStore: {},
-    currentSnippetId: 'new',
-    newSnippet: '',
+    currentSnippetId: null,
+    customSnippet: '',
     loading: false,
     loadingText: 'Loading...',
     form: 'new',

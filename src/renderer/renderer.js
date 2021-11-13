@@ -186,13 +186,17 @@ const runSnippet = async (event) => {
     }
 }
 
+const convertExecuteSnippet = customSnippet =>
+    customSnippet.replace(/Synvert::Rewriter.new.*do/m, 'Synvert::Rewriter.execute do').replace(/`/g, '\\`')
+
 const executeSnippet = async (event) => {
-    const { detail: { newSnippet, path } } = event
+    const { detail: { customSnippet, path } } = event
+    const snippetContent = convertExecuteSnippet(customSnippet)
     let stdout, stderr
     if (dockerDependencySelected()) {
-        ({ stdout, stderr } = await runDockerCommand(`echo "${newSnippet}" | docker run -i -v ${path}:/app xinminlabs/awesomecode-synvert-ruby synvert-ruby --execute --format json /app`))
+        ({ stdout, stderr } = await runDockerCommand(`echo "${snippetContent}" | docker run -i -v ${path}:/app xinminlabs/awesomecode-synvert-ruby synvert-ruby --execute --format json /app`))
     } else {
-        ({ stdout, stderr } = await runCommand(`echo "${newSnippet}" | synvert-ruby --execute --format json ${path}`))
+        ({ stdout, stderr } = await runCommand(`echo "${snippetContent}" | synvert-ruby --execute --format json ${path}`))
     }
     if (stderr) {
         triggerEvent(EVENT_SNIPPET_RUN, { error: 'Failed to execute snippet!' })

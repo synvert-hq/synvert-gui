@@ -26,7 +26,7 @@ import ConfirmDiffModal from "./ConfirmDiffModal";
 import ShowDiffModal from "./ShowDiffModal";
 
 export default () => {
-  const { path, snippetsStore, currentSnippetId, newSnippet, dispatch } =
+  const { path, snippetsStore, currentSnippetId, customSnippet, form, dispatch } =
     useContext(AppContext);
   const [showConfirmDiff, setShowConfirmDiff] = useState(false);
   const [showDiff, setShowDiff] = useState(false);
@@ -78,8 +78,8 @@ export default () => {
   };
 
   const run = () => {
-    if (currentSnippetId === 'new') {
-      triggerEvent(EVENT_EXECUTE_SNIPPET, { path, newSnippet });
+    if (form) {
+      triggerEvent(EVENT_EXECUTE_SNIPPET, { path, customSnippet });
     } else {
       triggerEvent(EVENT_RUN_SNIPPET, { path, currentSnippetId });
     }
@@ -132,7 +132,7 @@ export default () => {
             </button>
           </div>
         </div>
-        <button className="btn btn-primary ml-2" disabled={!path || (currentSnippetId === 'new' && newSnippet.length === 0)} onClick={run}>
+        <button className="btn btn-primary ml-2" disabled={!path || (form && customSnippet.length === 0)} onClick={run}>
           Run
         </button>
       </div>

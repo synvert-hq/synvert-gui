@@ -5,7 +5,7 @@ import isReachable from "is-reachable";
 
 import AppContext from "../context";
 import { host, log } from '../utils'
-import { SET_LOADING, SET_NEW_SNIPPET } from "../constants";
+import { SET_LOADING, SET_CUSTOM_SNIPPET } from "../constants";
 import ShowNeedHelpModal from "./ShowNeedHelpModal";
 
 export default () => {
@@ -17,33 +17,33 @@ export default () => {
   const { register, control, handleSubmit, formState: { errors } } = useForm({ defaultValues: { inputs_outputs: [{ input: '', output: '' }] } });
   const { fields, append, remove } = useFieldArray({ control, name: 'inputs_outputs' });
 
-  const composeNewSnippet = (data, result) => {
-    let newSnippet = "Synvert::Rewriter.execute do\n";
+  const composeCustomSnippet = (data, result) => {
+    let customSnippet = "Synvert::Rewriter.execute do\n";
     if (data.rubyVersion) {
-      newSnippet += `  if_ruby '${data.rubyVersion}'\n`;
+      customSnippet += `  if_ruby '${data.rubyVersion}'\n`;
     }
     if (data.gemVersion) {
       const index = data.gemVersion.indexOf(" ");
       const name = data.gemVersion.substring(0, index);
       const version = data.gemVersion.substring(index + 1);
-      newSnippet += `  if_gem '${name}', '${version}'\n`;
+      customSnippet += `  if_gem '${name}', '${version}'\n`;
     }
-    newSnippet += `  within_files '${data.filePattern}' do\n`;
+    customSnippet += `  within_files '${data.filePattern}' do\n`;
     if (result.snippet) {
-      newSnippet += "    ";
-      newSnippet += result.snippet.replace(/\n/g, "\n    ");
-      newSnippet += "\n";
+      customSnippet += "    ";
+      customSnippet += result.snippet.replace(/\n/g, "\n    ");
+      customSnippet += "\n";
     }
-    newSnippet += "  end\n";
-    newSnippet += "end";
-    return newSnippet;
+    customSnippet += "  end\n";
+    customSnippet += "end";
+    return customSnippet;
   };
 
-  const updateNewSnippet = (snippetContent) => {
+  const updateCustomSnippet = (snippetContent) => {
     setSnippetContent(snippetContent);
     dispatch({
-      type: SET_NEW_SNIPPET,
-      newSnippet: snippetContent,
+      type: SET_CUSTOM_SNIPPET,
+      customSnippet: snippetContent,
     });
   }
 
@@ -70,16 +70,16 @@ export default () => {
       if (result.error) {
         setSnippetError(result.error);
         log(result.error);
-        updateNewSnippet('');
+        updateCustomSnippet('');
       } else if (!result.snippet) {
         setSnippetError('Failed to generate snippet');
       } else {
         setSnippetError('');
-        updateNewSnippet(composeNewSnippet(data, result));
+        updateCustomSnippet(composeCustomSnippet(data, result));
       }
     } else {
       setSnippetError('Failed to send request, please check your network setting.');
-      updateNewSnippet('');
+      updateCustomSnippet('');
     }
     dispatch({ type: SET_LOADING, loading: false });
   };
@@ -178,7 +178,7 @@ export default () => {
               rows="10"
               value={snippetContent}
               onChange={(e) => setSnippetContent(e.target.value)}
-              onBlur={(e) => updateNewSnippet(e.target.value)}
+              onBlur={(e) => updateCustomSnippet(e.target.value)}
             ></textarea>
           </div>
         </form>
