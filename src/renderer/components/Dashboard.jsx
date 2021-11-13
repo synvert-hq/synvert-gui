@@ -17,6 +17,7 @@ import {
   SET_CODE,
   SET_LOADING,
   SET_FORM,
+  SET_CUSTOM_SNIPPET,
 } from "../constants";
 import { SET_SNIPPETS_STORE  } from "../constants";
 import { dependencySelected, triggerEvent } from "../utils";
@@ -50,6 +51,7 @@ export default () => {
       return;
     }
     dispatch({ type: SET_FORM, form: 'edit' })
+    dispatch({ type: SET_CUSTOM_SNIPPET, customSnippet: code })
   });
 
   const edit = () => {

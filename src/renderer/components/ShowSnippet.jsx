@@ -55,7 +55,7 @@ export default ({ edit }) => {
           Show
         </button>
         <button
-          className="btn btn-secondary float-right mr-2"
+          className="btn btn-primary float-right mr-2"
           onClick={edit}
         >
           Edit
