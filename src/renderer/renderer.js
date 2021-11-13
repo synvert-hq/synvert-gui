@@ -289,4 +289,4 @@ ipcRenderer.on(EVENT_SYNC_SNIPPETS, () => {
 })
 
 // sync snippets every time app starts
-setTimeout(syncSnippets, 10000)
+setTimeout(syncSnippets, 1000)
