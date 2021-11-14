@@ -62,6 +62,7 @@
     "react-hot-toast": "^2.1.0",
     "react-loading-overlay": "^1.0.1",
     "react-markdown": "^6.0.3",
+    "shell-escape": "^0.2.0",
     "spawn-sync": "^2.0.0"
   }
 }
