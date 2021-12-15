@@ -269,7 +269,7 @@ const syncSnippets = async () => {
     if (dockerDependencySelected()) {
         ({ stdout, stderr } = await runDockerCommand('docker pull xinminlabs/awesomecode-synvert-ruby'))
     } else {
-        ({ stdout, stderr } = await runCommand('gem install synvert && synvert-ruby --sync'))
+        ({ stdout, stderr } = await runCommand('gem install synvert synvert-core && synvert-ruby --sync'))
     }
     // ignore stderr, always load snippets
     return await loadSnippets()
