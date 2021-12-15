@@ -79,12 +79,11 @@ export default ({ edit }) => {
           <ReactMarkdown children={snippet.description} />
         </div>
         <ul>
-          {snippet.sub_snippets.map((subSnippetName) => {
-            const subSnippet =
-              snippetsStore[`${snippet.group}/${subSnippetName}`];
+          {snippet.sub_snippets.map(({ group, name }) => {
+            const subSnippet = snippetsStore[`${group}/${name}`];
             return (
-              <li key={subSnippetName}>
-                <h4>{subSnippetName}</h4>
+              <li key={name}>
+                <h4>{group}/{name}</h4>
                 <div>
                   <ReactMarkdown children={subSnippet.description} />
                 </div>
