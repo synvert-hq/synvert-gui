@@ -71,6 +71,7 @@ export default () => {
         updateCustomSnippet('');
       } else if (!result.snippet) {
         setSnippetError('Failed to generate snippet');
+        updateCustomSnippet('');
       } else {
         setSnippetError('');
         updateCustomSnippet(composeCustomSnippet(data, result));
