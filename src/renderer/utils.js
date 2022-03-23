@@ -66,7 +66,7 @@ export const triggerEvent = (name, detail) => {
     }
 }
 
-export const host = () => process.env.DEBUG === 'true' ? 'https://synvert-api.test' : 'https://synvert-api.xinminlabs.com'
+export const baseUrl = () => process.env.DEBUG === 'true' ? 'https://synvert-api.xinminlabs.com/ruby' : 'https://synvert-api.xinminlabs.com'
 
 export const log = (...args) => {
     if (process.env.DEBUG === 'true') {

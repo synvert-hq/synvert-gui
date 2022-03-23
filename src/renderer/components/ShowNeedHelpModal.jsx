@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { host } from '../utils'
+import { baseUrl } from '../utils'
 
 export default ({ id, defaultReason, close }) => {
   const [email, setEmail] = useState('');
@@ -9,7 +9,7 @@ export default ({ id, defaultReason, close }) => {
 
   const submit = async () => {
     setSubmitting(true)
-    const response = await fetch(`${host()}/api/v1/report`, {
+    const response = await fetch(`${baseUrl()}/api/v1/report`, {
       method: 'POST',
       headers: {
         Accept: "application/json",

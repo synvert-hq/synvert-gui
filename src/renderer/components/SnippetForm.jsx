@@ -3,7 +3,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import { machineIdSync } from 'node-machine-id';
 
 import AppContext from "../context";
-import { host, log } from '../utils'
+import { baseUrl, log } from '../utils'
 import { SET_LOADING, SET_CUSTOM_SNIPPET } from "../constants";
 import ShowNeedHelpModal from "./ShowNeedHelpModal";
 
@@ -53,7 +53,7 @@ export default () => {
     const outputs = inputs_outputs.map(input_output => input_output.output);
     const token = machineIdSync({original: true});
     try {
-      const response = await fetch(`${host()}/api/v1/call`, {
+      const response = await fetch(`${baseUrl()}/api/v1/call`, {
         method: "POST",
         headers: {
           Accept: "application/json",
