@@ -132,7 +132,7 @@ export default () => {
               <label>Inputs</label>
             </div>
             <div className="form-group col-md-6">
-              <a href="https://synvert.xinminlabs.com/gui/#how-to-write-inputsoutputs" className="float-right" target="_blank">How to write inputs/outpus?</a>
+              <a href="https://synvert.net/gui/#how-to-write-inputsoutputs" className="float-right" target="_blank">How to write inputs/outpus?</a>
               <label>Outputs</label>
             </div>
           </div>
