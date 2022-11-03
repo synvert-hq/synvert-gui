@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import useEventListener from "@use-it/event-listener";
-import LoadingOverlay from "react-loading-overlay";
+import LoadingOverlay from "@murasoftware/react-loading-overlay";
 import toast from 'react-hot-toast';
 
 import AppContext from "../context";
