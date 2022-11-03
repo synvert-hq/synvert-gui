@@ -34,27 +34,27 @@ const config = {
     }
   ],
   "plugins": [
-    [
-      "@electron-forge/plugin-webpack",
-      {
-        "mainConfig": "./webpack.main.config.js",
-        "renderer": {
-          "config": "./webpack.renderer.config.js",
-          "entryPoints": [
+    {
+      name: "@electron-forge/plugin-webpack",
+      config: {
+        mainConfig: "./webpack.main.config.js",
+        renderer: {
+          config: "./webpack.renderer.config.js",
+          entryPoints: [
             {
-              "html": "./src/renderer/index.html",
-              "js": "./src/renderer/renderer.js",
-              "name": "main_window",
-              // "webpackConfig": {
-              //   devtool: "nosources-source-map"
-              // }
+              name: "main_window",
+              html: "./src/renderer/index.html",
+              js: "./src/renderer/renderer.js",
+              preload: {
+                js: "src/preload.js"
+              }
             }
           ],
           nodeIntegration: true // defaults to false
         },
-          devContentSecurityPolicy: "script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:9200 http://api-ruby.synvert.net; img-src 'self' http://localhost:9200 http://api-ruby.synvert.net; default-src 'self' http://localhost:9200 https://api-ruby.synvert.net;"
+        devContentSecurityPolicy: "script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:9200 http://api-ruby.synvert.net; img-src 'self' http://localhost:9200 http://api-ruby.synvert.net; default-src 'self' http://localhost:9200 https://api-ruby.synvert.net;"
       }
-    ]
+    }
   ]
 }
 
