@@ -53,13 +53,13 @@ export default () => {
     const outputs = inputs_outputs.map(input_output => input_output.output);
     // const token = machineIdSync({original: true});
     try {
-      const response = await fetch(`${baseUrl()}/api/v1/call`, {
+      const response = await fetch(`${baseUrl()}/generate-snippet`, {
         method: "POST",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
           // "X-SYNVERT-TOKEN": token,
-          "X-SYNVERT-PLATFORM": process.platform,
+          "X-SYNVERT-PLATFORM": "gui",
         },
         body: JSON.stringify({ inputs, outputs }),
       });
