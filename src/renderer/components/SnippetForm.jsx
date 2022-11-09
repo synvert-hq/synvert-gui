@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
-import { machineIdSync } from 'node-machine-id';
+// import { machineIdSync } from 'node-machine-id';
 
 import AppContext from "../context";
 import { baseUrl, log } from '../utils'
@@ -51,14 +51,14 @@ export default () => {
     const { inputs_outputs } = data;
     const inputs = inputs_outputs.map(input_output => input_output.input);
     const outputs = inputs_outputs.map(input_output => input_output.output);
-    const token = machineIdSync({original: true});
+    // const token = machineIdSync({original: true});
     try {
       const response = await fetch(`${baseUrl()}/api/v1/call`, {
         method: "POST",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
-          "X-SYNVERT-TOKEN": token,
+          // "X-SYNVERT-TOKEN": token,
           "X-SYNVERT-PLATFORM": process.platform,
         },
         body: JSON.stringify({ inputs, outputs }),

@@ -1,5 +1,3 @@
-const { dialog } = require("electron");
-
 import React, { useContext, useState } from "react";
 import useEventListener from "@use-it/event-listener";
 import toast from 'react-hot-toast';
@@ -68,13 +66,13 @@ export default () => {
   );
 
   const selectPath = () => {
-    const paths = dialog.showOpenDialogSync({
-      properties: ["openDirectory", "openFile"],
-    });
-    if (paths) {
-      dispatch({ type: SET_PATH, path: paths[0] });
-      localStorage.setItem("path", paths[0]);
-    }
+    // const paths = dialog.showOpenDialogSync({
+    //   properties: ["openDirectory", "openFile"],
+    // });
+    // if (paths) {
+    //   dispatch({ type: SET_PATH, path: paths[0] });
+    //   localStorage.setItem("path", paths[0]);
+    // }
   };
 
   const run = () => {

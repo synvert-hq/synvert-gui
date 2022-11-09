@@ -13,11 +13,9 @@ const getMainWindowOptions = () => {
     acceptFirstMouse: true,
     backgroundColor: '#1d2427',
     webPreferences: {
-      contextIsolation: false,
+      contextIsolation: true,
       devTools: showDevTools(),
-      enableRemoteModule: true,
-      nodeIntegration: true,
-      webviewTag: false
+      nodeIntegration: false,
     },
   };
 }

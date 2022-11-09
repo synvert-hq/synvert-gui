@@ -1,17 +1,17 @@
-import { ipcRenderer } from 'electron';
+// import { ipcRenderer } from 'electron';
 
 const savePreference = (key, value) => {
-    const preferences = ipcRenderer.sendSync('getPreferences')
-    if (!preferences.settings) {
-        preferences.settings = {}
-    }
-    preferences.settings[key] = value
-    ipcRenderer.sendSync('setPreferences', preferences)
+    // const preferences = ipcRenderer.sendSync('getPreferences')
+    // if (!preferences.settings) {
+    //     preferences.settings = {}
+    // }
+    // preferences.settings[key] = value
+    // ipcRenderer.sendSync('setPreferences', preferences)
 }
 
 const getPreference = (key) => {
-    const preferences = ipcRenderer.sendSync('getPreferences')
-    return preferences && preferences.settings && preferences.settings[key]
+    // const preferences = ipcRenderer.sendSync('getPreferences')
+    // return preferences && preferences.settings && preferences.settings[key]
 }
 
 const PREFERENCE_DEPENDENCY = 'dependency'
