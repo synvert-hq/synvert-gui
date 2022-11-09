@@ -65,14 +65,12 @@ export default () => {
     }
   );
 
-  const selectPath = () => {
-    // const paths = dialog.showOpenDialogSync({
-    //   properties: ["openDirectory", "openFile"],
-    // });
-    // if (paths) {
-    //   dispatch({ type: SET_PATH, path: paths[0] });
-    //   localStorage.setItem("path", paths[0]);
-    // }
+  const selectPath = async () => {
+    const filePath = await window.electronAPI.openFile()
+    if (filePath) {
+      dispatch({ type: SET_PATH, path: filePath });
+      localStorage.setItem("path", filePath);
+    }
   };
 
   const run = () => {

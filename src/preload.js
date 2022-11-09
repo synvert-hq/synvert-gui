@@ -4,4 +4,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
   isDev: () => process.env.DEBUG === "true",
   getPreferences: () => ipcRenderer.sendSync("getPreferences"),
   setPreferences: (preferences) => ipcRenderer.sendSync("setPreferences", preferences),
+  openFile: () => ipcRenderer.invoke('dialog:openFile'),
 })
