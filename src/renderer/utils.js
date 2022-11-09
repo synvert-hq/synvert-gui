@@ -1,17 +1,15 @@
-// import { ipcRenderer } from 'electron';
-
 const savePreference = (key, value) => {
-    // const preferences = ipcRenderer.sendSync('getPreferences')
-    // if (!preferences.settings) {
-    //     preferences.settings = {}
-    // }
-    // preferences.settings[key] = value
-    // ipcRenderer.sendSync('setPreferences', preferences)
+    const preferences = window.electronAPI.getPreferences()
+    if (!preferences.settings) {
+        preferences.settings = {}
+    }
+    preferences.settings[key] = value
+    electronAPI.setPreferences(preferences)
 }
 
 const getPreference = (key) => {
-    // const preferences = ipcRenderer.sendSync('getPreferences')
-    // return preferences && preferences.settings && preferences.settings[key]
+    const preferences = window.electronAPI.getPreferences()
+    return preferences && preferences.settings && preferences.settings[key]
 }
 
 const PREFERENCE_DEPENDENCY = 'dependency'
@@ -66,10 +64,10 @@ export const triggerEvent = (name, detail) => {
     }
 }
 
-export const baseUrl = () => process.env.DEBUG === 'true' ? 'http://localhost:9200' : 'https://api-ruby.synvert.net'
+export const baseUrl = () => window.electronAPI.isDev() ? 'http://localhost:9292' : 'https://api-ruby.synvert.net'
 
 export const log = (...args) => {
-    if (process.env.DEBUG === 'true') {
+    if (window.electronAPI.isDev()) {
         console.log(...args)
     }
 }
