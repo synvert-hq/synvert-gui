@@ -2,7 +2,7 @@ import { app, ipcMain, shell, Menu } from 'electron';
 import defaultMenu from 'electron-default-menu';
 
 import preferences from './preferences';
-import { createMainWindow } from './window';
+import { createMainWindow, getOrCreateMainWindow } from './window';
 import { EVENT_SYNC_SNIPPETS } from '../renderer/constants';
 
 const isSubmenu = (submenu) => {
@@ -87,9 +87,7 @@ const getFileMenu = () => {
     },
     {
       label: 'Sync Snippets',
-      click: () => {
-        ipcMain.emit(EVENT_SYNC_SNIPPETS)
-      },
+      click: () => getOrCreateMainWindow().webContents.send(EVENT_SYNC_SNIPPETS),
     },
   ];
 

@@ -3,7 +3,6 @@ import { getOrCreateMainWindow } from './window';
 import { setupAboutPanel } from './about-panel';
 import { setupMenu } from './menu';
 import { setupUpdates } from './update';
-import { EVENT_SYNC_SNIPPETS } from '../renderer/constants';
 
 async function handleFileOpen() {
   const { canceled, filePaths } = await dialog.showOpenDialog({
@@ -47,10 +46,3 @@ app.on('window-all-closed', () => {
     app.quit();
   }
 });
-
-
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.
-ipcMain.on(EVENT_SYNC_SNIPPETS, () => {
-  getOrCreateMainWindow().webContents.send(EVENT_SYNC_SNIPPETS);
-})

@@ -29,7 +29,6 @@
 import './app.jsx';
 import './index.css';
 
-// import { ipcRenderer } from 'electron';
 import {
     EVENT_CHECK_DEPENDENCIES,
     EVENT_DEPENDENCIES_CHECKED,
@@ -255,20 +254,11 @@ const loadSnippets = async () => {
 //     triggerEvent(EVENT_DIFF_COMMITTED, { error: stderr })
 // }
 
-// const syncSnippets = async () => {
-//     let stdout, stderr
-//     if (!dependencySelected()) {
-//         return
-//     }
-
-//     if (dockerDependencySelected()) {
-//         ({ stdout, stderr } = await runDockerCommand('docker pull xinminlabs/awesomecode-synvert-ruby'))
-//     } else {
-//         ({ stdout, stderr } = await runCommand('gem install synvert synvert-core && synvert-ruby --sync'))
-//     }
-//     // ignore stderr, always load snippets
-//     return await loadSnippets()
-// }
+const syncSnippets = async () => {
+    await window.electronAPI.syncSnippets()
+    // ignore stderr, always load snippets
+    await loadSnippets()
+}
 
 // window.addEventListener(EVENT_CHECK_DEPENDENCIES, checkDependencies)
 window.addEventListener(EVENT_LOAD_SNIPPETS, loadSnippets)
@@ -278,12 +268,8 @@ window.addEventListener(EVENT_LOAD_SNIPPETS, loadSnippets)
 // window.addEventListener(EVENT_SHOW_SNIPPET, showSnippet)
 // window.addEventListener(EVENT_SHOW_SNIPPET_DIFF, showSnippetDiff)
 // window.addEventListener(EVENT_COMMIT_DIFF, commitDiff)
-// window.addEventListener(EVENT_SYNC_SNIPPETS, syncSnippets)
 
-// // sync snippets from menu
-// ipcRenderer.on(EVENT_SYNC_SNIPPETS, () => {
-//     triggerEvent(EVENT_SYNC_SNIPPETS)
-// })
+window.electronAPI.onSyncSnippets(syncSnippets);
 
-// // sync snippets every time app starts
-// setTimeout(syncSnippets, 1000)
+// sync snippets every time app starts
+setTimeout(syncSnippets, 1000)
