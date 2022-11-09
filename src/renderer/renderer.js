@@ -30,26 +30,26 @@ import './app.jsx';
 import './index.css';
 
 // import { ipcRenderer } from 'electron';
-// import {
-//     EVENT_CHECK_DEPENDENCIES,
-//     EVENT_DEPENDENCIES_CHECKED,
-//     EVENT_LOAD_SNIPPETS,
-//     EVENT_SNIPPETS_LOADED,
-//     EVENT_RUN_SNIPPET,
-//     EVENT_SNIPPET_RUN,
-//     EVENT_EXECUTE_SNIPPET,
-//     EVENT_EDIT_SNIPPET,
-//     EVENT_SNIPPET_EDIT,
-//     EVENT_SHOW_SNIPPET,
-//     EVENT_SNIPPET_SHOWN,
-//     EVENT_CHECKING_DEPENDENCIES,
-//     EVENT_SHOW_SNIPPET_DIFF,
-//     EVENT_SNIPPET_DIFF_SHOWN,
-//     EVENT_COMMIT_DIFF,
-//     EVENT_DIFF_COMMITTED,
-//     EVENT_SYNC_SNIPPETS,
-// } from './constants';
-// import { log, triggerEvent, dockerDependencySelected, convertSnippetsToStore, dependencySelected } from './utils'
+import {
+    EVENT_CHECK_DEPENDENCIES,
+    EVENT_DEPENDENCIES_CHECKED,
+    EVENT_LOAD_SNIPPETS,
+    EVENT_SNIPPETS_LOADED,
+    EVENT_RUN_SNIPPET,
+    EVENT_SNIPPET_RUN,
+    EVENT_EXECUTE_SNIPPET,
+    EVENT_EDIT_SNIPPET,
+    EVENT_SNIPPET_EDIT,
+    EVENT_SHOW_SNIPPET,
+    EVENT_SNIPPET_SHOWN,
+    EVENT_CHECKING_DEPENDENCIES,
+    EVENT_SHOW_SNIPPET_DIFF,
+    EVENT_SNIPPET_DIFF_SHOWN,
+    EVENT_COMMIT_DIFF,
+    EVENT_DIFF_COMMITTED,
+    EVENT_SYNC_SNIPPETS,
+} from './constants';
+import { log, triggerEvent, convertSnippetsToStore } from './utils'
 
 // import shellescape from 'shell-escape'
 // import util from 'util'
@@ -147,25 +147,20 @@ import './index.css';
 //     }
 // }
 
-// const loadSnippets = async () => {
-//     let stdout, stderr
-//     if (dockerDependencySelected()) {
-//         ({ stdout, stderr } = await runDockerCommand('docker run xinminlabs/awesomecode-synvert-ruby synvert-ruby --list --format json'))
-//     } else {
-//         ({ stdout, stderr } = await runCommand('synvert-ruby --list --format json'))
-//     }
-//     if (stderr) {
-//         triggerEvent(EVENT_SNIPPETS_LOADED, { error: stderr })
-//         return
-//     }
-//     try {
-//         const snippets = JSON.parse(stdout)
-//         const snippetsStore = convertSnippetsToStore(snippets)
-//         triggerEvent(EVENT_SNIPPETS_LOADED, { snippetsStore })
-//     } catch (e) {
-//         triggerEvent(EVENT_SNIPPETS_LOADED, { error: e.message })
-//     }
-// }
+const loadSnippets = async () => {
+    const { stdout, stderr } = await window.electronAPI.loadSnippets();
+    if (stderr) {
+        triggerEvent(EVENT_SNIPPETS_LOADED, { error: stderr })
+        return
+    }
+    try {
+        const snippets = JSON.parse(stdout)
+        const snippetsStore = convertSnippetsToStore(snippets)
+        triggerEvent(EVENT_SNIPPETS_LOADED, { snippetsStore })
+    } catch (e) {
+        triggerEvent(EVENT_SNIPPETS_LOADED, { error: e.message })
+    }
+}
 
 // const runSnippet = async (event) => {
 //     const { detail: { currentSnippetId, path } } = event
@@ -276,7 +271,7 @@ import './index.css';
 // }
 
 // window.addEventListener(EVENT_CHECK_DEPENDENCIES, checkDependencies)
-// window.addEventListener(EVENT_LOAD_SNIPPETS, loadSnippets)
+window.addEventListener(EVENT_LOAD_SNIPPETS, loadSnippets)
 // window.addEventListener(EVENT_RUN_SNIPPET, runSnippet)
 // window.addEventListener(EVENT_EXECUTE_SNIPPET, executeSnippet)
 // window.addEventListener(EVENT_EDIT_SNIPPET, editSnippet)
