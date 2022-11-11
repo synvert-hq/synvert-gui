@@ -55,99 +55,54 @@ import { log, triggerEvent, convertSnippetsToStore } from './utils'
 // const exec = util.promisify(require('child_process').exec)
 // require('fix-path')()
 
-// const isRealError = stderr => stderr && !stderr.startsWith('warning:') && !stderr.startsWith('Cloning into ')
+const isRealError = stderr => stderr && !stderr.startsWith('warning:') && !stderr.startsWith('Cloning into ')
 
-// const runDockerCommand = async (command, { type, id, name } = {}) => {
-//     if (type) {
-//         await new Promise(resolve => setTimeout(resolve, 100));
-//         triggerEvent(type, { id, name, status: 'started' })
-//     }
-//     try {
-//         log({ type: 'runDockerCommand', command })
-//         const { stdout, stderr } = await exec(command)
-//         log({ type: 'runDockerCommand', stdout, stderr })
-//         if (type) {
-//             triggerEvent(type, { id, name, status: isRealError(stderr) ? 'failed' : 'done' })
-//         }
-//         return { stdout, stderr: isRealError(stderr) ? stderr : null }
-//     } catch (e) {
-//         log({ type: 'runDockerCommand error', e })
-//         if (type) {
-//             triggerEvent(type, { id, name, status: 'failed' })
-//         }
-//         return { stdout: null, stderr: e.message }
-//     }
-// }
+const runCommand = async (command, args, { type, id, name } = {}) => {
+    if (type) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+        triggerEvent(type, { id, name, status: 'started' });
+    }
+    try {
+        log({ type: 'runCommand', command });
+        const { stdout, stderr } = await window.electronAPI.runCommand(command, args);
+        log({ type: 'runCommand', stdout, stderr });
+        if (type) {
+            triggerEvent(type, { id, name, status: isRealError(stderr) ? 'failed' : 'done' });
+        }
+        return { stdout, stderr: isRealError(stderr) ? stderr : null };
+    } catch (e) {
+        log({ type: 'runCommand error', e });
+        if (type) {
+            triggerEvent(type, { id, name, status: 'failed' });
+        }
+        return { stdout: null, stderr: e.message };
+    }
+}
 
-// const runCommand = async (command, { type, id, name } = {}) => {
-//     if (type) {
-//         await new Promise(resolve => setTimeout(resolve, 100));
-//         triggerEvent(type, { id, name, status: 'started' })
-//     }
-//     try {
-//         log({ type: 'runCommand', command })
-//         const { stdout, stderr } = await exec(command)
-//         log({ type: 'runCommand', stdout, stderr })
-//         if (type) {
-//             triggerEvent(type, { id, name, status: isRealError(stderr) ? 'failed' : 'done' })
-//         }
-//         return { stdout, stderr: isRealError(stderr) ? stderr : null }
-//     } catch (e) {
-//         log({ type: 'runCommand error', e })
-//         if (type) {
-//             triggerEvent(type, { id, name, status: 'failed' })
-//         }
-//         return { stdout: null, stderr: e.message }
-//     }
-// }
-
-// const checkDependencies = async () => {
-//     let stdout, stderr
-//     if (dockerDependencySelected()) {
-//         ({ stdout, stderr } = await runCommand('docker -v', { type: EVENT_CHECKING_DEPENDENCIES, id: 1, name: 'Checking docker daemon...' }))
-//         if (stderr) {
-//             triggerEvent(EVENT_CHECKING_DEPENDENCIES, { error: stderr })
-//             return
-//         }
-//         ({ stdout, stderr } = await runDockerCommand('docker image inspect xinminlabs/awesomecode-synvert-ruby', { type: EVENT_CHECKING_DEPENDENCIES, id: 2, name: 'Checking docker image xinminlabs/awesomecode-synvert-ruby...'}))
-//         if (!stderr) {
-//             triggerEvent(EVENT_DEPENDENCIES_CHECKED, { error: stderr })
-//             return
-//         }
-//         ({ stdout, stderr } = await runDockerCommand('docker pull xinminlabs/awesomecode-synvert-ruby', { type: EVENT_CHECKING_DEPENDENCIES, id: 3, name: 'Pulling docker image xinminlabs/awesomecode-synvert-ruby...' }))
-//         if (!stderr) {
-//             triggerEvent(EVENT_DEPENDENCIES_CHECKED, { error: stderr })
-//             return
-//         }
-//         triggerEvent(EVENT_DEPENDENCIES_CHECKED, { error: stderr })
-//     } else {
-//         ({ stdout, stderr } = await runCommand('ruby -v', { type: EVENT_CHECKING_DEPENDENCIES, id: 1, name: 'Checking ruby version...' }))
-//         if (stderr) {
-//             triggerEvent(EVENT_DEPENDENCIES_CHECKED, { error: stderr })
-//             return
-//         }
-//         ({ stdout, stderr } = await runCommand('synvert-ruby --version', { type: EVENT_CHECKING_DEPENDENCIES, id: 2, name: 'Checking synvert version...' }))
-//         if (isRealError(stderr)) {
-//             ({ stdout, stderr } = await runCommand('gem install synvert', { type: EVENT_CHECKING_DEPENDENCIES, id: 3, name: 'Installing synvert gem...' }))
-//             if (stderr) {
-//                 triggerEvent(EVENT_DEPENDENCIES_CHECKED, { error: stderr })
-//                 return
-//             }
-//         }
-//         ({ stdout, stderr } = await runCommand('test -d ~/.synvert-ruby/.git || exit 1', { type: EVENT_CHECKING_DEPENDENCIES, id: 4, name: 'Checking synvert snippets...'}))
-//         if (stderr) {
-//             ({ stdout, stderr } = await runCommand('synvert-ruby --sync', { type: EVENT_CHECKING_DEPENDENCIES, id: 5, name: 'Syncing synvert snippets...' }))
-//             if (isRealError(stderr)) {
-//                 triggerEvent(EVENT_DEPENDENCIES_CHECKED, { error: stderr })
-//                 return
-//             }
-//         }
-//         triggerEvent(EVENT_DEPENDENCIES_CHECKED)
-//     }
-// }
+const checkDependencies = async () => {
+    let { stdout, stderr } = await runCommand('ruby', ['--version'], { type: EVENT_CHECKING_DEPENDENCIES, id: 1, name: 'Checking ruby version...' });
+    if (stderr) {
+        triggerEvent(EVENT_DEPENDENCIES_CHECKED, { error: stderr })
+        return
+    }
+    ({ stdout, stderr } = await runCommand('synvert-ruby', ['--version'], { type: EVENT_CHECKING_DEPENDENCIES, id: 2, name: 'Checking synvert version...' }))
+    if (isRealError(stderr)) {
+        ({ stdout, stderr } = await runCommand('gem', ['install', 'synvert'], { type: EVENT_CHECKING_DEPENDENCIES, id: 3, name: 'Installing synvert gem...' }))
+        if (stderr) {
+            triggerEvent(EVENT_DEPENDENCIES_CHECKED, { error: stderr })
+            return
+        }
+    }
+    ({ stdout, stderr } = await runCommand('synvert-ruby', ['--sync'], { type: EVENT_CHECKING_DEPENDENCIES, id: 5, name: 'Syncing synvert snippets...' }))
+    if (isRealError(stderr)) {
+        triggerEvent(EVENT_DEPENDENCIES_CHECKED, { error: stderr })
+        return
+    }
+    triggerEvent(EVENT_DEPENDENCIES_CHECKED)
+}
 
 const loadSnippets = async () => {
-    const { stdout, stderr } = await window.electronAPI.loadSnippets();
+    const { stdout, stderr } = await window.electronAPI.runCommand('synvert-ruby', ['--list', '--format', 'json']);
     if (stderr) {
         triggerEvent(EVENT_SNIPPETS_LOADED, { error: stderr })
         return
@@ -255,12 +210,12 @@ const loadSnippets = async () => {
 // }
 
 const syncSnippets = async () => {
-    await window.electronAPI.syncSnippets()
+    await window.electronAPI.runCommand('synvert-ruby', ['--sync']);
     // ignore stderr, always load snippets
     await loadSnippets()
 }
 
-// window.addEventListener(EVENT_CHECK_DEPENDENCIES, checkDependencies)
+window.addEventListener(EVENT_CHECK_DEPENDENCIES, checkDependencies)
 window.addEventListener(EVENT_LOAD_SNIPPETS, loadSnippets)
 // window.addEventListener(EVENT_RUN_SNIPPET, runSnippet)
 // window.addEventListener(EVENT_EXECUTE_SNIPPET, executeSnippet)
