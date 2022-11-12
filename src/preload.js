@@ -31,9 +31,13 @@ contextBridge.exposeInMainWorld('electronAPI', {
   setPreferences: (preferences) => ipcRenderer.sendSync("setPreferences", preferences),
   openFile: () => ipcRenderer.invoke('dialog:openFile'),
 
-  runCommand: async (command, args) => {
+  runCommand: async (command, args, input = null) => {
     const { output, error } = await new Promise((resolve) => {
       const child = rubySpawn(command, args, { encoding: 'utf8' }, true);
+      if (child.stdin && input) {
+        child.stdin.write(input);
+        child.stdin.end();
+      }
       let output = '';
       if (child.stdout) {
         child.stdout.on('data', data => {
@@ -50,10 +54,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
         return resolve({ output, error });
       });
     });
-    return { stdout: output, stderr: error };
-  },
-  checkRubyVersion: async () => {
-    const { output, error } = await runCommand('ruby', ['-v'])
     return { stdout: output, stderr: error };
   },
 

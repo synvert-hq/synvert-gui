@@ -29,6 +29,8 @@
 import './app.jsx';
 import './index.css';
 
+import shellescape from 'shell-escape'
+
 import {
     EVENT_CHECK_DEPENDENCIES,
     EVENT_DEPENDENCIES_CHECKED,
@@ -46,14 +48,8 @@ import {
     EVENT_SNIPPET_DIFF_SHOWN,
     EVENT_COMMIT_DIFF,
     EVENT_DIFF_COMMITTED,
-    EVENT_SYNC_SNIPPETS,
 } from './constants';
 import { log, triggerEvent, convertSnippetsToStore } from './utils'
-
-// import shellescape from 'shell-escape'
-// import util from 'util'
-// const exec = util.promisify(require('child_process').exec)
-// require('fix-path')()
 
 const isRealError = stderr => stderr && !stderr.startsWith('warning:') && !stderr.startsWith('Cloning into ')
 
@@ -116,98 +112,64 @@ const loadSnippets = async () => {
     }
 }
 
-// const runSnippet = async (event) => {
-//     const { detail: { currentSnippetId, path } } = event
-//     let stdout, stderr
-//     if (dockerDependencySelected()) {
-//         ({ stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app xinminlabs/awesomecode-synvert-ruby synvert-ruby --run ${currentSnippetId} --format json /app`))
-//     } else {
-//         ({ stdout, stderr } = await runCommand(`synvert-ruby --run ${currentSnippetId} --format json ${path}`))
-//     }
-//     if (stderr) {
-//         triggerEvent(EVENT_SNIPPET_RUN, { error: 'Failed to run snippet!' })
-//         return
-//     }
-//     try {
-//         const output = JSON.parse(stdout)
-//         triggerEvent(EVENT_SNIPPET_RUN, { affectedFiles: output.affected_files })
-//     } catch(e) {
-//         triggerEvent(EVENT_SNIPPET_RUN, { error: e.message })
-//     }
-// }
+const runSnippet = async (event) => {
+    const { detail: { currentSnippetId, path } } = event
+    const { stdout, stderr } = await window.electronAPI.runCommand('synvert-ruby', ['--run', currentSnippetId, '--format', 'json', path]);
+    if (stderr) {
+        triggerEvent(EVENT_SNIPPET_RUN, { error: 'Failed to run snippet!' })
+        return
+    }
+    try {
+        const output = JSON.parse(stdout)
+        triggerEvent(EVENT_SNIPPET_RUN, { affectedFiles: output.affected_files })
+    } catch(e) {
+        triggerEvent(EVENT_SNIPPET_RUN, { error: e.message })
+    }
+}
 
-// const echoExecuteSnippet = customSnippet => {
-//     const executeSnippet = customSnippet.replace(/Synvert::Rewriter.new.*do/m, 'Synvert::Rewriter.execute do')
-//      return shellescape(['echo', executeSnippet])
-// }
+const echoExecuteSnippet = customSnippet => {
+    const executeSnippet = customSnippet.replace(/Synvert::Rewriter.new.*do/m, 'Synvert::Rewriter.execute do')
+    return shellescape(['echo', executeSnippet])
+}
 
-// const executeSnippet = async (event) => {
-//     const { detail: { customSnippet, path } } = event
-//     let stdout, stderr
-//     if (dockerDependencySelected()) {
-//         ({ stdout, stderr } = await runDockerCommand(`${echoExecuteSnippet(customSnippet)} | docker run -i -v ${path}:/app xinminlabs/awesomecode-synvert-ruby synvert-ruby --execute --format json /app`))
-//     } else {
-//         ({ stdout, stderr } = await runCommand(`${echoExecuteSnippet(customSnippet)} | synvert-ruby --execute --format json ${path}`))
-//     }
-//     if (stderr) {
-//         triggerEvent(EVENT_SNIPPET_RUN, { error: 'Failed to execute snippet!' })
-//         return
-//     }
-//     try {
-//         const output = JSON.parse(stdout)
-//         triggerEvent(EVENT_SNIPPET_RUN, { affectedFiles: output.affected_files })
-//     } catch(e) {
-//         triggerEvent(EVENT_SNIPPET_RUN, { error: e.message })
-//     }
-// }
+const executeSnippet = async (event) => {
+    const { detail: { customSnippet, path } } = event
+    const { stdout, stderr } = await runCommand('synvert-ruby', ['--execute', '--format', 'json', 'path'], echoExecuteSnippet(customSnippet));
+    if (stderr) {
+        triggerEvent(EVENT_SNIPPET_RUN, { error: 'Failed to execute snippet!' })
+        return
+    }
+    try {
+        const output = JSON.parse(stdout)
+        triggerEvent(EVENT_SNIPPET_RUN, { affectedFiles: output.affected_files })
+    } catch(e) {
+        triggerEvent(EVENT_SNIPPET_RUN, { error: e.message })
+    }
+}
 
-// const showSnippet = async (event) => {
-//     const { detail: { currentSnippetId } } = event
-//     let stdout, stderr
-//     if (dockerDependencySelected()) {
-//         ({ stdout, stderr } = await runDockerCommand(`docker run xinminlabs/awesomecode-synvert-ruby synvert-ruby --show ${currentSnippetId}`))
-//     } else {
-//         ({ stdout, stderr } = await runCommand(`synvert-ruby --show ${currentSnippetId}`))
-//     }
-//     triggerEvent(EVENT_SNIPPET_SHOWN, { code: stdout, error: stderr })
-// }
+const showSnippet = async (event) => {
+    const { detail: { currentSnippetId } } = event
+    const { stdout, stderr } = await window.electronAPI.runCommand('synvert-ruby', ['--show', currentSnippetId])
+    triggerEvent(EVENT_SNIPPET_SHOWN, { code: stdout, error: stderr })
+}
 
-// const editSnippet = async (event) => {
-//     const { detail: { currentSnippetId } } = event
-//     let stdout, stderr
-//     if (dockerDependencySelected()) {
-//         ({ stdout, stderr } = await runDockerCommand(`docker run xinminlabs/awesomecode-synvert-ruby synvert-ruby --show ${currentSnippetId}`))
-//     } else {
-//         ({ stdout, stderr } = await runCommand(`synvert-ruby --show ${currentSnippetId}`))
-//     }
-//     triggerEvent(EVENT_SNIPPET_EDIT, { code: stdout, error: stderr })
-// }
+const editSnippet = async (event) => {
+    const { detail: { currentSnippetId } } = event
+    const { stdout, stderr } = await window.electronAPI.runCommand('synvert-ruby', ['--show', currentSnippetId])
+    triggerEvent(EVENT_SNIPPET_EDIT, { code: stdout, error: stderr })
+}
 
-// const showSnippetDiff = async (event) => {
-//     const { detail: { path } } = event
-//     let stdout, stderr
-//     if (dockerDependencySelected()) {
-//         ({ stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app xinminlabs/awesomecode-synvert-ruby /bin/sh -c "cd /app && git add .; git diff --cached --ignore-space-at-eol; git reset ."`))
-//     } else {
-//         ({ stdout, stderr } = await runCommand(`cd ${path}; git add .; git diff --cached --ignore-space-at-eol; git reset .`))
-//     }
-//     triggerEvent(EVENT_SNIPPET_DIFF_SHOWN, { diff: stdout, error: stderr })
-// }
+const showSnippetDiff = async (event) => {
+    const { detail: { path } } = event
+    const { stdout, stderr } = await window.electronAPI.runCommand(`cd ${path}; git add .; git diff --cached --ignore-space-at-eol; git reset .`);
+    triggerEvent(EVENT_SNIPPET_DIFF_SHOWN, { diff: stdout, error: stderr })
+}
 
-// const commitDiff = async (event) => {
-//     const { detail: { path, commitMessage } } = event
-//     let stdout, stderr
-//     if (dockerDependencySelected()) {
-//         let gitConfigPath = '~/.gitconfig'
-//         if (process.platform === 'win32') {
-//             gitConfigPath = '%USERPROFILE%\\.gitconfig'
-//         }
-//         ({ stdout, stderr } = await runDockerCommand(`docker run -v ${path}:/app -v ${gitConfigPath}:/etc/gitconfig xinminlabs/awesomecode-synvert-ruby /bin/sh -c "cd /app && git add . && git commit -m ${`\\"${commitMessage.replace(/"/g, '\\\\\\"')}\\"`} --no-verify"`))
-//     } else {
-//         ({ stdout, stderr } = await runCommand(`cd ${path} && git add . && git commit -m "${commitMessage.replace(/"/g, '\\"')}" --no-verify`))
-//     }
-//     triggerEvent(EVENT_DIFF_COMMITTED, { error: stderr })
-// }
+const commitDiff = async (event) => {
+    const { detail: { path, commitMessage } } = event
+    const { stdout, stderr } = await window.electronAPI.runCommand(`cd ${path} && git add . && git commit -m "${commitMessage.replace(/"/g, '\\"')}" --no-verify`);
+    triggerEvent(EVENT_DIFF_COMMITTED, { error: stderr })
+}
 
 const syncSnippets = async () => {
     await window.electronAPI.runCommand('synvert-ruby', ['--sync']);
@@ -217,12 +179,12 @@ const syncSnippets = async () => {
 
 window.addEventListener(EVENT_CHECK_DEPENDENCIES, checkDependencies)
 window.addEventListener(EVENT_LOAD_SNIPPETS, loadSnippets)
-// window.addEventListener(EVENT_RUN_SNIPPET, runSnippet)
-// window.addEventListener(EVENT_EXECUTE_SNIPPET, executeSnippet)
-// window.addEventListener(EVENT_EDIT_SNIPPET, editSnippet)
-// window.addEventListener(EVENT_SHOW_SNIPPET, showSnippet)
-// window.addEventListener(EVENT_SHOW_SNIPPET_DIFF, showSnippetDiff)
-// window.addEventListener(EVENT_COMMIT_DIFF, commitDiff)
+window.addEventListener(EVENT_RUN_SNIPPET, runSnippet)
+window.addEventListener(EVENT_EXECUTE_SNIPPET, executeSnippet)
+window.addEventListener(EVENT_EDIT_SNIPPET, editSnippet)
+window.addEventListener(EVENT_SHOW_SNIPPET, showSnippet)
+window.addEventListener(EVENT_SHOW_SNIPPET_DIFF, showSnippetDiff)
+window.addEventListener(EVENT_COMMIT_DIFF, commitDiff)
 
 window.electronAPI.onSyncSnippets(syncSnippets);
 
