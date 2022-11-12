@@ -12,16 +12,6 @@ const getPreference = (key) => {
     return preferences && preferences.settings && preferences.settings[key]
 }
 
-const PREFERENCE_DEPENDENCY = 'dependency'
-export const DOCKER_DEPENDENCY = 'docker'
-export const NATIVE_DEPENDENCY = 'native'
-
-export const selectDockerDependency = () => savePreference(PREFERENCE_DEPENDENCY, DOCKER_DEPENDENCY)
-export const selectNativeDependency = () => savePreference(PREFERENCE_DEPENDENCY, NATIVE_DEPENDENCY)
-export const dependencySelected = () => !!getPreference(PREFERENCE_DEPENDENCY)
-export const dockerDependencySelected = () => getPreference(PREFERENCE_DEPENDENCY) === DOCKER_DEPENDENCY
-export const nativeDependencySelected = () => getPreference(PREFERENCE_DEPENDENCY) === NATIVE_DEPENDENCY
-
 const PREFERENCE_SHOW_DIFFS = 'show_diffs'
 export const SHOW_DIFFS_ALWAYS_SHOW = 'always_show'
 export const SHOW_DIFFS_NEVER_SHOW = 'never_show'

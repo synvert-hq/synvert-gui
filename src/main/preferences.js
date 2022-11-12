@@ -23,15 +23,6 @@ const preferences = new ElectronPreferences({
                         label: 'Settings',
                         fields: [
                             {
-                                label: 'Dependency',
-                                key: 'dependency',
-                                type: 'radio',
-                                options: [
-                                    { label: 'Docker (Recommended)', value: 'docker' },
-                                    { label: 'Native', value: 'native' }
-                                ]
-                            },
-                            {
                                 label: 'Show diffs after running a snippet',
                                 key: 'show_diffs',
                                 type: 'radio',
