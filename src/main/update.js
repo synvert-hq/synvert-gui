@@ -4,7 +4,7 @@ import { app, autoUpdater, dialog } from 'electron'
 const version = app.getVersion();
 const platform = os.platform() + '_' + os.arch();  // usually returns darwin_64
 
-const updaterFeedURL = 'https://download-synvert.xinminlabs.com/update/'+platform+'/'+version;
+const updaterFeedURL = 'https://download.synvert.net/update/'+platform+'/'+version;
 
 export const setupUpdates = () => {
   const checkOS = process.platform === 'darwin' || process.platform === 'win32';
