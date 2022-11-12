@@ -53,14 +53,14 @@ import { log, triggerEvent, convertSnippetsToStore } from './utils'
 
 const isRealError = stderr => stderr && !stderr.startsWith('warning:') && !stderr.startsWith('Cloning into ')
 
-const runCommand = async (command, args, { type, id, name } = {}) => {
+const runRubyCommand = async (command, args, { type, id, name } = {}) => {
     if (type) {
         await new Promise(resolve => setTimeout(resolve, 100));
         triggerEvent(type, { id, name, status: 'started' });
     }
     try {
         log({ type: 'runCommand', command });
-        const { stdout, stderr } = await window.electronAPI.runCommand(command, args);
+        const { stdout, stderr } = await window.electronAPI.runRubyCommand(command, args);
         log({ type: 'runCommand', stdout, stderr });
         if (type) {
             triggerEvent(type, { id, name, status: isRealError(stderr) ? 'failed' : 'done' });
@@ -76,20 +76,20 @@ const runCommand = async (command, args, { type, id, name } = {}) => {
 }
 
 const checkDependencies = async () => {
-    let { stdout, stderr } = await runCommand('ruby', ['--version'], { type: EVENT_CHECKING_DEPENDENCIES, id: 1, name: 'Checking ruby version...' });
+    let { stdout, stderr } = await runRubyCommand('ruby', ['--version'], { type: EVENT_CHECKING_DEPENDENCIES, id: 1, name: 'Checking ruby version...' });
     if (stderr) {
         triggerEvent(EVENT_DEPENDENCIES_CHECKED, { error: stderr })
         return
     }
-    ({ stdout, stderr } = await runCommand('synvert-ruby', ['--version'], { type: EVENT_CHECKING_DEPENDENCIES, id: 2, name: 'Checking synvert version...' }))
+    ({ stdout, stderr } = await runRubyCommand('synvert-ruby', ['--version'], { type: EVENT_CHECKING_DEPENDENCIES, id: 2, name: 'Checking synvert version...' }))
     if (isRealError(stderr)) {
-        ({ stdout, stderr } = await runCommand('gem', ['install', 'synvert'], { type: EVENT_CHECKING_DEPENDENCIES, id: 3, name: 'Installing synvert gem...' }))
+        ({ stdout, stderr } = await runRubyCommand('gem', ['install', 'synvert'], { type: EVENT_CHECKING_DEPENDENCIES, id: 3, name: 'Installing synvert gem...' }))
         if (stderr) {
             triggerEvent(EVENT_DEPENDENCIES_CHECKED, { error: stderr })
             return
         }
     }
-    ({ stdout, stderr } = await runCommand('synvert-ruby', ['--sync'], { type: EVENT_CHECKING_DEPENDENCIES, id: 5, name: 'Syncing synvert snippets...' }))
+    ({ stdout, stderr } = await runRubyCommand('synvert-ruby', ['--sync'], { type: EVENT_CHECKING_DEPENDENCIES, id: 5, name: 'Syncing synvert snippets...' }))
     if (isRealError(stderr)) {
         triggerEvent(EVENT_DEPENDENCIES_CHECKED, { error: stderr })
         return
@@ -98,7 +98,7 @@ const checkDependencies = async () => {
 }
 
 const loadSnippets = async () => {
-    const { stdout, stderr } = await window.electronAPI.runCommand('synvert-ruby', ['--list', '--format', 'json']);
+    const { stdout, stderr } = await window.electronAPI.runRubyCommand('synvert-ruby', ['--list', '--format', 'json']);
     if (stderr) {
         triggerEvent(EVENT_SNIPPETS_LOADED, { error: stderr })
         return
@@ -114,7 +114,7 @@ const loadSnippets = async () => {
 
 const runSnippet = async (event) => {
     const { detail: { currentSnippetId, path } } = event
-    const { stdout, stderr } = await window.electronAPI.runCommand('synvert-ruby', ['--run', currentSnippetId, '--format', 'json', path]);
+    const { stdout, stderr } = await window.electronAPI.runRubyCommand('synvert-ruby', ['--run', currentSnippetId, '--format', 'json', path]);
     if (stderr) {
         triggerEvent(EVENT_SNIPPET_RUN, { error: 'Failed to run snippet!' })
         return
@@ -134,7 +134,7 @@ const echoExecuteSnippet = customSnippet => {
 
 const executeSnippet = async (event) => {
     const { detail: { customSnippet, path } } = event
-    const { stdout, stderr } = await runCommand('synvert-ruby', ['--execute', '--format', 'json', 'path'], echoExecuteSnippet(customSnippet));
+    const { stdout, stderr } = await runRubyCommand('synvert-ruby', ['--execute', '--format', 'json', 'path'], echoExecuteSnippet(customSnippet));
     if (stderr) {
         triggerEvent(EVENT_SNIPPET_RUN, { error: 'Failed to execute snippet!' })
         return
@@ -149,13 +149,13 @@ const executeSnippet = async (event) => {
 
 const showSnippet = async (event) => {
     const { detail: { currentSnippetId } } = event
-    const { stdout, stderr } = await window.electronAPI.runCommand('synvert-ruby', ['--show', currentSnippetId])
+    const { stdout, stderr } = await window.electronAPI.runRubyCommand('synvert-ruby', ['--show', currentSnippetId])
     triggerEvent(EVENT_SNIPPET_SHOWN, { code: stdout, error: stderr })
 }
 
 const editSnippet = async (event) => {
     const { detail: { currentSnippetId } } = event
-    const { stdout, stderr } = await window.electronAPI.runCommand('synvert-ruby', ['--show', currentSnippetId])
+    const { stdout, stderr } = await window.electronAPI.runRubyCommand('synvert-ruby', ['--show', currentSnippetId])
     triggerEvent(EVENT_SNIPPET_EDIT, { code: stdout, error: stderr })
 }
 
@@ -172,7 +172,7 @@ const commitDiff = async (event) => {
 }
 
 const syncSnippets = async () => {
-    await window.electronAPI.runCommand('synvert-ruby', ['--sync']);
+    await window.electronAPI.runRubyCommand('synvert-ruby', ['--sync']);
     // ignore stderr, always load snippets
     await loadSnippets()
 }
