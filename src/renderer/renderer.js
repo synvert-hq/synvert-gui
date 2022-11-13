@@ -51,7 +51,8 @@ import {
 } from './constants';
 import { log, triggerEvent, convertSnippetsToStore } from './utils'
 
-const isRealError = stderr => stderr && !stderr.startsWith('warning:') && !stderr.startsWith('Cloning into ')
+const isRealError = stderr => stderr && !stderr.startsWith('warning:') && !stderr.startsWith('Cloning into ') &&
+  !stderr.startsWith("error: pathspec '.' did not match any file(s) known to git")
 
 const runRubyCommand = async (command, args, { type, id, name } = {}) => {
     if (type) {
