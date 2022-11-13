@@ -12,6 +12,11 @@ const preferences = new ElectronPreferences({
     browserWindowOverrides: {
         title: 'Synvert GUI Preferences',
     },
+    defaults: {
+        settings: {
+            show_diffs: 'ask_me',
+        }
+    },
     sections: [
         {
             id: 'settings',
