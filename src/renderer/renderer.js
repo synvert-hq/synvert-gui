@@ -60,7 +60,7 @@ const runRubyCommand = async (command, args, { type, id, name } = {}) => {
         triggerEvent(type, { id, name, status: 'started' });
     }
     try {
-        log({ type: 'runCommand', command });
+        log({ type: 'runCommand', command: [command].concat(args).join(' ') });
         const { stdout, stderr } = await window.electronAPI.runRubyCommand(command, args);
         log({ type: 'runCommand', stdout, stderr });
         if (type) {
