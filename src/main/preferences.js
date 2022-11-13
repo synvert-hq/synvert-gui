@@ -13,11 +13,32 @@ const preferences = new ElectronPreferences({
         title: 'Synvert GUI Preferences',
     },
     defaults: {
+        ruby: {
+            number_of_workers: 4,
+        },
         settings: {
             show_diffs: 'ask_me',
         }
     },
     sections: [
+        {
+            id: 'ruby',
+            label: 'Ruby',
+            form: {
+                groups: [
+                    {
+                        label: 'Ruby',
+                        fields: [
+                            {
+                                label: 'Number of workers to run in parallel',
+                                key: 'number_of_workers',
+                                type: 'number',
+                            }
+                        ]
+                    },
+                ]
+            }
+        },
         {
             id: 'settings',
             label: 'Settings',
