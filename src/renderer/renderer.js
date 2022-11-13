@@ -99,7 +99,7 @@ const checkDependencies = async () => {
 }
 
 const loadSnippets = async () => {
-    const { stdout, stderr } = await window.electronAPI.runRubyCommand('synvert-ruby', ['--list', '--format', 'json']);
+    const { stdout, stderr } = await runRubyCommand('synvert-ruby', ['--list', '--format', 'json']);
     if (stderr) {
         triggerEvent(EVENT_SNIPPETS_LOADED, { error: stderr })
         return
@@ -115,7 +115,7 @@ const loadSnippets = async () => {
 
 const runSnippet = async (event) => {
     const { detail: { currentSnippetId, path } } = event
-    const { stdout, stderr } = await window.electronAPI.runRubyCommand('synvert-ruby', ['--run', currentSnippetId, '--format', 'json', path]);
+    const { stdout, stderr } = await runRubyCommand('synvert-ruby', ['--run', currentSnippetId, '--format', 'json', path]);
     if (stderr) {
         triggerEvent(EVENT_SNIPPET_RUN, { error: 'Failed to run snippet!' })
         return
@@ -150,13 +150,13 @@ const executeSnippet = async (event) => {
 
 const showSnippet = async (event) => {
     const { detail: { currentSnippetId } } = event
-    const { stdout, stderr } = await window.electronAPI.runRubyCommand('synvert-ruby', ['--show', currentSnippetId])
+    const { stdout, stderr } = await runRubyCommand('synvert-ruby', ['--show', currentSnippetId])
     triggerEvent(EVENT_SNIPPET_SHOWN, { code: stdout, error: stderr })
 }
 
 const editSnippet = async (event) => {
     const { detail: { currentSnippetId } } = event
-    const { stdout, stderr } = await window.electronAPI.runRubyCommand('synvert-ruby', ['--show', currentSnippetId])
+    const { stdout, stderr } = await runRubyCommand('synvert-ruby', ['--show', currentSnippetId])
     triggerEvent(EVENT_SNIPPET_EDIT, { code: stdout, error: stderr })
 }
 
@@ -173,7 +173,7 @@ const commitDiff = async (event) => {
 }
 
 const syncSnippets = async () => {
-    await window.electronAPI.runRubyCommand('synvert-ruby', ['--sync']);
+    await runRubyCommand('synvert-ruby', ['--sync']);
     // ignore stderr, always load snippets
     await loadSnippets()
 }
