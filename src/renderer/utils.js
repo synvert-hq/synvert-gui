@@ -1,29 +1,27 @@
-const savePreference = (key, value) => {
+const savePreference = (section, key, value) => {
     const preferences = window.electronAPI.getPreferences()
-    if (!preferences.settings) {
-        preferences.settings = {}
-    }
-    preferences.settings[key] = value
-    electronAPI.setPreferences(preferences)
+    preferences[section][key] = value
+    window.electronAPI.setPreferences(preferences)
 }
 
-const getPreference = (key) => {
+const getPreference = (section, key) => {
     const preferences = window.electronAPI.getPreferences()
-    return preferences && preferences.settings && preferences.settings[key]
+    return preferences[section][key]
 }
 
-const PREFERENCE_SHOW_DIFFS = 'show_diffs'
+const SETTINGS_SECTION = 'settings'
+const SETTINGS_SHOW_DIFFS = 'show_diffs'
 export const SHOW_DIFFS_ALWAYS_SHOW = 'always_show'
 export const SHOW_DIFFS_NEVER_SHOW = 'never_show'
 export const SHOW_DIFFS_ASK_ME = 'ask_me'
 
-export const selectShowDiffsAlwaysShow = () => savePreference(PREFERENCE_SHOW_DIFFS, SHOW_DIFFS_ALWAYS_SHOW)
-export const selectShowDiffsNeverShow = () => savePreference(PREFERENCE_SHOW_DIFFS, SHOW_DIFFS_NEVER_SHOW)
-export const selectShowDiffsAskMe = () => savePreference(PREFERENCE_SHOW_DIFFS, SHOW_DIFFS_ASK_ME)
-export const showDiffsSelected = () => !!getPreference(PREFERENCE_SHOW_DIFFS)
-export const showDiffsAlwaysShowSelected = () => getPreference(PREFERENCE_SHOW_DIFFS, SHOW_DIFFS_ALWAYS_SHOW)
-export const showDiffsNeverShowSelected = () => getPreference(PREFERENCE_SHOW_DIFFS, SHOW_DIFFS_NEVER_SHOW)
-export const showDiffsAskMeSelected = () => getPreference(PREFERENCE_SHOW_DIFFS, SHOW_DIFFS_ASK_ME)
+export const selectShowDiffsAlwaysShow = () => savePreference(SETTINGS_SECTION, SETTINGS_SHOW_DIFFS, SHOW_DIFFS_ALWAYS_SHOW)
+export const selectShowDiffsNeverShow = () => savePreference(SETTINGS_SECTION, SETTINGS_SHOW_DIFFS, SHOW_DIFFS_NEVER_SHOW)
+export const selectShowDiffsAskMe = () => savePreference(SETTINGS_SECTION, SETTINGS_SHOW_DIFFS, SHOW_DIFFS_ASK_ME)
+export const showDiffsSelected = () => !!getPreference(SETTINGS_SECTION, SETTINGS_SHOW_DIFFS)
+export const showDiffsAlwaysShowSelected = () => getPreference(SETTINGS_SECTION, SETTINGS_SHOW_DIFFS) === SHOW_DIFFS_ALWAYS_SHOW
+export const showDiffsNeverShowSelected = () => getPreference(SETTINGS_SECTION, SETTINGS_SHOW_DIFFS) === SHOW_DIFFS_NEVER_SHOW
+export const showDiffsAskMeSelected = () => getPreference(SETTINGS_SECTION, SETTINGS_SHOW_DIFFS) === SHOW_DIFFS_ASK_ME
 
 export const convertSnippetsToStore = (snippets) =>
     snippets.reduce(
