@@ -30,6 +30,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
           error += data;
         });
       }
+      child.on('error', (e) => {
+        return resolve({ error: e.message });
+      });
       child.on('exit', () => {
         return resolve({ output, error });
       });
