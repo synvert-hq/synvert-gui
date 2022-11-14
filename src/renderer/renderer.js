@@ -29,8 +29,6 @@
 import './app.jsx';
 import './index.css';
 
-import shellescape from 'shell-escape'
-
 import {
     EVENT_CHECK_DEPENDENCIES,
     EVENT_DEPENDENCIES_CHECKED,
@@ -54,14 +52,14 @@ import { log, triggerEvent, convertSnippetsToStore } from './utils'
 const isRealError = stderr => stderr && !stderr.startsWith('warning:') && !stderr.startsWith('Cloning into ') &&
   !stderr.startsWith("error: pathspec '.' did not match any file(s) known to git")
 
-const runRubyCommand = async (command, args, { type, id, name } = {}) => {
+const runRubyCommand = async (command, args, { input, type, id, name } = {}) => {
     if (type) {
         await new Promise(resolve => setTimeout(resolve, 100));
         triggerEvent(type, { id, name, status: 'started' });
     }
     try {
         log({ type: 'runCommand', command: [command].concat(args).join(' ') });
-        const { stdout, stderr } = await window.electronAPI.runRubyCommand(command, args);
+        const { stdout, stderr } = await window.electronAPI.runRubyCommand(command, args, input);
         log({ type: 'runCommand', stdout, stderr });
         if (type) {
             triggerEvent(type, { id, name, status: isRealError(stderr) ? 'failed' : 'done' });
@@ -128,14 +126,9 @@ const runSnippet = async (event) => {
     }
 }
 
-const echoExecuteSnippet = customSnippet => {
-    const executeSnippet = customSnippet.replace(/Synvert::Rewriter.new.*do/m, 'Synvert::Rewriter.execute do')
-    return shellescape(['echo', executeSnippet])
-}
-
 const executeSnippet = async (event) => {
     const { detail: { customSnippet, path } } = event
-    const { stdout, stderr } = await runRubyCommand('synvert-ruby', ['--execute', '--format', 'json', 'path'], echoExecuteSnippet(customSnippet));
+    const { stdout, stderr } = await runRubyCommand('synvert-ruby', ['--execute', 'run', '--format', 'json', path], { input: customSnippet });
     if (stderr) {
         triggerEvent(EVENT_SNIPPET_RUN, { error: 'Failed to execute snippet!' })
         return
