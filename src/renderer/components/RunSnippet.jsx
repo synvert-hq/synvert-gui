@@ -19,6 +19,7 @@ import {
   showDiffsAlwaysShowSelected,
   selectShowDiffsAlwaysShow,
   selectShowDiffsNeverShow,
+  setWorkingDir,
 } from "../utils";
 import ConfirmDiffModal from "./ConfirmDiffModal";
 import ShowDiffModal from "./ShowDiffModal";
@@ -69,7 +70,7 @@ export default () => {
     const filePath = await window.electronAPI.openFile()
     if (filePath) {
       dispatch({ type: SET_PATH, path: filePath });
-      localStorage.setItem("path", filePath);
+      setWorkingDir(filePath);
     }
   };
 

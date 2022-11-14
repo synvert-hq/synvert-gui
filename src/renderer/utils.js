@@ -1,3 +1,5 @@
+import { SETTINGS_SECTION, SETTINGS_SHOW_DIFFS, SHOW_DIFFS_ALWAYS_SHOW, SHOW_DIFFS_NEVER_SHOW, SHOW_DIFFS_ASK_ME, GENERAL_SECTION, GENERAL_WORKING_DIR } from "../constants"
+
 const savePreference = (section, key, value) => {
     const preferences = window.electronAPI.getPreferences()
     preferences[section][key] = value
@@ -9,12 +11,6 @@ const getPreference = (section, key) => {
     return preferences[section][key]
 }
 
-const SETTINGS_SECTION = 'settings'
-const SETTINGS_SHOW_DIFFS = 'show_diffs'
-export const SHOW_DIFFS_ALWAYS_SHOW = 'always_show'
-export const SHOW_DIFFS_NEVER_SHOW = 'never_show'
-export const SHOW_DIFFS_ASK_ME = 'ask_me'
-
 export const selectShowDiffsAlwaysShow = () => savePreference(SETTINGS_SECTION, SETTINGS_SHOW_DIFFS, SHOW_DIFFS_ALWAYS_SHOW)
 export const selectShowDiffsNeverShow = () => savePreference(SETTINGS_SECTION, SETTINGS_SHOW_DIFFS, SHOW_DIFFS_NEVER_SHOW)
 export const selectShowDiffsAskMe = () => savePreference(SETTINGS_SECTION, SETTINGS_SHOW_DIFFS, SHOW_DIFFS_ASK_ME)
@@ -22,6 +18,9 @@ export const showDiffsSelected = () => !!getPreference(SETTINGS_SECTION, SETTING
 export const showDiffsAlwaysShowSelected = () => getPreference(SETTINGS_SECTION, SETTINGS_SHOW_DIFFS) === SHOW_DIFFS_ALWAYS_SHOW
 export const showDiffsNeverShowSelected = () => getPreference(SETTINGS_SECTION, SETTINGS_SHOW_DIFFS) === SHOW_DIFFS_NEVER_SHOW
 export const showDiffsAskMeSelected = () => getPreference(SETTINGS_SECTION, SETTINGS_SHOW_DIFFS) === SHOW_DIFFS_ASK_ME
+
+export const getWorkingDir = () => getPreference(GENERAL_SECTION, GENERAL_WORKING_DIR);
+export const setWorkingDir = (path) => savePreference(GENERAL_SECTION, GENERAL_WORKING_DIR, path);
 
 export const convertSnippetsToStore = (snippets) =>
     snippets.reduce(

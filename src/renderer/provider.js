@@ -2,9 +2,10 @@ import React, { useReducer } from 'react'
 
 import appReducer from './reducer'
 import AppContext from './context'
+import { getWorkingDir } from './utils'
 
 const initialState = {
-    path: localStorage.getItem('path') || '',
+    path: getWorkingDir() || '',
     snippetsStore: {},
     currentSnippetId: null,
     customSnippet: '',

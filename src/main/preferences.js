@@ -3,6 +3,7 @@ import path from 'path'
 import ElectronPreferences from 'electron-preferences'
 
 import { showDevTools } from './utils'
+import { SETTINGS_SECTION, SETTINGS_SHOW_DIFFS, SHOW_DIFFS_ALWAYS_SHOW, SHOW_DIFFS_NEVER_SHOW, SHOW_DIFFS_ASK_ME, GENERAL_SECTION, GENERAL_WORKING_DIR } from "../constants"
 
 const preferences = new ElectronPreferences({
     dataStore: path.join(app.getPath('userData'), 'preferences.json'),
@@ -16,8 +17,11 @@ const preferences = new ElectronPreferences({
         ruby: {
             number_of_workers: 4,
         },
-        settings: {
-            show_diffs: 'ask_me',
+        [SETTINGS_SECTION]: {
+            [SETTINGS_SHOW_DIFFS]: 'ask_me',
+        },
+        [GENERAL_SECTION]: {
+            [GENERAL_WORKING_DIR]: '',
         }
     },
     sections: [
@@ -40,7 +44,7 @@ const preferences = new ElectronPreferences({
             }
         },
         {
-            id: 'settings',
+            id: SETTINGS_SECTION,
             label: 'Settings',
             icon: 'settings-gear-63',
             form: {
@@ -50,12 +54,12 @@ const preferences = new ElectronPreferences({
                         fields: [
                             {
                                 label: 'Show diffs after running a snippet',
-                                key: 'show_diffs',
+                                key: SETTINGS_SHOW_DIFFS,
                                 type: 'radio',
                                 options: [
-                                    { label: 'Always show', value: 'always_show' },
-                                    { label: "Never show", value: 'never_show' },
-                                    { label: 'Ask me every time', value: 'ask_me' }
+                                    { label: 'Always show', value: SHOW_DIFFS_ALWAYS_SHOW },
+                                    { label: "Never show", value: SHOW_DIFFS_NEVER_SHOW },
+                                    { label: 'Ask me every time', value: SHOW_DIFFS_ASK_ME }
                                 ]
                             }
                         ]
