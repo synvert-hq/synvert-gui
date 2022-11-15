@@ -4,12 +4,9 @@ import { useForm, useFieldArray } from "react-hook-form";
 import AppContext from "../context";
 import { baseUrl, log } from '../utils'
 import { SET_LOADING, SET_CUSTOM_SNIPPET } from "../constants";
-import ShowNeedHelpModal from "./ShowNeedHelpModal";
 
 export default () => {
   const { dispatch, snippetsStore, currentSnippetId, form } = useContext(AppContext);
-  const [snippetId, setSnippetId] = useState(null);
-  const [showNeedHelpModal, setShowNeedHelpModal] = useState(false);
   const [snippetContent, setSnippetContent] = useState(snippetsStore[currentSnippetId]?.code || "");
   const [snippetError, setSnippetError] = useState("");
   const { register, control, handleSubmit, formState: { errors } } = useForm({ defaultValues: { inputs_outputs: [{ input: '', output: '' }] } });
@@ -62,7 +59,6 @@ export default () => {
         body: JSON.stringify({ inputs, outputs }),
       });
       const result = await response.json();
-      setSnippetId(result.id);
       if (result.error) {
         setSnippetError(result.error);
         log(result.error);
@@ -80,10 +76,6 @@ export default () => {
     }
     dispatch({ type: SET_LOADING, loading: false });
   };
-
-  const close = () => {
-    setShowNeedHelpModal(false);
-  }
 
   const title = form === "new" ? "New Snippet" : "Edit Snippet";
 
@@ -167,9 +159,6 @@ export default () => {
           </div>
           <div className="form-group">
             {snippetError !== '' && (<span className="text-danger">{snippetError}</span>)}
-            {snippetError !== '' && snippetId && (
-              <button className="btn btn-link" type="button" onClick={() => setShowNeedHelpModal(true)}>Need Help?</button>
-            )}
             <textarea
               className="form-control"
               rows="10"
@@ -180,7 +169,6 @@ export default () => {
           </div>
         </form>
       </div>
-      {showNeedHelpModal && <ShowNeedHelpModal id={snippetId} defaultReason={snippetError !== '' ? 'The snippet is not generated.' : ''} close={close} />}
     </>
   );
 };
