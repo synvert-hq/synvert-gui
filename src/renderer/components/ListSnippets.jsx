@@ -3,7 +3,7 @@ import useEventListener from "@use-it/event-listener";
 import toast from 'react-hot-toast';
 
 import AppContext from "../context";
-import { baseUrl, triggerEvent, searchSnippets, sortSnippets, convertSnippetsToStore } from "../utils";
+import { baseUrl, triggerEvent, searchSnippets, sortSnippets } from "../utils";
 import ProgressLogs from "./ProgressLogs";
 import {
   EVENT_CHECK_DEPENDENCIES,
@@ -21,12 +21,13 @@ const snippetClassname = (snippet, currentSnippetId) =>
 
 export default () => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [snippets, setSnippets] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(null);
   const [firstError, setFirstError] = useState(true);
   const [checking, setChecking] = useState(false);
 
-  const { currentSnippetId, snippetsStore, dispatch } = useContext(AppContext);
+  const { currentSnippetId, dispatch } = useContext(AppContext);
 
   const loadSnippets = async () => {
     try {
@@ -38,23 +39,23 @@ export default () => {
         },
       });
       const result = await response.json();
-      const snippetsStore = convertSnippetsToStore(result.snippets)
-      triggerEvent(EVENT_SNIPPETS_LOADED, { snippetsStore })
+      setSnippets(result.snippets);
+      setLoaded(true);
     } catch(e) {
-        triggerEvent(EVENT_SNIPPETS_LOADED, { error: e.message })
+      setError(e.message);
     }
   }
 
-  useEventListener(EVENT_DEPENDENCIES_CHECKED, ({ detail: { error } = {} }) => {
-    if (error) {
-      setLoaded(true);
-      setError(error);
-    } else {
-      setLoaded(false);
-      loadSnippets();
-    }
-    setChecking(false);
-  });
+  // useEventListener(EVENT_DEPENDENCIES_CHECKED, async ({ detail: { error } = {} }) => {
+  //   if (error) {
+  //     setLoaded(true);
+  //     setError(error);
+  //   } else {
+  //     setLoaded(false);
+  //     await loadSnippets();
+  //   }
+  //   setChecking(false);
+  // });
 
   useEventListener(EVENT_SNIPPETS_LOADED, ({ detail: { error } }) => {
     setLoaded(true);
@@ -132,10 +133,7 @@ export default () => {
         </button>
       </div>
       <ul className="snippets-list list-group list-group-flush mt-2">
-        {searchSnippets(
-          sortSnippets(Object.values(snippetsStore)),
-          searchTerm
-        ).map((snippet) => (
+        {searchSnippets(sortSnippets(snippets), searchTerm).map((snippet) => (
           <li
             role="button"
             className={snippetClassname(snippet, currentSnippetId)}

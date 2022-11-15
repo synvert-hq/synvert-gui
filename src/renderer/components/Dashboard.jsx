@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import useEventListener from "@use-it/event-listener";
 import LoadingOverlay from "@murasoftware/react-loading-overlay";
 import toast from 'react-hot-toast';
@@ -9,7 +9,6 @@ import ShowSnippet from "./ShowSnippet";
 import RunSnippet from "./RunSnippet";
 import SnippetForm from "./SnippetForm";
 import {
-  EVENT_SNIPPETS_LOADED,
   EVENT_SYNC_SNIPPETS,
   EVENT_EDIT_SNIPPET,
   EVENT_SNIPPET_EDIT,
@@ -28,16 +27,6 @@ export default () => {
   useEventListener(
     EVENT_SYNC_SNIPPETS,
     () => { dispatch({ type: SET_LOADING, loading: true, loadingText: 'Syncing Snippets...' }) }
-  );
-
-  useEventListener(
-    EVENT_SNIPPETS_LOADED,
-    ({ detail: { snippetsStore } = {} }) => {
-      dispatch({ type: SET_LOADING, loading: false });
-      if (snippetsStore) {
-        dispatch({ type: SET_SNIPPETS_STORE, snippetsStore });
-      }
-    }
   );
 
   useEventListener(EVENT_SNIPPET_EDIT, ({ detail: { code, error } }) => {
