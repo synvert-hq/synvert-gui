@@ -26,7 +26,7 @@ export const convertSnippetsToStore = (snippets) =>
     snippets.reduce(
         (obj, snippet) => ({
             ...obj,
-            [`${snippet.group}/${snippet.name}`]: snippet
+            [snippet.id]: snippet
         }),
         {}
     );

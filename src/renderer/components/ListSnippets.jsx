@@ -3,13 +3,13 @@ import useEventListener from "@use-it/event-listener";
 import toast from 'react-hot-toast';
 
 import AppContext from "../context";
-import { baseUrl, triggerEvent, searchSnippets, sortSnippets } from "../utils";
+import { baseUrl, triggerEvent, searchSnippets, sortSnippets, convertSnippetsToStore } from "../utils";
 import ProgressLogs from "./ProgressLogs";
 import {
   EVENT_CHECK_DEPENDENCIES,
   EVENT_CHECKING_DEPENDENCIES,
-  EVENT_DEPENDENCIES_CHECKED,
   EVENT_SNIPPETS_LOADED,
+  SET_SNIPPETS_STORE,
   SET_CURRENT_SNIPPET_ID,
   SET_FORM,
 } from "../constants";
@@ -21,13 +21,12 @@ const snippetClassname = (snippet, currentSnippetId) =>
 
 export default () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [snippets, setSnippets] = useState([]);
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(null);
   const [firstError, setFirstError] = useState(true);
   const [checking, setChecking] = useState(false);
 
-  const { currentSnippetId, dispatch } = useContext(AppContext);
+  const { currentSnippetId, snippetsStore, dispatch } = useContext(AppContext);
 
   const loadSnippets = async () => {
     try {
@@ -39,8 +38,9 @@ export default () => {
         },
       });
       const result = await response.json();
-      setSnippets(result.snippets);
-      setLoaded(true);
+      const snippetsStore = convertSnippetsToStore(result.snippets);
+      dispatch({ type: SET_SNIPPETS_STORE, snippetsStore });
+      setLoaded(true)
     } catch(e) {
       setError(e.message);
     }
@@ -110,7 +110,7 @@ export default () => {
     });
     dispatch({
       type: SET_CURRENT_SNIPPET_ID,
-      currentSnippetId: `${snippet.group}/${snippet.name}`,
+      currentSnippetId: snippet.id,
     });
   };
 
@@ -133,7 +133,7 @@ export default () => {
         </button>
       </div>
       <ul className="snippets-list list-group list-group-flush mt-2">
-        {searchSnippets(sortSnippets(snippets), searchTerm).map((snippet) => (
+        {searchSnippets(sortSnippets((Object.values(snippetsStore))), searchTerm).map((snippet) => (
           <li
             role="button"
             className={snippetClassname(snippet, currentSnippetId)}
