@@ -3,13 +3,12 @@ import useEventListener from "@use-it/event-listener";
 import toast from 'react-hot-toast';
 
 import AppContext from "../context";
-import { triggerEvent, searchSnippets, sortSnippets } from "../utils";
+import { baseUrl, triggerEvent, searchSnippets, sortSnippets, convertSnippetsToStore } from "../utils";
 import ProgressLogs from "./ProgressLogs";
 import {
   EVENT_CHECK_DEPENDENCIES,
   EVENT_CHECKING_DEPENDENCIES,
   EVENT_DEPENDENCIES_CHECKED,
-  EVENT_LOAD_SNIPPETS,
   EVENT_SNIPPETS_LOADED,
   SET_CURRENT_SNIPPET_ID,
   SET_FORM,
@@ -29,13 +28,30 @@ export default () => {
 
   const { currentSnippetId, snippetsStore, dispatch } = useContext(AppContext);
 
+  const loadSnippets = async () => {
+    try {
+      const response = await fetch(`${baseUrl()}/snippets`, {
+        headers: {
+          "Content-Type": "application/json",
+          "X-SYNVERT-TOKEN": window.electronAPI.getToken(),
+          "X-SYNVERT-PLATFORM": "gui",
+        },
+      });
+      const result = await response.json();
+      const snippetsStore = convertSnippetsToStore(result.snippets)
+      triggerEvent(EVENT_SNIPPETS_LOADED, { snippetsStore })
+    } catch(e) {
+        triggerEvent(EVENT_SNIPPETS_LOADED, { error: e.message })
+    }
+  }
+
   useEventListener(EVENT_DEPENDENCIES_CHECKED, ({ detail: { error } = {} }) => {
     if (error) {
       setLoaded(true);
       setError(error);
     } else {
       setLoaded(false);
-      triggerEvent(EVENT_LOAD_SNIPPETS);
+      loadSnippets();
     }
     setChecking(false);
   });
@@ -55,9 +71,7 @@ export default () => {
 
   useEffect(() => {
     if (!loaded) {
-      setTimeout(() => {
-        triggerEvent(EVENT_LOAD_SNIPPETS);
-      }, 100)
+      setTimeout(loadSnippets, 100)
     }
   }, [loaded]);
 

@@ -32,8 +32,6 @@ import './index.css';
 import {
     EVENT_CHECK_DEPENDENCIES,
     EVENT_DEPENDENCIES_CHECKED,
-    EVENT_LOAD_SNIPPETS,
-    EVENT_SNIPPETS_LOADED,
     EVENT_RUN_SNIPPET,
     EVENT_SNIPPET_RUN,
     EVENT_EXECUTE_SNIPPET,
@@ -47,7 +45,7 @@ import {
     EVENT_COMMIT_DIFF,
     EVENT_DIFF_COMMITTED,
 } from './constants';
-import { log, triggerEvent, convertSnippetsToStore } from './utils'
+import { log, triggerEvent } from './utils'
 
 const isRealError = stderr => stderr && !stderr.startsWith('warning:') && !stderr.startsWith('Cloning into ') &&
   !stderr.startsWith("error: pathspec '.' did not match any file(s) known to git")
@@ -94,21 +92,6 @@ const checkDependencies = async () => {
         return
     }
     triggerEvent(EVENT_DEPENDENCIES_CHECKED)
-}
-
-const loadSnippets = async () => {
-    const { stdout, stderr } = await runRubyCommand('synvert-ruby', ['--list', '--format', 'json']);
-    if (stderr) {
-        triggerEvent(EVENT_SNIPPETS_LOADED, { error: stderr })
-        return
-    }
-    try {
-        const snippets = JSON.parse(stdout)
-        const snippetsStore = convertSnippetsToStore(snippets)
-        triggerEvent(EVENT_SNIPPETS_LOADED, { snippetsStore })
-    } catch (e) {
-        triggerEvent(EVENT_SNIPPETS_LOADED, { error: e.message })
-    }
 }
 
 const runSnippet = async (event) => {
@@ -167,12 +150,9 @@ const commitDiff = async (event) => {
 
 const syncSnippets = async () => {
     await runRubyCommand('synvert-ruby', ['--sync']);
-    // ignore stderr, always load snippets
-    await loadSnippets()
 }
 
 window.addEventListener(EVENT_CHECK_DEPENDENCIES, checkDependencies)
-window.addEventListener(EVENT_LOAD_SNIPPETS, loadSnippets)
 window.addEventListener(EVENT_RUN_SNIPPET, runSnippet)
 window.addEventListener(EVENT_EXECUTE_SNIPPET, executeSnippet)
 window.addEventListener(EVENT_EDIT_SNIPPET, editSnippet)
