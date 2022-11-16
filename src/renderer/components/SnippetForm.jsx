@@ -77,12 +77,10 @@ export default () => {
     dispatch({ type: SET_LOADING, loading: false });
   };
 
-  const title = form === "new" ? "New Snippet" : "Edit Snippet";
-
   return (
     <>
       <div className="new-snippet container-fluid flex-grow-1">
-        <h4 className="text-center">{title}</h4>
+        <h4 className="text-center">Generate Snippet</h4>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="form-group">
             <label>File Pattern:</label>
@@ -152,7 +150,7 @@ export default () => {
                 Add More Input/Output
               </button>
               <button type="button" className="btn btn-link" onClick={() => remove(fields.length - 1)}>
-                Remove last Input/Output
+                Remove Last Input/Output
               </button>
             </div>
             <input
@@ -166,7 +164,7 @@ export default () => {
             <textarea
               className="form-control"
               rows="10"
-              value={snippet.source_code}
+              value={snippet.source_code || ""}
               onChange={(e) => setSnippetContent(e.target.value)}
               onBlur={(e) => updateCustomSnippet(e.target.value)}
             ></textarea>
