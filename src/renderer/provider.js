@@ -8,7 +8,7 @@ const initialState = {
     path: getWorkingDir() || '',
     snippetsStore: {},
     currentSnippetId: null,
-    customSnippet: '',
+    generatedSnippet: '',
     loading: false,
     loadingText: 'Loading...',
     showForm: true,

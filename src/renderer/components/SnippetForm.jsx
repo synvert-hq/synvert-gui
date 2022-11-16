@@ -3,42 +3,41 @@ import { useForm, useFieldArray } from "react-hook-form";
 
 import AppContext from "../context";
 import { baseUrl, log } from '../utils'
-import { SET_LOADING, SET_CUSTOM_SNIPPET } from "../constants";
+import { SET_LOADING, SET_GENERATED_SNIPPET } from "../constants";
 
 export default () => {
-  const { dispatch, snippetsStore, currentSnippetId, form } = useContext(AppContext);
-  const snippet = currentSnippetId ? snippetsStore[currentSnippetId] : {};
+  const { dispatch, snippetsStore, currentSnippetId, generatedSnippet } = useContext(AppContext);
+  const snippetCode = currentSnippetId ? snippetsStore[currentSnippetId].source_code : generatedSnippet;
   const [snippetError, setSnippetError] = useState("");
   const { register, control, handleSubmit, formState: { errors } } = useForm({ defaultValues: { inputs_outputs: [{ input: '', output: '' }] } });
   const { fields, append, remove } = useFieldArray({ control, name: 'inputs_outputs' });
 
-  const composeCustomSnippet = (data, result) => {
-    let customSnippet = "Synvert::Rewriter.execute do\n";
+  const composeGeneratedSnippet = (data, result) => {
+    let generatedSnippet = "Synvert::Rewriter.new 'group', 'name' do\n";
     if (data.rubyVersion) {
-      customSnippet += `  if_ruby '${data.rubyVersion}'\n`;
+      generatedSnippet += `  if_ruby '${data.rubyVersion}'\n`;
     }
     if (data.gemVersion) {
       const index = data.gemVersion.indexOf(" ");
       const name = data.gemVersion.substring(0, index);
       const version = data.gemVersion.substring(index + 1);
-      customSnippet += `  if_gem '${name}', '${version}'\n`;
+      generatedSnippet += `  if_gem '${name}', '${version}'\n`;
     }
-    customSnippet += `  within_files '${data.filePattern}' do\n`;
+    generatedSnippet += `  within_files '${data.filePattern}' do\n`;
     if (result.snippet) {
-      customSnippet += "    ";
-      customSnippet += result.snippet.replace(/\n/g, "\n    ");
-      customSnippet += "\n";
+      generatedSnippet += "    ";
+      generatedSnippet += result.snippet.replace(/\n/g, "\n    ");
+      generatedSnippet += "\n";
     }
-    customSnippet += "  end\n";
-    customSnippet += "end";
-    return customSnippet;
+    generatedSnippet += "  end\n";
+    generatedSnippet += "end";
+    return generatedSnippet;
   };
 
-  const updateCustomSnippet = (snippetContent) => {
-    setSnippetContent(snippetContent);
+  const updateGeneratedSnippet = (generatedSnippet) => {
     dispatch({
-      type: SET_CUSTOM_SNIPPET,
-      customSnippet: snippetContent,
+      type: SET_GENERATED_SNIPPET,
+      generatedSnippet,
     });
   }
 
@@ -62,17 +61,17 @@ export default () => {
       if (result.error) {
         setSnippetError(result.error);
         log(result.error);
-        updateCustomSnippet('');
+        updateGeneratedSnippet('');
       } else if (!result.snippet) {
         setSnippetError('Failed to generate snippet');
-        updateCustomSnippet('');
+        updateGeneratedSnippet('');
       } else {
         setSnippetError('');
-        updateCustomSnippet(composeCustomSnippet(data, result));
+        updateGeneratedSnippet(composeGeneratedSnippet(data, result));
       }
     } catch {
       setSnippetError('Failed to send request, please check your network setting.');
-      updateCustomSnippet('');
+      updateGeneratedSnippet('');
     }
     dispatch({ type: SET_LOADING, loading: false });
   };
@@ -164,9 +163,9 @@ export default () => {
             <textarea
               className="form-control"
               rows="10"
-              value={snippet.source_code || ""}
+              value={snippetCode}
               onChange={(e) => setSnippetContent(e.target.value)}
-              onBlur={(e) => updateCustomSnippet(e.target.value)}
+              onBlur={(e) => updateGeneratedSnippet(e.target.value)}
             ></textarea>
           </div>
         </form>

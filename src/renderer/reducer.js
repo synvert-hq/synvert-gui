@@ -1,4 +1,4 @@
-import { SET_PATH, SET_SNIPPETS_STORE, SET_CURRENT_SNIPPET_ID, SET_LOADING, SET_CUSTOM_SNIPPET, SET_SHOW_FORM } from './constants'
+import { SET_PATH, SET_SNIPPETS_STORE, SET_CURRENT_SNIPPET_ID, SET_LOADING, SET_GENERATED_SNIPPET, SET_SHOW_FORM } from './constants'
 
 export default (state = {}, action) => {
     switch (action.type) {
@@ -16,12 +16,13 @@ export default (state = {}, action) => {
             return {
                 ...state,
                 currentSnippetId: action.currentSnippetId,
-                customSnippet: '',
+                generatedSnippet: '',
             }
-        case SET_CUSTOM_SNIPPET:
+        case SET_GENERATED_SNIPPET:
             return {
                 ...state,
-                customSnippet: action.customSnippet,
+                currentSnippetId: null,
+                generatedSnippet: action.generatedSnippet,
             }
         case SET_LOADING:
             return {
