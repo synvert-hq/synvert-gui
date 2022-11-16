@@ -43,17 +43,6 @@ body {
   overflow-y: auto;
 }
 
-.new-snippet .form-row .remove-btn {
-  z-index: 999;
-  top: 0;
-  right: 0;
-  display: none;
-}
-
-.new-snippet .form-row:hover .remove-btn {
-  display: block;
-}
-
 .modal .commit-message-input {
   height: 38px;
   width: auto;

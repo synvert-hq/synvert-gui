@@ -8,7 +8,6 @@ import { SET_LOADING, SET_CUSTOM_SNIPPET } from "../constants";
 export default () => {
   const { dispatch, snippetsStore, currentSnippetId, form } = useContext(AppContext);
   const snippet = currentSnippetId ? snippetsStore[currentSnippetId] : {};
-  console.log('snippet', snippet)
   const [snippetError, setSnippetError] = useState("");
   const { register, control, handleSubmit, formState: { errors } } = useForm({ defaultValues: { inputs_outputs: [{ input: '', output: '' }] } });
   const { fields, append, remove } = useFieldArray({ control, name: 'inputs_outputs' });
@@ -128,8 +127,7 @@ export default () => {
             </div>
           </div>
           {fields.map((item, index) => (
-            <div className="form-row position-relative" key={item.id}>
-              {index > 0 && (<button type="button" className="btn btn-link remove-btn position-absolute" onClick={() => remove(index)}>x</button>)}
+            <div className="form-row" key={item.id}>
               <div className="form-group col-md-6">
                 <textarea
                   className="form-control"
@@ -149,9 +147,14 @@ export default () => {
             </div>
           ))}
           <div className="form-group d-flex justify-content-between">
-            <button type="button" className="btn btn-link" onClick={() => append({ input: '', output: '' })}>
-              Add More Input/Output
-            </button>
+            <div>
+              <button type="button" className="btn btn-link" onClick={() => append({ input: '', output: '' })}>
+                Add More Input/Output
+              </button>
+              <button type="button" className="btn btn-link" onClick={() => remove(fields.length - 1)}>
+                Remove last Input/Output
+              </button>
+            </div>
             <input
               className="btn btn-primary"
               type="submit"
