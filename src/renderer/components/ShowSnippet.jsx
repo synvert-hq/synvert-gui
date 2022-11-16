@@ -3,7 +3,7 @@ import ReactMarkdown from "react-markdown";
 
 import ShowCodeModal from "./ShowCodeModal";
 import AppContext from "../context";
-import { SET_FORM } from "../constants";
+import { SET_SHOW_FORM } from "../constants";
 
 export default () => {
   const [showCode, setShowCode] = useState(false);
@@ -20,7 +20,7 @@ export default () => {
   };
 
   const edit = () => {
-    dispatch({ type : SET_FORM, form: 'edit' })
+    dispatch({ type : SET_SHOW_FORM, showForm: true })
   };
 
   return (

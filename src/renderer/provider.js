@@ -11,7 +11,7 @@ const initialState = {
     customSnippet: '',
     loading: false,
     loadingText: 'Loading...',
-    form: 'new',
+    showForm: true,
 }
 
 export default ({ children }) => {

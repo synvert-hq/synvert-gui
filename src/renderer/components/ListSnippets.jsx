@@ -11,7 +11,7 @@ import {
   EVENT_SNIPPETS_LOADED,
   SET_SNIPPETS_STORE,
   SET_CURRENT_SNIPPET_ID,
-  SET_FORM,
+  SET_SHOW_FORM,
 } from "../constants";
 
 const snippetClassname = (snippet, currentSnippetId) =>
@@ -94,8 +94,8 @@ export default () => {
 
   const newSnippet = () => {
     dispatch({
-      type: SET_FORM,
-      form: 'new',
+      type: SET_SHOW_FORM,
+      showForm: true,
     });
     dispatch({
       type: SET_CURRENT_SNIPPET_ID,
@@ -105,8 +105,8 @@ export default () => {
 
   const snippetClicked = (snippet) => {
     dispatch({
-      type: SET_FORM,
-      form: null,
+      type: SET_SHOW_FORM,
+      showForm: false,
     });
     dispatch({
       type: SET_CURRENT_SNIPPET_ID,

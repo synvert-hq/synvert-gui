@@ -13,7 +13,7 @@ import {
 } from "../constants";
 
 export default () => {
-  const { form, loading, loadingText, dispatch } = useContext(AppContext);
+  const { showForm, loading, loadingText, dispatch } = useContext(AppContext);
 
   useEventListener(
     EVENT_SYNC_SNIPPETS,
@@ -28,7 +28,7 @@ export default () => {
         </div>
         <div className="flex-grow-1">
           <div className="d-flex flex-column main-content">
-            {form ? <SnippetForm /> : <ShowSnippet />}
+            {showForm ? <SnippetForm /> : <ShowSnippet />}
             <RunSnippet />
           </div>
         </div>
