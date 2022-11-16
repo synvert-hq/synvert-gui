@@ -1,48 +1,26 @@
 import React, { useContext, useEffect, useState } from "react";
-import useEventListener from "@use-it/event-listener";
 import ReactMarkdown from "react-markdown";
-import toast from 'react-hot-toast';
 
 import ShowCodeModal from "./ShowCodeModal";
 import AppContext from "../context";
-import {
-  EVENT_SHOW_SNIPPET,
-  EVENT_SNIPPET_SHOWN,
-  SET_CODE,
-  SET_LOADING,
-} from "../constants";
-import { triggerEvent } from "../utils";
+import { SET_FORM } from "../constants";
 
-export default ({ edit }) => {
+export default () => {
   const [showCode, setShowCode] = useState(false);
-  const { dispatch, snippetsStore, currentSnippetId } = useContext(AppContext);
+  const { snippetsStore, currentSnippetId, dispatch } = useContext(AppContext);
 
   useEffect(() => {
     Prism.highlightAll();
   });
 
-  useEventListener(EVENT_SNIPPET_SHOWN, ({ detail: { code, error } }) => {
-    dispatch({ type: SET_LOADING, loading: false });
-    dispatch({ type: SET_CODE, code });
-    if (error) {
-      toast.error(error);
-      return;
-    }
-
-    setShowCode(true);
-  });
-
   const snippet = snippetsStore[currentSnippetId];
-
-  const showSourceCode = () => {
-    if (!snippet.code) {
-      triggerEvent(EVENT_SHOW_SNIPPET, { currentSnippetId });
-      dispatch({ type: SET_LOADING, loading: true });
-    }
-  };
 
   const close = () => {
     setShowCode(false);
+  };
+
+  const edit = () => {
+    dispatch({ type : SET_FORM, form: 'edit' })
   };
 
   return (
@@ -50,7 +28,7 @@ export default ({ edit }) => {
       <div className="snippet-show container-fluid flex-grow-1">
         <button
           className="btn btn-primary float-right"
-          onClick={showSourceCode}
+          onClick={() => setShowCode(true)}
         >
           Show
         </button>

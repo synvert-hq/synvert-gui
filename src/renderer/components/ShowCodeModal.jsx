@@ -25,7 +25,7 @@ export default ({ snippet, close }) => {
             </div>
             <div className="modal-body">
               <pre className="language-ruby">
-                <code className="language-ruby">{snippet.code}</code>
+                <code className="language-ruby">{snippet.source_code}</code>
               </pre>
             </div>
             <div className="modal-footer">

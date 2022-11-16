@@ -1,4 +1,4 @@
-import { app, ipcMain, shell, Menu } from 'electron';
+import { app, shell, Menu } from 'electron';
 import defaultMenu from 'electron-default-menu';
 
 import preferences from './preferences';

@@ -7,7 +7,8 @@ import { SET_LOADING, SET_CUSTOM_SNIPPET } from "../constants";
 
 export default () => {
   const { dispatch, snippetsStore, currentSnippetId, form } = useContext(AppContext);
-  const [snippetContent, setSnippetContent] = useState(snippetsStore[currentSnippetId]?.code || "");
+  const snippet = currentSnippetId ? snippetsStore[currentSnippetId] : {};
+  console.log('snippet', snippet)
   const [snippetError, setSnippetError] = useState("");
   const { register, control, handleSubmit, formState: { errors } } = useForm({ defaultValues: { inputs_outputs: [{ input: '', output: '' }] } });
   const { fields, append, remove } = useFieldArray({ control, name: 'inputs_outputs' });
@@ -162,7 +163,7 @@ export default () => {
             <textarea
               className="form-control"
               rows="10"
-              value={snippetContent}
+              value={snippet.source_code}
               onChange={(e) => setSnippetContent(e.target.value)}
               onBlur={(e) => updateCustomSnippet(e.target.value)}
             ></textarea>

@@ -35,10 +35,6 @@ import {
     EVENT_RUN_SNIPPET,
     EVENT_SNIPPET_RUN,
     EVENT_EXECUTE_SNIPPET,
-    EVENT_EDIT_SNIPPET,
-    EVENT_SNIPPET_EDIT,
-    EVENT_SHOW_SNIPPET,
-    EVENT_SNIPPET_SHOWN,
     EVENT_CHECKING_DEPENDENCIES,
     EVENT_SHOW_SNIPPET_DIFF,
     EVENT_SNIPPET_DIFF_SHOWN,
@@ -124,18 +120,6 @@ const executeSnippet = async (event) => {
     }
 }
 
-const showSnippet = async (event) => {
-    const { detail: { currentSnippetId } } = event
-    const { stdout, stderr } = await runRubyCommand('synvert-ruby', ['--show', currentSnippetId])
-    triggerEvent(EVENT_SNIPPET_SHOWN, { code: stdout, error: stderr })
-}
-
-const editSnippet = async (event) => {
-    const { detail: { currentSnippetId } } = event
-    const { stdout, stderr } = await runRubyCommand('synvert-ruby', ['--show', currentSnippetId])
-    triggerEvent(EVENT_SNIPPET_EDIT, { code: stdout, error: stderr })
-}
-
 const showSnippetDiff = async (event) => {
     const { detail: { path } } = event
     const { stdout, stderr } = await window.electronAPI.runCommand(`cd ${path}; git add .; git diff --cached --ignore-space-at-eol; git reset .`);
@@ -155,8 +139,6 @@ const syncSnippets = async () => {
 window.addEventListener(EVENT_CHECK_DEPENDENCIES, checkDependencies)
 window.addEventListener(EVENT_RUN_SNIPPET, runSnippet)
 window.addEventListener(EVENT_EXECUTE_SNIPPET, executeSnippet)
-window.addEventListener(EVENT_EDIT_SNIPPET, editSnippet)
-window.addEventListener(EVENT_SHOW_SNIPPET, showSnippet)
 window.addEventListener(EVENT_SHOW_SNIPPET_DIFF, showSnippetDiff)
 window.addEventListener(EVENT_COMMIT_DIFF, commitDiff)
 
