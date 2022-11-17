@@ -29,9 +29,10 @@
 import './app.jsx';
 import './index.css';
 
+import React from "react";
+import toast from 'react-hot-toast';
+
 import {
-    EVENT_CHECK_DEPENDENCIES,
-    EVENT_DEPENDENCIES_CHECKED,
     EVENT_RUN_SNIPPET,
     EVENT_SNIPPET_RUN,
     EVENT_EXECUTE_SNIPPET,
@@ -57,26 +58,31 @@ const runRubyCommand = async (command, args, { input } = {}) => {
     }
 }
 
+const installGem = async () => {
+    await runRubyCommand('gem', ['install', 'synvert']);
+    toast.success("Successfully installed the synvert gem.")
+}
+
 const checkDependencies = async () => {
     let { stdout, stderr } = await runRubyCommand('ruby', ['--version']);
     if (stderr) {
-        triggerEvent(EVENT_DEPENDENCIES_CHECKED, { error: stderr })
+        toast.error("ruby is not available!")
         return
     }
     ({ stdout, stderr } = await runRubyCommand('synvert-ruby', ['--version']))
-    if (isRealError(stderr)) {
-        ({ stdout, stderr } = await runRubyCommand('gem', ['install', 'synvert']))
-        if (stderr) {
-            triggerEvent(EVENT_DEPENDENCIES_CHECKED, { error: stderr })
-            return
-        }
-    }
-    ({ stdout, stderr } = await runRubyCommand('synvert-ruby', ['--sync']))
-    if (isRealError(stderr)) {
-        triggerEvent(EVENT_DEPENDENCIES_CHECKED, { error: stderr })
-        return
-    }
-    triggerEvent(EVENT_DEPENDENCIES_CHECKED)
+    toast((t) => (
+        <div>
+            <p>Synvert gem not found. Run `gem install synvert` or update your Gemfile.</p>
+            <div className="d-flex justify-content-between">
+                <button className="btn btn-primary btn-sm" onClick={() => {
+                    installGem();
+                    toast.dismiss(t.id);
+                }}>Install Now</button>
+                <button className="btn btn-info btn-sm" onClick={() => toast.dismiss(t.id)}>Dismiss</button>
+            </div>
+        </div>
+    ))
+    return
 }
 
 const runSnippet = async (event) => {
@@ -125,7 +131,6 @@ const syncSnippets = async () => {
     await runRubyCommand('synvert-ruby', ['--sync']);
 }
 
-window.addEventListener(EVENT_CHECK_DEPENDENCIES, checkDependencies)
 window.addEventListener(EVENT_RUN_SNIPPET, runSnippet)
 window.addEventListener(EVENT_EXECUTE_SNIPPET, executeSnippet)
 window.addEventListener(EVENT_SHOW_SNIPPET_DIFF, showSnippetDiff)
@@ -133,5 +138,5 @@ window.addEventListener(EVENT_COMMIT_DIFF, commitDiff)
 
 window.electronAPI.onSyncSnippets(syncSnippets);
 
-// sync snippets every time app starts
-setTimeout(syncSnippets, 1000)
+// check dependencies every time app starts
+setTimeout(checkDependencies, 100)

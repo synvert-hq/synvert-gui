@@ -1,6 +1,3 @@
-export const EVENT_CHECK_DEPENDENCIES = "event.check_dependencies"
-export const EVENT_CHECKING_DEPENDENCIES = "event.checking_dependencies"
-export const EVENT_DEPENDENCIES_CHECKED = "event.dependencies_checked"
 export const EVENT_RUN_SNIPPET = "event.run_snippet"
 export const EVENT_EXECUTE_SNIPPET = "event.execute_snippet"
 export const EVENT_SNIPPET_RUN = "event.snippet_run"
