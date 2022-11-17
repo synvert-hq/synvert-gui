@@ -35,7 +35,6 @@ import {
     EVENT_RUN_SNIPPET,
     EVENT_SNIPPET_RUN,
     EVENT_EXECUTE_SNIPPET,
-    EVENT_CHECKING_DEPENDENCIES,
     EVENT_SHOW_SNIPPET_DIFF,
     EVENT_SNIPPET_DIFF_SHOWN,
     EVENT_COMMIT_DIFF,
@@ -46,43 +45,33 @@ import { log, triggerEvent } from './utils'
 const isRealError = stderr => stderr && !stderr.startsWith('warning:') && !stderr.startsWith('Cloning into ') &&
   !stderr.startsWith("error: pathspec '.' did not match any file(s) known to git")
 
-const runRubyCommand = async (command, args, { input, type, id, name } = {}) => {
-    if (type) {
-        await new Promise(resolve => setTimeout(resolve, 100));
-        triggerEvent(type, { id, name, status: 'started' });
-    }
+const runRubyCommand = async (command, args, { input } = {}) => {
     try {
         log({ type: 'runCommand', command: [command].concat(args).join(' ') });
         const { stdout, stderr } = await window.electronAPI.runRubyCommand(command, args, input);
         log({ type: 'runCommand', stdout, stderr });
-        if (type) {
-            triggerEvent(type, { id, name, status: isRealError(stderr) ? 'failed' : 'done' });
-        }
         return { stdout, stderr: isRealError(stderr) ? stderr : null };
     } catch (e) {
         log({ type: 'runCommand error', e });
-        if (type) {
-            triggerEvent(type, { id, name, status: 'failed' });
-        }
-        return { stdout: null, stderr: e.message };
+        return { stderr: e.message };
     }
 }
 
 const checkDependencies = async () => {
-    let { stdout, stderr } = await runRubyCommand('ruby', ['--version'], { type: EVENT_CHECKING_DEPENDENCIES, id: 1, name: 'Checking ruby version...' });
+    let { stdout, stderr } = await runRubyCommand('ruby', ['--version']);
     if (stderr) {
         triggerEvent(EVENT_DEPENDENCIES_CHECKED, { error: stderr })
         return
     }
-    ({ stdout, stderr } = await runRubyCommand('synvert-ruby', ['--version'], { type: EVENT_CHECKING_DEPENDENCIES, id: 2, name: 'Checking synvert version...' }))
+    ({ stdout, stderr } = await runRubyCommand('synvert-ruby', ['--version']))
     if (isRealError(stderr)) {
-        ({ stdout, stderr } = await runRubyCommand('gem', ['install', 'synvert'], { type: EVENT_CHECKING_DEPENDENCIES, id: 3, name: 'Installing synvert gem...' }))
+        ({ stdout, stderr } = await runRubyCommand('gem', ['install', 'synvert']))
         if (stderr) {
             triggerEvent(EVENT_DEPENDENCIES_CHECKED, { error: stderr })
             return
         }
     }
-    ({ stdout, stderr } = await runRubyCommand('synvert-ruby', ['--sync'], { type: EVENT_CHECKING_DEPENDENCIES, id: 5, name: 'Syncing synvert snippets...' }))
+    ({ stdout, stderr } = await runRubyCommand('synvert-ruby', ['--sync']))
     if (isRealError(stderr)) {
         triggerEvent(EVENT_DEPENDENCIES_CHECKED, { error: stderr })
         return
