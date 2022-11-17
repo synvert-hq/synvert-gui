@@ -59,8 +59,12 @@ const runRubyCommand = async (command, args, { input } = {}) => {
 }
 
 const installGem = async () => {
-    await runRubyCommand('gem', ['install', 'synvert']);
-    toast.success("Successfully installed the synvert gem.")
+    const { stdout, stderr } = await runRubyCommand('gem', ['install', 'synvert']);
+    if (stderr) {
+        toast.error("Failed to install the synvert gem.");
+    } else {
+        toast.success("Successfully installed the synvert gem.")
+    }
 }
 
 const checkDependencies = async () => {
