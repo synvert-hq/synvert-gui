@@ -1,12 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
-import useEventListener from "@use-it/event-listener";
-import toast from 'react-hot-toast';
 
 import AppContext from "../context";
-import { baseUrl, triggerEvent, searchSnippets, sortSnippets, convertSnippetsToStore } from "../utils";
-import ProgressLogs from "./ProgressLogs";
+import { baseUrl, searchSnippets, sortSnippets, convertSnippetsToStore } from "../utils";
 import {
-  EVENT_CHECKING_DEPENDENCIES,
   SET_SNIPPETS_STORE,
   SET_CURRENT_SNIPPET_ID,
   SET_SHOW_FORM,
@@ -21,8 +17,6 @@ export default () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(null);
-  const [firstError, setFirstError] = useState(true);
-  const [checking, setChecking] = useState(false);
 
   const { currentSnippetId, snippetsStore, dispatch } = useContext(AppContext);
 
@@ -56,10 +50,6 @@ export default () => {
         <p>{error}</p>
       </div>
     )
-  }
-
-  if (checking) {
-    return <ProgressLogs type={EVENT_CHECKING_DEPENDENCIES} />
   }
 
   const newSnippet = () => {
