@@ -6,8 +6,8 @@ import { baseUrl, log } from '../utils'
 import { SET_LOADING, SET_GENERATED_SNIPPET } from "../constants";
 
 export default () => {
-  const { dispatch, snippetsStore, currentSnippetId, generatedSnippet } = useContext(AppContext);
-  const snippetCode = currentSnippetId ? snippetsStore[currentSnippetId].source_code : generatedSnippet;
+  const { dispatch, snippetCode } = useContext(AppContext);
+  const [code, setCode] = useState(snippetCode)
   const [snippetError, setSnippetError] = useState("");
   const { register, control, handleSubmit, formState: { errors } } = useForm({ defaultValues: { inputs_outputs: [{ input: '', output: '' }] } });
   const { fields, append, remove } = useFieldArray({ control, name: 'inputs_outputs' });
@@ -34,10 +34,10 @@ export default () => {
     return generatedSnippet;
   };
 
-  const updateGeneratedSnippet = (generatedSnippet) => {
+  const updateSnippetCode = (snippetCode) => {
     dispatch({
       type: SET_GENERATED_SNIPPET,
-      generatedSnippet,
+      snippetCode,
     });
   }
 
@@ -61,17 +61,17 @@ export default () => {
       if (result.error) {
         setSnippetError(result.error);
         log(result.error);
-        updateGeneratedSnippet('');
+        updateSnippetCode('');
       } else if (!result.snippet) {
         setSnippetError('Failed to generate snippet');
-        updateGeneratedSnippet('');
+        updateSnippetCode('');
       } else {
         setSnippetError('');
-        updateGeneratedSnippet(composeGeneratedSnippet(data, result));
+        updateSnippetCode(composeGeneratedSnippet(data, result));
       }
     } catch {
       setSnippetError('Failed to send request, please check your network setting.');
-      updateGeneratedSnippet('');
+      updateSnippetCode('');
     }
     dispatch({ type: SET_LOADING, loading: false });
   };
@@ -163,9 +163,9 @@ export default () => {
             <textarea
               className="form-control"
               rows="10"
-              value={snippetCode}
-              onChange={(e) => setSnippetContent(e.target.value)}
-              onBlur={(e) => updateGeneratedSnippet(e.target.value)}
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              onBlur={(e) => updateSnippetCode(e.target.value)}
             ></textarea>
           </div>
         </form>

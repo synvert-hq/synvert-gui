@@ -10,7 +10,6 @@ import {
   EVENT_SNIPPET_DIFF_SHOWN,
   SET_PATH,
   SET_LOADING,
-  EVENT_EXECUTE_SNIPPET,
 } from "../constants";
 import {
   triggerEvent,
@@ -25,7 +24,7 @@ import ConfirmDiffModal from "./ConfirmDiffModal";
 import ShowDiffModal from "./ShowDiffModal";
 
 export default () => {
-  const { path, snippetsStore, currentSnippetId, customSnippet, form, dispatch } =
+  const { path, snippetsStore, currentSnippetId, snippetCode, dispatch } =
     useContext(AppContext);
   const [showConfirmDiff, setShowConfirmDiff] = useState(false);
   const [showDiff, setShowDiff] = useState(false);
@@ -75,11 +74,7 @@ export default () => {
   };
 
   const run = () => {
-    if (form) {
-      triggerEvent(EVENT_EXECUTE_SNIPPET, { path, customSnippet });
-    } else {
-      triggerEvent(EVENT_RUN_SNIPPET, { path, currentSnippetId });
-    }
+    triggerEvent(EVENT_RUN_SNIPPET, { path, snippetCode });
     dispatch({ type: SET_LOADING, loading: true, loadingText: 'Running... it may take a while' });
   };
 
@@ -129,7 +124,7 @@ export default () => {
             </button>
           </div>
         </div>
-        <button className="btn btn-primary ml-2" disabled={!path || (form && customSnippet.length === 0)} onClick={run}>
+        <button className="btn btn-primary ml-2" disabled={!path || (snippetCode.length === 0)} onClick={run}>
           Run
         </button>
       </div>

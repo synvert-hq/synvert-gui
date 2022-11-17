@@ -16,13 +16,13 @@ export default (state = {}, action) => {
             return {
                 ...state,
                 currentSnippetId: action.currentSnippetId,
-                generatedSnippet: '',
+                snippetCode: state.snippetsStore[action.currentSnippetId].source_code,
             }
         case SET_GENERATED_SNIPPET:
             return {
                 ...state,
                 currentSnippetId: null,
-                generatedSnippet: action.generatedSnippet,
+                snippetCode: action.snippetCode,
             }
         case SET_LOADING:
             return {

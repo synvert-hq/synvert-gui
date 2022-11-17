@@ -1,5 +1,4 @@
 export const EVENT_RUN_SNIPPET = "event.run_snippet"
-export const EVENT_EXECUTE_SNIPPET = "event.execute_snippet"
 export const EVENT_SNIPPET_RUN = "event.snippet_run"
 export const EVENT_SHOW_SNIPPET_DIFF = "event.show_snippet_diff"
 export const EVENT_SNIPPET_DIFF_SHOWN = "event.snippet_diff_shown"

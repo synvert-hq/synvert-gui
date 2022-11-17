@@ -35,7 +35,6 @@ import toast from 'react-hot-toast';
 import {
     EVENT_RUN_SNIPPET,
     EVENT_SNIPPET_RUN,
-    EVENT_EXECUTE_SNIPPET,
     EVENT_SHOW_SNIPPET_DIFF,
     EVENT_SNIPPET_DIFF_SHOWN,
     EVENT_COMMIT_DIFF,
@@ -70,45 +69,32 @@ const installGem = async () => {
 const checkDependencies = async () => {
     let { stdout, stderr } = await runRubyCommand('ruby', ['--version']);
     if (stderr) {
-        toast.error("ruby is not available!")
-        return
+        toast.error("ruby is not available!");
+        return;
     }
-    ({ stdout, stderr } = await runRubyCommand('synvert-ruby', ['--version']))
-    toast((t) => (
-        <div>
-            <p>Synvert gem not found. Run `gem install synvert` or update your Gemfile.</p>
-            <div className="d-flex justify-content-between">
-                <button className="btn btn-primary btn-sm" onClick={() => {
-                    installGem();
-                    toast.dismiss(t.id);
-                }}>Install Now</button>
-                <button className="btn btn-info btn-sm" onClick={() => toast.dismiss(t.id)}>Dismiss</button>
+    ({ stdout, stderr } = await runRubyCommand('synvert-ruby', ['--version']));
+    if (stderr) {
+        toast((t) => (
+            <div>
+                <p>Synvert gem not found. Run `gem install synvert` or update your Gemfile.</p>
+                <div className="d-flex justify-content-between">
+                    <button className="btn btn-primary btn-sm" onClick={() => {
+                        installGem();
+                        toast.dismiss(t.id);
+                    }}>Install Now</button>
+                    <button className="btn btn-info btn-sm" onClick={() => toast.dismiss(t.id)}>Dismiss</button>
+                </div>
             </div>
-        </div>
-    ))
-    return
+        ));
+        return;
+    }
 }
 
 const runSnippet = async (event) => {
-    const { detail: { currentSnippetId, path } } = event
-    const { stdout, stderr } = await runRubyCommand('synvert-ruby', ['--run', currentSnippetId, '--format', 'json', path]);
+    const { detail: { snippetCode, path } } = event
+    const { stdout, stderr } = await runRubyCommand('synvert-ruby', ['--execute', 'run', '--format', 'json', path], { input: snippetCode });
     if (stderr) {
         triggerEvent(EVENT_SNIPPET_RUN, { error: 'Failed to run snippet!' })
-        return
-    }
-    try {
-        const output = JSON.parse(stdout)
-        triggerEvent(EVENT_SNIPPET_RUN, { affectedFiles: output.affected_files })
-    } catch(e) {
-        triggerEvent(EVENT_SNIPPET_RUN, { error: e.message })
-    }
-}
-
-const executeSnippet = async (event) => {
-    const { detail: { customSnippet, path } } = event
-    const { stdout, stderr } = await runRubyCommand('synvert-ruby', ['--execute', 'run', '--format', 'json', path], { input: customSnippet });
-    if (stderr) {
-        triggerEvent(EVENT_SNIPPET_RUN, { error: 'Failed to execute snippet!' })
         return
     }
     try {
@@ -143,7 +129,6 @@ const syncSnippets = async () => {
 }
 
 window.addEventListener(EVENT_RUN_SNIPPET, runSnippet)
-window.addEventListener(EVENT_EXECUTE_SNIPPET, executeSnippet)
 window.addEventListener(EVENT_SHOW_SNIPPET_DIFF, showSnippetDiff)
 window.addEventListener(EVENT_COMMIT_DIFF, commitDiff)
 
