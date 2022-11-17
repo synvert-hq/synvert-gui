@@ -4,13 +4,18 @@ import { useForm, useFieldArray } from "react-hook-form";
 import AppContext from "../context";
 import { baseUrl, log } from '../utils'
 import { SET_LOADING, SET_GENERATED_SNIPPET } from "../constants";
+import { useEffect } from "react";
 
 export default () => {
   const { dispatch, snippetCode } = useContext(AppContext);
-  const [code, setCode] = useState(snippetCode)
+  const [code, setCode] = useState("")
   const [snippetError, setSnippetError] = useState("");
   const { register, control, handleSubmit, formState: { errors } } = useForm({ defaultValues: { inputs_outputs: [{ input: '', output: '' }] } });
   const { fields, append, remove } = useFieldArray({ control, name: 'inputs_outputs' });
+
+  useEffect(() => {
+    setCode(snippetCode);
+  }, [snippetCode])
 
   const composeGeneratedSnippet = (data, result) => {
     let generatedSnippet = "Synvert::Rewriter.new 'group', 'name' do\n";
