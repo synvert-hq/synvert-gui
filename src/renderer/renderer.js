@@ -61,7 +61,7 @@ const runRubyCommand = async (command, args, { input } = {}) => {
 const installGem = async () => {
     const { stdout, stderr } = await runRubyCommand('gem', ['install', 'synvert']);
     if (stderr) {
-        toast.error("Failed to install the synvert gem.");
+        toast.error("Failed to install the synvert gem. ") + stderr;
     } else {
         toast.success("Successfully installed the synvert gem.")
     }
@@ -132,7 +132,14 @@ const commitDiff = async (event) => {
 }
 
 const syncSnippets = async () => {
-    await runRubyCommand('synvert-ruby', ['--sync']);
+    const toastId = toast.loading('Syncing snippets...');
+    const { stdout, stderr } = await runRubyCommand('synvert-ruby', ['--sync']);
+    toast.dismiss(toastId);
+    if (stderr) {
+        toast.error("Failed to sync snippets. " + stderr);
+    } else {
+        toast.success("Snippets are successfully synced.")
+    }
 }
 
 window.addEventListener(EVENT_RUN_SNIPPET, runSnippet)
