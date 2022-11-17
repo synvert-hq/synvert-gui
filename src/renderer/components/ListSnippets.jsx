@@ -6,9 +6,7 @@ import AppContext from "../context";
 import { baseUrl, triggerEvent, searchSnippets, sortSnippets, convertSnippetsToStore } from "../utils";
 import ProgressLogs from "./ProgressLogs";
 import {
-  EVENT_CHECK_DEPENDENCIES,
   EVENT_CHECKING_DEPENDENCIES,
-  EVENT_SNIPPETS_LOADED,
   SET_SNIPPETS_STORE,
   SET_CURRENT_SNIPPET_ID,
   SET_SHOW_FORM,
@@ -46,35 +44,7 @@ export default () => {
     }
   }
 
-  // useEventListener(EVENT_DEPENDENCIES_CHECKED, async ({ detail: { error } = {} }) => {
-  //   if (error) {
-  //     setLoaded(true);
-  //     setError(error);
-  //   } else {
-  //     setLoaded(false);
-  //     await loadSnippets();
-  //   }
-  //   setChecking(false);
-  // });
-
-  useEventListener(EVENT_SNIPPETS_LOADED, ({ detail: { error } }) => {
-    setLoaded(true);
-    if (error) {
-      if (firstError) {
-        setFirstError(false)
-        setChecking(true)
-        triggerEvent(EVENT_CHECK_DEPENDENCIES);
-      } else {
-        toast.error(error);
-      }
-    }
-  });
-
-  useEffect(() => {
-    if (!loaded) {
-      setTimeout(loadSnippets, 100)
-    }
-  }, [loaded]);
+  useEffect(() => { loadSnippets() }, []);
 
   if (!loaded) {
     return <div className="text-center">Loading Official Snippets...</div>;
