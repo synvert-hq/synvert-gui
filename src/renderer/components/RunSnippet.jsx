@@ -10,6 +10,10 @@ import {
   EVENT_SNIPPET_DIFF_SHOWN,
   SET_PATH,
   SET_LOADING,
+  SET_TEST_RESULTS,
+  SET_SHOW_TEST_RESULTS,
+  EVENT_TEST_SNIPPET,
+  EVENT_SNIPPET_TESTED,
 } from "../constants";
 import {
   triggerEvent,
@@ -44,6 +48,23 @@ export default () => {
   });
 
   useEventListener(
+    EVENT_SNIPPET_TESTED,
+    ({ detail: { testResults, error } = {} }) => {
+      dispatch({ type: SET_LOADING, loading: false });
+      if (error) {
+        toast.error(error);
+        return;
+      }
+      if (testResults.length === 0) {
+        toast('No file affected by this snippet');
+        return;
+      }
+      dispatch({ type: SET_TEST_RESULTS, testResults });
+      dispatch({ type: SET_SHOW_TEST_RESULTS, showTestResults: true });
+    }
+  )
+
+  useEventListener(
     EVENT_SNIPPET_RUN,
     ({ detail: { affectedFiles, error } = {} }) => {
       dispatch({ type: SET_LOADING, loading: false });
@@ -52,7 +73,7 @@ export default () => {
         return;
       }
       if (!affectedFiles || affectedFiles.length == 0) {
-        toast('No files affected by this snippet');
+        toast('No file affected by this snippet');
         return;
       }
 
@@ -71,6 +92,11 @@ export default () => {
       dispatch({ type: SET_PATH, path: filePath });
       setWorkingDir(filePath);
     }
+  };
+
+  const search = () => {
+    triggerEvent(EVENT_TEST_SNIPPET, { path, snippetCode });
+    dispatch({ type: SET_LOADING, loading: true, loadingText: 'Searching... it may take a while' });
   };
 
   const run = () => {
@@ -124,6 +150,9 @@ export default () => {
             </button>
           </div>
         </div>
+        <button className="btn btn-primary ml-2" disabled={!path || (snippetCode.length === 0)} onClick={search}>
+          Search
+        </button>
         <button className="btn btn-primary ml-2" disabled={!path || (snippetCode.length === 0)} onClick={run}>
           Run
         </button>

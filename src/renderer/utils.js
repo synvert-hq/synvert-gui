@@ -51,6 +51,20 @@ export const triggerEvent = (name, detail) => {
     }
 }
 
+const snakeToCamel = (str) => str.replace(/([-_]\w)/g, g => g[1].toUpperCase());
+
+export const parseJSON = (str) => {
+  return JSON.parse(str, function(key, value) {
+    const camelCaseKey = snakeToCamel(key);
+
+    if (this instanceof Array || camelCaseKey === key) {
+      return value;
+    } else {
+      this[camelCaseKey] = value;
+    }
+  });
+};
+
 export const baseUrl = () => window.electronAPI.isDev() ? 'http://localhost:9292' : 'https://api-ruby.synvert.net'
 
 export const log = (...args) => {

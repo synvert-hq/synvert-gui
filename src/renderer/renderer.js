@@ -33,6 +33,8 @@ import React from "react";
 import toast from 'react-hot-toast';
 
 import {
+    EVENT_TEST_SNIPPET,
+    EVENT_SNIPPET_TESTED,
     EVENT_RUN_SNIPPET,
     EVENT_SNIPPET_RUN,
     EVENT_SHOW_SNIPPET_DIFF,
@@ -40,7 +42,7 @@ import {
     EVENT_COMMIT_DIFF,
     EVENT_DIFF_COMMITTED,
 } from './constants';
-import { log, triggerEvent } from './utils'
+import { getWorkingDir, log, parseJSON, triggerEvent } from './utils'
 
 const isRealError = stderr => stderr && !stderr.startsWith('warning:') && !stderr.startsWith('Cloning into ') &&
   !stderr.startsWith("error: pathspec '.' did not match any file(s) known to git")
@@ -90,6 +92,30 @@ const checkDependencies = async () => {
     }
 }
 
+const addFileSourceToTestResults = (testResults, rootPath) => {
+    testResults.forEach((testResult) => {
+        const fileSource = window.electronAPI.readFile(window.electronAPI.pathJoin(rootPath, testResult.filePath));
+        testResult.fileSource = fileSource;
+        testResult.rootPath = rootPath;
+    });
+}
+
+const testSnippet = async (event) => {
+    const { detail: { snippetCode, path } } = event
+    const { stdout, stderr } = await runRubyCommand('synvert-ruby', ['--execute', 'test', '--format', 'json', path], { input: snippetCode });
+    if (stderr) {
+        triggerEvent(EVENT_SNIPPET_TESTED, { error: 'Failed to run snippet!' })
+        return
+    }
+    try {
+        const testResults = parseJSON(stdout)
+        addFileSourceToTestResults(testResults, getWorkingDir());
+        triggerEvent(EVENT_SNIPPET_TESTED, { testResults })
+    } catch(e) {
+        triggerEvent(EVENT_SNIPPET_TESTED, { error: e.message })
+    }
+}
+
 const runSnippet = async (event) => {
     const { detail: { snippetCode, path } } = event
     const { stdout, stderr } = await runRubyCommand('synvert-ruby', ['--execute', 'run', '--format', 'json', path], { input: snippetCode });
@@ -128,6 +154,7 @@ const syncSnippets = async () => {
     }
 }
 
+window.addEventListener(EVENT_TEST_SNIPPET, testSnippet)
 window.addEventListener(EVENT_RUN_SNIPPET, runSnippet)
 window.addEventListener(EVENT_SHOW_SNIPPET_DIFF, showSnippetDiff)
 window.addEventListener(EVENT_COMMIT_DIFF, commitDiff)

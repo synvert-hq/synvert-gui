@@ -48,6 +48,53 @@ body {
   width: auto;
 }
 
+/* test results */
+.search-results, .search-actions {
+  list-style: none;
+  padding-left: 0;
+}
+.search-results .result, .search-actions .action {
+  position: relative;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 30px;
+}
+.search-results .result:hover, .search-actions .action:hover {
+  background-color: #2A292E;
+}
+.search-actions .action {
+  padding-left: 25px;
+}
+.search-results .result.active, .search-actions .action.active {
+  background-color: #082A4B;
+  border: 1px solid #0D69CA;
+}
+.search-results .result .toggle-icon {
+  margin: 0 5px;
+}
+.search-results .toolkit, .search-actions .toolkit {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding-right: 5px;
+}
+.search-results .result:hover .toolkit, .search-actions .action:hover .toolkit {
+  display: block;
+}
+.search-results .toolkit a {
+  line-height: 16px;
+}
+.search-results .action .old-code {
+  text-decoration: line-through;
+  background-color: #691719;
+}
+
+.search-results .action .new-code {
+  background-color: #2f381f;
+}
+
 /* tweak from https://bootswatch.com/darkly/ */
 .btn-primary {
   color: #fff;

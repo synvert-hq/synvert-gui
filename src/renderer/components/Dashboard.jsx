@@ -7,13 +7,14 @@ import ListSnippets from "./ListSnippets";
 import ShowSnippet from "./ShowSnippet";
 import RunSnippet from "./RunSnippet";
 import SnippetForm from "./SnippetForm";
+import TestResults from "./TestResults";
 import {
   EVENT_SYNC_SNIPPETS,
   SET_LOADING,
 } from "../constants";
 
 export default () => {
-  const { showForm, loading, loadingText, dispatch } = useContext(AppContext);
+  const { showForm, showTestResults, loading, loadingText, dispatch } = useContext(AppContext);
 
   useEventListener(
     EVENT_SYNC_SNIPPETS,
@@ -22,17 +23,25 @@ export default () => {
 
   return (
     <LoadingOverlay active={loading} text={loadingText} spinner>
-      <div className="main-container d-flex flex-row">
-        <div className="sidebar">
-          <ListSnippets />
-        </div>
-        <div className="flex-grow-1">
-          <div className="d-flex flex-column main-content">
-            {showForm ? <SnippetForm /> : <ShowSnippet />}
-            <RunSnippet />
+      {showTestResults ? (
+        <div className="main-container d-flex flex-row">
+          <div className="sidebar">
+            <TestResults />
           </div>
         </div>
-      </div>
+      ) : (
+        <div className="main-container d-flex flex-row">
+          <div className="sidebar">
+            <ListSnippets />
+          </div>
+          <div className="flex-grow-1">
+            <div className="d-flex flex-column main-content">
+              {showForm ? <SnippetForm /> : <ShowSnippet />}
+              <RunSnippet />
+            </div>
+          </div>
+        </div>
+      )}
     </LoadingOverlay>
   );
 };

@@ -12,6 +12,8 @@ const initialState = {
     loading: false,
     loadingText: 'Loading...',
     showForm: true,
+    showTestResults: false,
+    testResults: [],
 }
 
 export default ({ children }) => {

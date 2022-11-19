@@ -1,3 +1,5 @@
+import fs from "fs";
+import path from "path";
 import { machineIdSync } from 'node-machine-id';
 import { rubySpawn } from 'ruby-spawn';
 import { execaCommand } from 'execa';
@@ -10,6 +12,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getPreferences: () => ipcRenderer.sendSync("getPreferences"),
   setPreferences: (preferences) => ipcRenderer.sendSync("setPreferences", preferences),
   openFile: () => ipcRenderer.invoke('dialog:openFile'),
+
+  pathJoin: (path1, path2) => path.join(path1, path2),
+  readFile: (filePath) => fs.readFileSync(filePath, "utf-8"),
+  writeFile: (filePath, fileContent) => fs.writeFileSync(filePath, fileContent),
 
   runRubyCommand: async (command, args, input = null) => {
     const { output, error } = await new Promise((resolve) => {
