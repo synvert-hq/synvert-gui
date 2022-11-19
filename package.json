@@ -42,10 +42,10 @@
     "style-loader": "^3.2.1"
   },
   "dependencies": {
-    "@forevolve/bootstrap-dark": "^1.2.0-g6c89781692",
+    "@forevolve/bootstrap-dark": "^3.0.0",
     "@murasoftware/react-loading-overlay": "^1.0.3",
     "@use-it/event-listener": "^0.1.7",
-    "bootstrap": "^4.6.0",
+    "bootstrap": "^4.6.2",
     "diff2html": "^3.4.8",
     "electron-default-menu": "^1.0.2",
     "electron-preferences": "^2.8.0",
