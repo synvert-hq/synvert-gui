@@ -12,6 +12,7 @@ import {
   EVENT_SYNC_SNIPPETS,
   SET_LOADING,
 } from "../constants";
+import CodeDiff from "./CodeDiff";
 
 export default () => {
   const { showForm, showTestResults, loading, loadingText, dispatch } = useContext(AppContext);
@@ -27,6 +28,11 @@ export default () => {
         <div className="main-container d-flex flex-row">
           <div className="sidebar">
             <TestResults />
+          </div>
+          <div className="flex-grow-1">
+            <div className="main-content">
+              <CodeDiff />
+            </div>
           </div>
         </div>
       ) : (
