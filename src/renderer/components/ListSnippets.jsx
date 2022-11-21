@@ -9,7 +9,7 @@ import {
 } from "../constants";
 
 const snippetClassname = (snippet, currentSnippetId) =>
-  currentSnippetId && `${snippet.group}/${snippet.name}` == currentSnippetId
+  currentSnippetId && snippet.id == currentSnippetId
     ? "list-group-item active"
     : "list-group-item";
 

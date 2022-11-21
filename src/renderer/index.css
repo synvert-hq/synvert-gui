@@ -33,6 +33,10 @@ body {
   overflow-y: auto;
 }
 
+.snippets-list .list-group-item:hover:not(.active) {
+  background-color: #2A292E;
+}
+
 .snippet-show {
   height: calc(100vh - 94px);
   overflow-y: auto;
