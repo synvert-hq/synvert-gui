@@ -65,6 +65,14 @@ export const parseJSON = (str) => {
   });
 };
 
+export const getNewSource = (oldSource, testResult) => {
+    let newSource = oldSource;
+    JSON.parse(JSON.stringify(testResult.actions)).reverse().forEach(action => {
+        newSource = newSource.slice(0, action.start) + action.newCode + newSource.slice(action.end);
+    });
+    return newSource;
+}
+
 export const baseUrl = () => window.electronAPI.isDev() ? 'http://localhost:9292' : 'https://api-ruby.synvert.net'
 
 export const log = (...args) => {

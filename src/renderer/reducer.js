@@ -14,6 +14,7 @@ import {
     SET_CURRENT_ACTION_INDEX,
     SET_CURRENT_RESULT_INDEX,
 } from './constants'
+import { getNewSource } from './utils';
 
 export default (state = {}, action) => {
     switch (action.type) {
@@ -75,10 +76,8 @@ export default (state = {}, action) => {
             const testResult = testResults[action.resultIndex];
             const absolutePath = window.electronAPI.pathJoin(action.rootPath, testResult.filePath);
             let source = window.electronAPI.readFile(absolutePath, "utf-8");
-            testResult.actions.reverse().forEach(resultAction => {
-                source = source.slice(0, resultAction.start) + resultAction.newCode + source.slice(resultAction.end);
-            });
-            window.electronAPI.writeFile(absolutePath, source);
+            const newSource = getNewSource(source, testResult);
+            window.electronAPI.writeFile(absolutePath, newSource);
             testResults.splice(action.resultIndex, 1);
             return {
                 ...state,
