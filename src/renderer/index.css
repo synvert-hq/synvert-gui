@@ -68,12 +68,14 @@ body {
 /* test results */
 .search-results {
   padding-top: 15px;
-  height: 100%;
-  overflow-y: auto;
 }
 .search-results form {
   padding-left: 15px;
   padding-right: 15px;
+}
+.search-results > ul {
+  height: calc(100vh - 458px);
+  overflow-y: auto;
 }
 .search-results, .search-actions {
   list-style: none;
