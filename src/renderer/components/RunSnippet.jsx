@@ -203,7 +203,8 @@ export default () => {
               className="form-control"
               placeholder="e.g. frontend/src"
               value={onlyPaths}
-              onChange={handleOnlyPathsChanged}
+              onChange={(e) => setOnlyPaths(e.target.value)}
+              onBlur={handleOnlyPathsChanged}
             />
           </div>
           <div className="form-group col-md-6">
@@ -211,7 +212,8 @@ export default () => {
             <input
               className="form-control"
               value={skipPaths}
-              onChange={handleSkipPathsChanged}
+              onChange={(e) => setSkipPaths(e.target.value)}
+              onBlur={handleSkipPathsChanged}
             />
           </div>
         </div>

@@ -4,18 +4,12 @@ import { useForm, useFieldArray } from "react-hook-form";
 import AppContext from "../context";
 import { baseUrl, log } from '../utils'
 import { SET_LOADING, SET_GENERATED_SNIPPET } from "../constants";
-import { useEffect } from "react";
+import SnippetCode from "./SnippetCode";
 
 export default () => {
-  const { dispatch, snippetCode } = useContext(AppContext);
-  const [code, setCode] = useState("")
-  const [snippetError, setSnippetError] = useState("");
+  const { dispatch } = useContext(AppContext);
   const { register, control, handleSubmit, formState: { errors } } = useForm({ defaultValues: { inputs_outputs: [{ input: '', output: '' }], nql_or_rules: 'nql' } });
   const { fields, append, remove } = useFieldArray({ control, name: 'inputs_outputs' });
-
-  useEffect(() => {
-    setCode(snippetCode);
-  }, [snippetCode])
 
   const composeGeneratedSnippet = (data, result) => {
     let generatedSnippet = "Synvert::Rewriter.new 'group', 'name' do\n";
@@ -39,10 +33,11 @@ export default () => {
     return generatedSnippet;
   };
 
-  const updateSnippetCode = (snippetCode) => {
+  const updateSnippetCode = ({ snippetCode, snippetError }) => {
     dispatch({
       type: SET_GENERATED_SNIPPET,
       snippetCode,
+      snippetError
     });
   }
 
@@ -64,19 +59,16 @@ export default () => {
       });
       const result = await response.json();
       if (result.error) {
-        setSnippetError(result.error);
+        updateSnippetCode({ snippetCode: "", snippetError: result.error });
         log(result.error);
-        updateSnippetCode('');
       } else if (!result.snippet) {
-        setSnippetError('Failed to generate snippet');
-        updateSnippetCode('');
+        updateSnippetCode({ snippetCode: "", snippetError: "Failed to generate snippet" });
       } else {
-        setSnippetError('');
-        updateSnippetCode(composeGeneratedSnippet(data, result));
+        const snippetCode = composeGeneratedSnippet(data, result);
+        updateSnippetCode({ snippetCode, snippetError: "" });
       }
     } catch {
-      setSnippetError('Failed to send request, please check your network setting.');
-      updateSnippetCode('');
+      updateSnippetCode({ snippetCode: "", snippetError: "Failed to send request, please check your network setting." });
     }
     dispatch({ type: SET_LOADING, loading: false });
   };
@@ -183,16 +175,7 @@ export default () => {
               />
             </div>
           </div>
-          <div className="form-group">
-            {snippetError !== '' && (<span className="text-danger">{snippetError}</span>)}
-            <textarea
-              className="form-control"
-              rows="10"
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              onBlur={(e) => updateSnippetCode(e.target.value)}
-            ></textarea>
-          </div>
+          <SnippetCode />
         </form>
       </div>
     </div>

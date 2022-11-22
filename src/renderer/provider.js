@@ -2,12 +2,12 @@ import React, { useReducer } from 'react'
 
 import appReducer from './reducer'
 import AppContext from './context'
-import { getWorkingDir } from './utils'
 
 const initialState = {
     snippetsStore: {},
     currentSnippetId: null,
     snippetCode: '',
+    snippetError: "",
     loading: false,
     loadingText: 'Loading...',
     showForm: true,

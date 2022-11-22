@@ -71,6 +71,10 @@ body {
   height: 100%;
   overflow-y: auto;
 }
+.search-results form {
+  padding-left: 15px;
+  padding-right: 15px;
+}
 .search-results, .search-actions {
   list-style: none;
   padding-left: 0;

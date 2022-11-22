@@ -15,6 +15,7 @@ import {
   SET_CURRENT_ACTION_INDEX,
 } from "../constants";
 import { getWorkingDir } from "../utils";
+import SnippetCode from "./SnippetCode";
 
 const TestResults = () => {
   const { testResults, currentResultIndex, currentActionIndex, dispatch } = useContext(AppContext);
@@ -53,60 +54,65 @@ const TestResults = () => {
   }
 
   return (
-    <ul className="search-results">
-      {testResults.map((result, resultIndex) => (
-        <li key={resultIndex}>
-          <div className={resultIndex === currentResultIndex && currentActionIndex === null ? "result active" : "result"} onClick={() => resultClicked(resultIndex)}>
-            <a href="#" className="toggle-icon" onClick={() => toggleResult(result.filePath)}>
-              {filesCollapse[result.filePath] ? (
-                <ChevronRightSvg />
-              ) : (
-                <ChevronDownSvg />
-              )}
-            </a>
-            <span title={result.filePath}>
-              {result.filePath}
-            </span>
-            <div className="toolkit">
-              {result.actions.every(action => (typeof action.newCode !== "undefined")) && (
-                <a href="#" onClick={() => replaceResult(resultIndex)}>
-                  <ReplaceAllSvg />
-                </a>
-              )}
-              <a href="#" onClick={() => removeResult(resultIndex)}>
-                <CloseSvg />
+    <div className="search-results">
+      <form>
+        <SnippetCode />
+      </form>
+      <ul>
+        {testResults.map((result, resultIndex) => (
+          <li key={resultIndex}>
+            <div className={resultIndex === currentResultIndex && currentActionIndex === null ? "result active" : "result"} onClick={() => resultClicked(resultIndex)}>
+              <a href="#" className="toggle-icon" onClick={() => toggleResult(result.filePath)}>
+                {filesCollapse[result.filePath] ? (
+                  <ChevronRightSvg />
+                ) : (
+                  <ChevronDownSvg />
+                )}
               </a>
+              <span title={result.filePath}>
+                {result.filePath}
+              </span>
+              <div className="toolkit">
+                {result.actions.every(action => (typeof action.newCode !== "undefined")) && (
+                  <a href="#" onClick={() => replaceResult(resultIndex)}>
+                    <ReplaceAllSvg />
+                  </a>
+                )}
+                <a href="#" onClick={() => removeResult(resultIndex)}>
+                  <CloseSvg />
+                </a>
+              </div>
             </div>
-          </div>
-          {!filesCollapse[result.filePath] && (
-            <ul className="search-actions">
-              {result.actions.map((action, actionIndex) => (
-                <li key={actionIndex}>
-                  <div className={resultIndex === currentResultIndex && actionIndex === currentActionIndex ? "action active" : "action"} onClick={() => actionClicked(resultIndex, actionIndex)}>
-                    <div className="toolkit">
-                      {typeof action.newCode !== "undefined" && (
-                        <a href="#" onClick={() => replaceAction(resultIndex, actionIndex)}>
-                          <ReplaceSvg />
+            {!filesCollapse[result.filePath] && (
+              <ul className="search-actions">
+                {result.actions.map((action, actionIndex) => (
+                  <li key={actionIndex}>
+                    <div className={resultIndex === currentResultIndex && actionIndex === currentActionIndex ? "action active" : "action"} onClick={() => actionClicked(resultIndex, actionIndex)}>
+                      <div className="toolkit">
+                        {typeof action.newCode !== "undefined" && (
+                          <a href="#" onClick={() => replaceAction(resultIndex, actionIndex)}>
+                            <ReplaceSvg />
+                          </a>
+                        )}
+                        <a href="#" onClick={() => removeAction(resultIndex, actionIndex)}>
+                          <CloseSvg />
                         </a>
+                      </div>
+                      {result.fileSource && (
+                        <>
+                          <span className="old-code">{result.fileSource.substring(action.start, action.end)}</span>
+                          <span className="new-code">{action.newCode}</span>
+                        </>
                       )}
-                      <a href="#" onClick={() => removeAction(resultIndex, actionIndex)}>
-                        <CloseSvg />
-                      </a>
                     </div>
-                    {result.fileSource && (
-                      <>
-                        <span className="old-code">{result.fileSource.substring(action.start, action.end)}</span>
-                        <span className="new-code">{action.newCode}</span>
-                      </>
-                    )}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </li>
-      ))}
-    </ul>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
   )
 }
 

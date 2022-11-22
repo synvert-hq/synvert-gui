@@ -36,6 +36,7 @@ export default (state = {}, action) => {
                 ...state,
                 currentSnippetId: null,
                 snippetCode: action.snippetCode,
+                snippetError: action.snippetError,
             }
         }
         case SET_LOADING: {
