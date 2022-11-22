@@ -31,10 +31,11 @@ export default (state = {}, action) => {
             }
         }
         case SET_CURRENT_SNIPPET_ID: {
+            const snippetCode = action.currentSnippetId ? state.snippetsStore[action.currentSnippetId].source_code : "";
             return {
                 ...state,
                 currentSnippetId: action.currentSnippetId,
-                snippetCode: state.snippetsStore[action.currentSnippetId].source_code,
+                snippetCode,
             }
         }
         case SET_GENERATED_SNIPPET: {
