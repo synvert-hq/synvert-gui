@@ -53,6 +53,12 @@ body {
   height: calc(100vh - 106px);
   overflow-y: auto;
 }
+.new-snippet .nql-or-rules-select label {
+  margin-right: 10px;
+}
+.new-snippet .nql-or-rules-select input[type=radio] {
+  margin-right: 5px;
+}
 
 .modal .commit-message-input {
   height: 38px;

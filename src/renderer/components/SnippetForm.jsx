@@ -10,7 +10,7 @@ export default () => {
   const { dispatch, snippetCode } = useContext(AppContext);
   const [code, setCode] = useState("")
   const [snippetError, setSnippetError] = useState("");
-  const { register, control, handleSubmit, formState: { errors } } = useForm({ defaultValues: { inputs_outputs: [{ input: '', output: '' }] } });
+  const { register, control, handleSubmit, formState: { errors } } = useForm({ defaultValues: { inputs_outputs: [{ input: '', output: '' }], nql_or_rules: 'nql' } });
   const { fields, append, remove } = useFieldArray({ control, name: 'inputs_outputs' });
 
   useEffect(() => {
@@ -48,7 +48,7 @@ export default () => {
 
   const onSubmit = async (data) => {
     dispatch({ type: SET_LOADING, loading: true, loadingText: "Submitting..." });
-    const { inputs_outputs } = data;
+    const { inputs_outputs, nql_or_rules } = data;
     const inputs = inputs_outputs.map(input_output => input_output.input);
     const outputs = inputs_outputs.map(input_output => input_output.output);
     try {
@@ -60,7 +60,7 @@ export default () => {
           "X-SYNVERT-TOKEN": window.electronAPI.getToken(),
           "X-SYNVERT-PLATFORM": "gui",
         },
-        body: JSON.stringify({ inputs, outputs }),
+        body: JSON.stringify({ inputs, outputs, nql_or_rules }),
       });
       const result = await response.json();
       if (result.error) {
@@ -157,11 +157,31 @@ export default () => {
                 Remove Last Input/Output
               </button>
             </div>
-            <input
-              className="btn btn-primary"
-              type="submit"
-              value="Generate Snippet"
-            />
+            <div className="nql-or-rules-select">
+              <label htmlFor="nql">
+                <input
+                  {...register("nql_or_rules")}
+                  id="nql"
+                  type="radio"
+                  value="nql"
+                />
+                NQL
+              </label>
+              <label htmlFor="rules">
+                <input
+                  {...register("nql_or_rules")}
+                  id="rules"
+                  type="radio"
+                  value="rules"
+                />
+                Rules
+              </label>
+              <input
+                className="btn btn-primary"
+                type="submit"
+                value="Generate Snippet"
+              />
+            </div>
           </div>
           <div className="form-group">
             {snippetError !== '' && (<span className="text-danger">{snippetError}</span>)}
