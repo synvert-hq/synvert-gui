@@ -3,7 +3,7 @@ import path from 'path'
 import ElectronPreferences from 'electron-preferences'
 
 import { showDevTools } from './utils'
-import { SETTINGS_SECTION, SETTINGS_SHOW_DIFFS, SHOW_DIFFS_ALWAYS_SHOW, SHOW_DIFFS_NEVER_SHOW, SHOW_DIFFS_ASK_ME, GENERAL_SECTION, GENERAL_WORKING_DIR } from "../constants"
+import { SETTINGS_SECTION, SETTINGS_SHOW_DIFFS, SHOW_DIFFS_ALWAYS_SHOW, SHOW_DIFFS_NEVER_SHOW, SHOW_DIFFS_ASK_ME } from "../constants"
 
 const preferences = new ElectronPreferences({
     dataStore: path.join(app.getPath('userData'), 'preferences.json'),
@@ -19,9 +19,6 @@ const preferences = new ElectronPreferences({
         },
         [SETTINGS_SECTION]: {
             [SETTINGS_SHOW_DIFFS]: 'ask_me',
-        },
-        [GENERAL_SECTION]: {
-            [GENERAL_WORKING_DIR]: '',
         }
     },
     sections: [

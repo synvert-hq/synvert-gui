@@ -42,7 +42,7 @@ import {
     EVENT_COMMIT_DIFF,
     EVENT_DIFF_COMMITTED,
 } from './constants';
-import { getWorkingDir, log, parseJSON, triggerEvent } from './utils'
+import { log, parseJSON, triggerEvent } from './utils'
 
 const isRealError = stderr => stderr && !stderr.startsWith('warning:') && !stderr.startsWith('Cloning into ') &&
   !stderr.startsWith("error: pathspec '.' did not match any file(s) known to git")
@@ -119,7 +119,7 @@ const testSnippet = async (event) => {
     }
     try {
         const testResults = parseJSON(stdout)
-        addFileSourceToTestResults(testResults, getWorkingDir());
+        addFileSourceToTestResults(testResults, path);
         triggerEvent(EVENT_SNIPPET_TESTED, { testResults })
     } catch(e) {
         triggerEvent(EVENT_SNIPPET_TESTED, { error: e.message })

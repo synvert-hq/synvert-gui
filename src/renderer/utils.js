@@ -1,4 +1,5 @@
-import { SETTINGS_SECTION, SETTINGS_SHOW_DIFFS, SHOW_DIFFS_ALWAYS_SHOW, SHOW_DIFFS_NEVER_SHOW, SHOW_DIFFS_ASK_ME, GENERAL_SECTION, GENERAL_WORKING_DIR } from "../constants"
+import { SETTINGS_SECTION, SETTINGS_SHOW_DIFFS, SHOW_DIFFS_ALWAYS_SHOW, SHOW_DIFFS_NEVER_SHOW, SHOW_DIFFS_ASK_ME } from "../constants"
+import { WORKING_DIR, ONLY_PATHS, SKIP_PATHS } from "./constants"
 
 const savePreference = (section, key, value) => {
     const preferences = window.electronAPI.getPreferences()
@@ -19,8 +20,14 @@ export const showDiffsAlwaysShowSelected = () => getPreference(SETTINGS_SECTION,
 export const showDiffsNeverShowSelected = () => getPreference(SETTINGS_SECTION, SETTINGS_SHOW_DIFFS) === SHOW_DIFFS_NEVER_SHOW
 export const showDiffsAskMeSelected = () => getPreference(SETTINGS_SECTION, SETTINGS_SHOW_DIFFS) === SHOW_DIFFS_ASK_ME
 
-export const getWorkingDir = () => getPreference(GENERAL_SECTION, GENERAL_WORKING_DIR);
-export const setWorkingDir = (path) => savePreference(GENERAL_SECTION, GENERAL_WORKING_DIR, path);
+export const getWorkingDir = () => localStorage.getItem(WORKING_DIR);
+export const saveWorkingDir = (path) => localStorage.setItem(WORKING_DIR, path);
+
+export const getOnlyPaths = () => localStorage.getItem(getWorkingDir() + ":" + ONLY_PATHS);
+export const saveOnlyPaths = (path) => localStorage.setItem(getWorkingDir() + ":" + ONLY_PATHS, path);
+
+export const getSkipPaths = () => localStorage.getItem(getWorkingDir() + ":" + SKIP_PATHS);
+export const saveSkipPaths = (path) => localStorage.setItem(getWorkingDir() + ":" + SKIP_PATHS, path);
 
 export const convertSnippetsToStore = (snippets) =>
     snippets.reduce(

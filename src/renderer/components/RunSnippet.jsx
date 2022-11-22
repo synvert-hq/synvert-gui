@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import useEventListener from "@use-it/event-listener";
 import toast from 'react-hot-toast';
 
@@ -8,7 +8,6 @@ import {
   EVENT_SNIPPET_RUN,
   EVENT_SHOW_SNIPPET_DIFF,
   EVENT_SNIPPET_DIFF_SHOWN,
-  SET_PATH,
   SET_LOADING,
   SET_TEST_RESULTS,
   SET_SHOW_TEST_RESULTS,
@@ -22,20 +21,44 @@ import {
   showDiffsAlwaysShowSelected,
   selectShowDiffsAlwaysShow,
   selectShowDiffsNeverShow,
-  setWorkingDir,
+  saveWorkingDir,
+  saveOnlyPaths,
+  saveSkipPaths,
+  getWorkingDir,
+  getOnlyPaths,
+  getSkipPaths,
 } from "../utils";
 import ConfirmDiffModal from "./ConfirmDiffModal";
 import ShowDiffModal from "./ShowDiffModal";
 
 export default () => {
-  const { path, snippetsStore, currentSnippetId, snippetCode, dispatch } =
+  const { snippetsStore, currentSnippetId, snippetCode, dispatch } =
     useContext(AppContext);
+  const [path, setPath] = useState("");
   const [onlyPaths, setOnlyPaths] = useState("");
   const [skipPaths, setSkipPaths] = useState("**/node_modules/**,**/dist/**");
   const [showConfirmDiff, setShowConfirmDiff] = useState(false);
   const [showDiff, setShowDiff] = useState(false);
   const [diff, setDiff] = useState("");
   const snippet = snippetsStore[currentSnippetId];
+
+  useEffect(() => {
+    if (getWorkingDir()) {
+      setPath(getWorkingDir());
+    }
+  }, [getWorkingDir()]);
+
+  useEffect(() => {
+    if (getOnlyPaths()) {
+      setOnlyPaths(getOnlyPaths());
+    }
+  }, [getOnlyPaths()]);
+
+  useEffect(() => {
+    if (getSkipPaths()) {
+      setSkipPaths(getSkipPaths());
+    }
+  }, [getSkipPaths()]);
 
   useEventListener(EVENT_SNIPPET_DIFF_SHOWN, ({ detail: { diff, error } }) => {
     dispatch({ type: SET_LOADING, loading: false });
@@ -91,20 +114,33 @@ export default () => {
   const selectPath = async () => {
     const filePath = await window.electronAPI.openFile()
     if (filePath) {
-      dispatch({ type: SET_PATH, path: filePath });
-      setWorkingDir(filePath);
+      saveWorkingDir(filePath);
     }
   };
 
   const search = () => {
+    const path = getWorkingDir();
     triggerEvent(EVENT_TEST_SNIPPET, { path, snippetCode, onlyPaths, skipPaths });
     dispatch({ type: SET_LOADING, loading: true, loadingText: 'Searching... it may take a while' });
   };
 
   const run = () => {
+    const path = getWorkingDir();
     triggerEvent(EVENT_RUN_SNIPPET, { path, snippetCode, onlyPaths, skipPaths });
     dispatch({ type: SET_LOADING, loading: true, loadingText: 'Running... it may take a while' });
   };
+
+  const handleOnlyPathsChanged = (event) => {
+    const onlyPaths = event.target.value;
+    setOnlyPaths(onlyPaths);
+    saveOnlyPaths(onlyPaths);
+  }
+
+  const handleSkipPathsChanged = (event) => {
+    const skipPaths = event.target.value;
+    setSkipPaths(skipPaths);
+    saveSkipPaths(skipPaths);
+  }
 
   const close = () => {
     setShowConfirmDiff(false);
@@ -167,7 +203,7 @@ export default () => {
               className="form-control"
               placeholder="e.g. frontend/src"
               value={onlyPaths}
-              onChange={(e) => setOnlyPaths(e.target.value)}
+              onChange={handleOnlyPathsChanged}
             />
           </div>
           <div className="form-group col-md-6">
@@ -175,7 +211,7 @@ export default () => {
             <input
               className="form-control"
               value={skipPaths}
-              onChange={(e) => setSkipPaths(e.target.value)}
+              onChange={handleSkipPathsChanged}
             />
           </div>
         </div>

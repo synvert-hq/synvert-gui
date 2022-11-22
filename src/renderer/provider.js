@@ -5,7 +5,6 @@ import AppContext from './context'
 import { getWorkingDir } from './utils'
 
 const initialState = {
-    path: getWorkingDir() || '',
     snippetsStore: {},
     currentSnippetId: null,
     snippetCode: '',
