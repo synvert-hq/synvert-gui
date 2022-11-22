@@ -75,8 +75,8 @@ export default () => {
   };
 
   return (
-    <div className="container-fluid">
-      <div className="d-flex">
+    <div className="snippets-list">
+      <div className="search-box d-flex">
         <input
           className="flex-grow-1 form-control"
           type="text"
@@ -92,7 +92,7 @@ export default () => {
           New
         </button>
       </div>
-      <ul className="snippets-list list-group list-group-flush mt-2">
+      <ul className="list-group list-group-flush mt-2">
         {searchSnippets(sortSnippets((Object.values(snippetsStore))), searchTerm).map((snippet) => (
           <li
             role="button"

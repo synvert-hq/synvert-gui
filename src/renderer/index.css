@@ -1,3 +1,7 @@
+:root {
+  color-scheme: dark;
+}
+
 html, body {
   height: 100%;
 }
@@ -7,29 +11,28 @@ body {
   margin: auto;
 }
 
-.main-container {
-  padding: 1rem 0;
+#root, ._loading_overlay_wrapper {
+  height: 100%;
 }
 
-.main-container .alert {
+.alert {
   position: fixed;
   left: 0;
   top: 0;
   width: 100%;
 }
 
-.sidebar {
-  width: 450px;
-}
-
-.main-content {
-  width: calc(100vw - 450px);
-  height: 100%;
-  overflow-x: auto;
-}
-
 .snippets-list {
-  height: calc(100vh - 94px);
+  padding-top: 15px;
+}
+
+.snippets-list .search-box {
+  padding: 0 15px;
+}
+
+.snippets-list .list-group {
+  height: calc(100vh - 64px);
+  overflow-x: hidden;
   overflow-y: auto;
 }
 
@@ -37,13 +40,17 @@ body {
   background-color: #2A292E;
 }
 
+.snippet-form, .snippet-show {
+  padding-top: 15px;
+}
+
 .snippet-show {
-  height: calc(100vh - 94px);
+  height: calc(100vh - 91px);
   overflow-y: auto;
 }
 
 .new-snippet {
-  height: calc(100vh - 94px);
+  height: calc(100vh - 106px);
   overflow-y: auto;
 }
 
@@ -53,6 +60,11 @@ body {
 }
 
 /* test results */
+.search-results {
+  padding-top: 15px;
+  height: 100%;
+  overflow-y: auto;
+}
 .search-results, .search-actions {
   list-style: none;
   padding-left: 0;
@@ -97,6 +109,12 @@ body {
 
 .search-results .action .new-code {
   background-color: #2f381f;
+}
+
+/* code diff */
+.code-diff {
+  height: 100%;
+  overflow-y: auto;
 }
 
 /* tweak from https://bootswatch.com/darkly/ */

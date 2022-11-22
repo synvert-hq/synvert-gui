@@ -1,6 +1,8 @@
 import React, { useContext } from "react";
 import useEventListener from "@use-it/event-listener";
 import LoadingOverlay from "@murasoftware/react-loading-overlay";
+import { Allotment } from "allotment";
+import "allotment/dist/style.css";
 
 import AppContext from "../context";
 import ListSnippets from "./ListSnippets";
@@ -25,28 +27,24 @@ export default () => {
   return (
     <LoadingOverlay active={loading} text={loadingText} spinner>
       {showTestResults ? (
-        <div className="main-container d-flex flex-row">
-          <div className="sidebar">
+        <Allotment>
+          <Allotment.Pane preferredSize={400}>
             <TestResults />
-          </div>
-          <div className="flex-grow-1">
-            <div className="main-content">
-              <CodeDiff />
-            </div>
-          </div>
-        </div>
+          </Allotment.Pane>
+          <Allotment.Pane>
+            <CodeDiff />
+          </Allotment.Pane>
+        </Allotment>
       ) : (
-        <div className="main-container d-flex flex-row">
-          <div className="sidebar">
+        <Allotment>
+          <Allotment.Pane preferredSize={400}>
             <ListSnippets />
-          </div>
-          <div className="flex-grow-1">
-            <div className="d-flex flex-column main-content">
-              {showForm ? <SnippetForm /> : <ShowSnippet />}
-              <RunSnippet />
-            </div>
-          </div>
-        </div>
+          </Allotment.Pane>
+          <Allotment.Pane>
+            {showForm ? <SnippetForm /> : <ShowSnippet />}
+            <RunSnippet />
+          </Allotment.Pane>
+        </Allotment>
       )}
     </LoadingOverlay>
   );

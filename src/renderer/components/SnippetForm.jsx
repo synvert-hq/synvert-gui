@@ -82,7 +82,7 @@ export default () => {
   };
 
   return (
-    <>
+    <div className="snippet-form">
       <div className="new-snippet container-fluid flex-grow-1">
         <h4 className="text-center">Generate Snippet</h4>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -175,6 +175,6 @@ export default () => {
           </div>
         </form>
       </div>
-    </>
+    </div>
   );
 };

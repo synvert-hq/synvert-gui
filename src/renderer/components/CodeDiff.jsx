@@ -11,12 +11,14 @@ const CodeDiff = () => {
   const newFileSource = getNewSource(fileSource, currentTestResult);
 
   return (
-    <ReactDiffViewer
-      oldValue={fileSource}
-      newValue={newFileSource}
-      useDarkTheme={true}
-      compareMethod={DiffMethod.WORDS}
-    />
+    <div className="code-diff">
+      <ReactDiffViewer
+        oldValue={fileSource}
+        newValue={newFileSource}
+        useDarkTheme={true}
+        compareMethod={DiffMethod.WORDS}
+      />
+    </div>
   )
 }
 
