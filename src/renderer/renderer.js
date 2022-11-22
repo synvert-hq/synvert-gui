@@ -101,8 +101,18 @@ const addFileSourceToTestResults = (testResults, rootPath) => {
 }
 
 const testSnippet = async (event) => {
-    const { detail: { snippetCode, path } } = event
-    const { stdout, stderr } = await runRubyCommand('synvert-ruby', ['--execute', 'test', '--format', 'json', path], { input: snippetCode });
+    const { detail: { snippetCode, path, onlyPaths, skipPaths } } = event
+    const commandArgs = ["--execute", "test"];
+    if (onlyPaths.length > 0) {
+        commandArgs.push("--only-paths");
+        commandArgs.push(onlyPaths);
+    }
+    if (skipPaths.length > 0) {
+        commandArgs.push("--skip-paths");
+        commandArgs.push(skipPaths);
+    }
+    commandArgs.push(path);
+    const { stdout, stderr } = await runRubyCommand('synvert-ruby', commandArgs, { input: snippetCode });
     if (stderr) {
         triggerEvent(EVENT_SNIPPET_TESTED, { error: 'Failed to run snippet!' })
         return
@@ -117,8 +127,18 @@ const testSnippet = async (event) => {
 }
 
 const runSnippet = async (event) => {
-    const { detail: { snippetCode, path } } = event
-    const { stdout, stderr } = await runRubyCommand('synvert-ruby', ['--execute', 'run', '--format', 'json', path], { input: snippetCode });
+    const { detail: { snippetCode, path, onlyPaths, skipPaths } } = event
+    const commandArgs = ["--execute", "test", "--format", "json"];
+    if (onlyPaths.length > 0) {
+        commandArgs.push("--only-paths");
+        commandArgs.push(onlyPaths);
+    }
+    if (skipPaths.length > 0) {
+        commandArgs.push("--skip-paths");
+        commandArgs.push(skipPaths);
+    }
+    commandArgs.push(path);
+    const { stdout, stderr } = await runRubyCommand('synvert-ruby', commandArgs, { input: snippetCode });
     if (stderr) {
         triggerEvent(EVENT_SNIPPET_RUN, { error: 'Failed to run snippet!' })
         return

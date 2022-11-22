@@ -30,6 +30,8 @@ import ShowDiffModal from "./ShowDiffModal";
 export default () => {
   const { path, snippetsStore, currentSnippetId, snippetCode, dispatch } =
     useContext(AppContext);
+  const [onlyPaths, setOnlyPaths] = useState("");
+  const [skipPaths, setSkipPaths] = useState("**/node_modules/**,**/dist/**");
   const [showConfirmDiff, setShowConfirmDiff] = useState(false);
   const [showDiff, setShowDiff] = useState(false);
   const [diff, setDiff] = useState("");
@@ -95,12 +97,12 @@ export default () => {
   };
 
   const search = () => {
-    triggerEvent(EVENT_TEST_SNIPPET, { path, snippetCode });
+    triggerEvent(EVENT_TEST_SNIPPET, { path, snippetCode, onlyPaths, skipPaths });
     dispatch({ type: SET_LOADING, loading: true, loadingText: 'Searching... it may take a while' });
   };
 
   const run = () => {
-    triggerEvent(EVENT_RUN_SNIPPET, { path, snippetCode });
+    triggerEvent(EVENT_RUN_SNIPPET, { path, snippetCode, onlyPaths, skipPaths });
     dispatch({ type: SET_LOADING, loading: true, loadingText: 'Running... it may take a while' });
   };
 
@@ -156,6 +158,27 @@ export default () => {
         <button className="btn btn-primary ml-2" disabled={!path || (snippetCode.length === 0)} onClick={run}>
           Run
         </button>
+      </div>
+      <div className="container-fluid mt-2">
+        <div className="form-row">
+          <div className="form-group col-md-6">
+            <label>Files to include:</label>
+            <input
+              className="form-control"
+              placeholder="e.g. frontend/src"
+              value={onlyPaths}
+              onChange={(e) => setOnlyPaths(e.target.value)}
+            />
+          </div>
+          <div className="form-group col-md-6">
+            <label>Files to exclude:</label>
+            <input
+              className="form-control"
+              value={skipPaths}
+              onChange={(e) => setSkipPaths(e.target.value)}
+            />
+          </div>
+        </div>
       </div>
       {showConfirmDiff && (
         <ConfirmDiffModal

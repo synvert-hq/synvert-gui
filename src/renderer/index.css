@@ -45,12 +45,12 @@ body {
 }
 
 .snippet-show {
-  height: calc(100vh - 91px);
+  height: calc(100vh - 161px);
   overflow-y: auto;
 }
 
 .new-snippet {
-  height: calc(100vh - 106px);
+  height: calc(100vh - 176px);
   overflow-y: auto;
 }
 .new-snippet .nql-or-rules-select label {
