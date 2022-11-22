@@ -16,6 +16,8 @@ import {
 } from "../constants";
 import { getWorkingDir } from "../utils";
 import SnippetCode from "./SnippetCode";
+import FilesToInclude from "./FilesToInclude";
+import FilesToExclude from "./FilesToExclude";
 
 const TestResults = () => {
   const { testResults, currentResultIndex, currentActionIndex, dispatch } = useContext(AppContext);
@@ -57,6 +59,8 @@ const TestResults = () => {
     <div className="search-results">
       <form>
         <SnippetCode />
+        <FilesToInclude />
+        <FilesToExclude />
       </form>
       <ul>
         {testResults.map((result, resultIndex) => (

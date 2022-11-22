@@ -22,21 +22,19 @@ import {
   selectShowDiffsAlwaysShow,
   selectShowDiffsNeverShow,
   saveWorkingDir,
-  saveOnlyPaths,
-  saveSkipPaths,
   getWorkingDir,
   getOnlyPaths,
   getSkipPaths,
 } from "../utils";
 import ConfirmDiffModal from "./ConfirmDiffModal";
 import ShowDiffModal from "./ShowDiffModal";
+import FilesToInclude from "./FilesToInclude";
+import FilesToExclude from "./FilesToExclude";
 
 export default () => {
   const { snippetsStore, currentSnippetId, snippetCode, dispatch } =
     useContext(AppContext);
   const [path, setPath] = useState("");
-  const [onlyPaths, setOnlyPaths] = useState("");
-  const [skipPaths, setSkipPaths] = useState("**/node_modules/**,**/dist/**");
   const [showConfirmDiff, setShowConfirmDiff] = useState(false);
   const [showDiff, setShowDiff] = useState(false);
   const [diff, setDiff] = useState("");
@@ -47,18 +45,6 @@ export default () => {
       setPath(getWorkingDir());
     }
   }, [getWorkingDir()]);
-
-  useEffect(() => {
-    if (getOnlyPaths()) {
-      setOnlyPaths(getOnlyPaths());
-    }
-  }, [getOnlyPaths()]);
-
-  useEffect(() => {
-    if (getSkipPaths()) {
-      setSkipPaths(getSkipPaths());
-    }
-  }, [getSkipPaths()]);
 
   useEventListener(EVENT_SNIPPET_DIFF_SHOWN, ({ detail: { diff, error } }) => {
     dispatch({ type: SET_LOADING, loading: false });
@@ -120,27 +106,19 @@ export default () => {
 
   const search = () => {
     const path = getWorkingDir();
+    const onlyPaths = getOnlyPaths();
+    const skipPaths = getSkipPaths();
     triggerEvent(EVENT_TEST_SNIPPET, { path, snippetCode, onlyPaths, skipPaths });
     dispatch({ type: SET_LOADING, loading: true, loadingText: 'Searching... it may take a while' });
   };
 
   const run = () => {
     const path = getWorkingDir();
+    const onlyPaths = getOnlyPaths();
+    const skipPaths = getSkipPaths();
     triggerEvent(EVENT_RUN_SNIPPET, { path, snippetCode, onlyPaths, skipPaths });
     dispatch({ type: SET_LOADING, loading: true, loadingText: 'Running... it may take a while' });
   };
-
-  const handleOnlyPathsChanged = (event) => {
-    const onlyPaths = event.target.value;
-    setOnlyPaths(onlyPaths);
-    saveOnlyPaths(onlyPaths);
-  }
-
-  const handleSkipPathsChanged = (event) => {
-    const skipPaths = event.target.value;
-    setSkipPaths(skipPaths);
-    saveSkipPaths(skipPaths);
-  }
 
   const close = () => {
     setShowConfirmDiff(false);
@@ -197,24 +175,11 @@ export default () => {
       </div>
       <div className="container-fluid mt-2">
         <div className="form-row">
-          <div className="form-group col-md-6">
-            <label>Files to include:</label>
-            <input
-              className="form-control"
-              placeholder="e.g. frontend/src"
-              value={onlyPaths}
-              onChange={(e) => setOnlyPaths(e.target.value)}
-              onBlur={handleOnlyPathsChanged}
-            />
+          <div className="col-md-6">
+            <FilesToInclude />
           </div>
-          <div className="form-group col-md-6">
-            <label>Files to exclude:</label>
-            <input
-              className="form-control"
-              value={skipPaths}
-              onChange={(e) => setSkipPaths(e.target.value)}
-              onBlur={handleSkipPathsChanged}
-            />
+          <div className="col-md-6">
+            <FilesToExclude />
           </div>
         </div>
       </div>
