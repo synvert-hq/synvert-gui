@@ -37,10 +37,6 @@ import {
     EVENT_SNIPPET_TESTED,
     EVENT_RUN_SNIPPET,
     EVENT_SNIPPET_RUN,
-    EVENT_SHOW_SNIPPET_DIFF,
-    EVENT_SNIPPET_DIFF_SHOWN,
-    EVENT_COMMIT_DIFF,
-    EVENT_DIFF_COMMITTED,
 } from './constants';
 import { log, parseJSON, triggerEvent } from './utils'
 
@@ -151,18 +147,6 @@ const runSnippet = async (event) => {
     }
 }
 
-const showSnippetDiff = async (event) => {
-    const { detail: { path } } = event
-    const { stdout, stderr } = await window.electronAPI.runCommand(`cd ${path}; git add .; git diff --cached --ignore-space-at-eol; git reset .`);
-    triggerEvent(EVENT_SNIPPET_DIFF_SHOWN, { diff: stdout, error: stderr })
-}
-
-const commitDiff = async (event) => {
-    const { detail: { path, commitMessage } } = event
-    const { stdout, stderr } = await window.electronAPI.runCommand(`cd ${path} && git add . && git commit -m "${commitMessage.replace(/"/g, '\\"')}" --no-verify`);
-    triggerEvent(EVENT_DIFF_COMMITTED, { error: stderr })
-}
-
 const syncSnippets = async () => {
     const toastId = toast.loading('Syncing snippets...');
     const { stdout, stderr } = await runRubyCommand('synvert-ruby', ['--sync']);
@@ -176,8 +160,6 @@ const syncSnippets = async () => {
 
 window.addEventListener(EVENT_TEST_SNIPPET, testSnippet)
 window.addEventListener(EVENT_RUN_SNIPPET, runSnippet)
-window.addEventListener(EVENT_SHOW_SNIPPET_DIFF, showSnippetDiff)
-window.addEventListener(EVENT_COMMIT_DIFF, commitDiff)
 
 window.electronAPI.onSyncSnippets(syncSnippets);
 
