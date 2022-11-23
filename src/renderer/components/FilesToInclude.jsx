@@ -17,7 +17,7 @@ const FilesToInclude = () => {
   }
 
   return (
-    <div className="form-group">
+    <div className="form-group d-flex align-items-center files-to-include">
       <label>Files to include:</label>
       <input
         className="form-control"

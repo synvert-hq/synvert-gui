@@ -17,7 +17,7 @@ const FilesToExclude = () => {
   }
 
   return (
-    <div className="form-group">
+    <div className="form-group d-flex align-items-center files-to-include">
       <label>Files to exclude:</label>
       <input
         className="form-control"

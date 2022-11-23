@@ -45,12 +45,12 @@ body {
 }
 
 .snippet-show {
-  height: calc(100vh - 161px);
+  height: calc(100vh - 131px);
   overflow-y: auto;
 }
 
 .new-snippet {
-  height: calc(100vh - 176px);
+  height: calc(100vh - 146px);
   overflow-y: auto;
 }
 .new-snippet .nql-or-rules-select label {
@@ -60,9 +60,8 @@ body {
   margin-right: 5px;
 }
 
-.modal .commit-message-input {
-  height: 38px;
-  width: auto;
+.files-to-include label, .files-to-exclude label {
+  width: 175px;
 }
 
 /* test results */
