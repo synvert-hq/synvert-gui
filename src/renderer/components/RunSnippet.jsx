@@ -4,21 +4,20 @@ import toast from 'react-hot-toast';
 
 import AppContext from "../context";
 import {
-  EVENT_RUN_SNIPPET,
   EVENT_SNIPPET_RUN,
   SET_LOADING,
   SET_TEST_RESULTS,
   SET_SHOW_TEST_RESULTS,
-  EVENT_TEST_SNIPPET,
   EVENT_SNIPPET_TESTED,
 } from "../constants";
-import { triggerEvent } from "../utils";
 import WorkingDir from "./WorkingDir";
 import FilesToInclude from "./FilesToInclude";
 import FilesToExclude from "./FilesToExclude";
+import SearchButton from "./SearchButton";
+import ReplaceButton from "./ReplaceButton";
 
 export default () => {
-  const { rootPath, onlyPaths, skipPaths, snippetCode, dispatch } = useContext(AppContext);
+  const { dispatch } = useContext(AppContext);
 
   useEventListener(
     EVENT_SNIPPET_TESTED,
@@ -52,28 +51,14 @@ export default () => {
     }
   );
 
-  const search = () => {
-    triggerEvent(EVENT_TEST_SNIPPET, { rootPath, snippetCode, onlyPaths, skipPaths });
-    dispatch({ type: SET_LOADING, loading: true, loadingText: 'Searching... it may take a while' });
-  };
-
-  const replaceAll = () => {
-    triggerEvent(EVENT_RUN_SNIPPET, { rootPath, snippetCode, onlyPaths, skipPaths });
-    dispatch({ type: SET_LOADING, loading: true, loadingText: 'Running... it may take a while' });
-  };
-
   return (
-    <>
-      <div className="container-fluid mt-4 d-flex flex-row">
+    <div className="run-snippet">
+      <div className="container-fluid mt-3 d-flex flex-row">
         <WorkingDir />
-        <button className="btn btn-primary ml-2" disabled={!rootPath || (snippetCode.length === 0)} onClick={search}>
-          Search
-        </button>
-        <button className="btn btn-primary ml-2" disabled={!rootPath || (snippetCode.length === 0)} onClick={replaceAll}>
-          Replace
-        </button>
+        <SearchButton />
+        <ReplaceButton />
       </div>
-      <div className="container-fluid mt-2">
+      <div className="container-fluid mt-3">
         <div className="form-row">
           <div className="col-md-6">
             <FilesToInclude />
@@ -83,6 +68,6 @@ export default () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };

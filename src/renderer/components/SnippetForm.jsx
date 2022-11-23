@@ -120,10 +120,10 @@ export default () => {
             )}
           </div>
           <div className="form-row">
-            <div className="form-group col-md-6">
+            <div className="col-md-6">
               <label>Inputs</label>
             </div>
-            <div className="form-group col-md-6">
+            <div className="col-md-6">
               <a href="https://synvert.net/how_to_write_inputs_outputs" className="float-right" target="_blank">How to write inputs/outpus?</a>
               <label>Outputs</label>
             </div>
@@ -185,7 +185,7 @@ export default () => {
               />
             </div>
           </div>
-          <SnippetCode />
+          <SnippetCode rows={10} />
         </form>
       </div>
     </div>

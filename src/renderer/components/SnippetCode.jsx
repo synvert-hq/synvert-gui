@@ -3,7 +3,7 @@ import React, { useState, useEffect, useContext } from "react";
 import AppContext from "../context";
 import { SET_GENERATED_SNIPPET } from "../constants";
 
-const SnippetCode = () => {
+const SnippetCode = ({ rows }) => {
   const { dispatch, snippetCode, snippetError } = useContext(AppContext);
   const [code, setCode] = useState("")
   const [error, setError] = useState("")
@@ -31,7 +31,7 @@ const SnippetCode = () => {
       {error !== '' && (<span className="text-danger">{error}</span>)}
       <textarea
         className="form-control"
-        rows="10"
+        rows={rows}
         value={code}
         onChange={(e) => setCode(e.target.value)}
         onBlur={(e) => updateSnippetCode(e.target.value)}

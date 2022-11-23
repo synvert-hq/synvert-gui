@@ -18,6 +18,8 @@ import {
 import SnippetCode from "./SnippetCode";
 import FilesToInclude from "./FilesToInclude";
 import FilesToExclude from "./FilesToExclude";
+import SearchButton from "./SearchButton";
+import ReplaceButton from "./ReplaceButton";
 
 const TestResults = () => {
   const { rootPath, testResults, currentResultIndex, currentActionIndex, dispatch } = useContext(AppContext);
@@ -61,13 +63,17 @@ const TestResults = () => {
 
   return (
     <div className="search-results">
-      <button className="btn btn-back" onClick={back}>&lt;&nbsp;Back</button>
+      <button className="btn btn-sm btn-back" onClick={back}>&lt;&nbsp;Back</button>
       <form>
-        <SnippetCode />
+        <SnippetCode rows={5} />
         <FilesToInclude />
         <FilesToExclude />
+        <div className="d-flex justify-content-end">
+          <SearchButton />
+          <ReplaceButton />
+        </div>
       </form>
-      <ul>
+      <ul className="mt-3">
         {testResults.map((result, resultIndex) => (
           <li key={resultIndex}>
             <div className={resultIndex === currentResultIndex && currentActionIndex === null ? "result active" : "result"} onClick={() => resultClicked(resultIndex)}>

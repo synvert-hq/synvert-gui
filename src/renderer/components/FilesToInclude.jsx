@@ -17,10 +17,10 @@ const FilesToInclude = () => {
   }
 
   return (
-    <div className="form-group d-flex align-items-center files-to-include">
+    <div className="d-flex align-items-center files-to-include">
       <label>Files to include:</label>
       <input
-        className="form-control"
+        className="form-control form-control-sm"
         placeholder="e.g. frontend/src"
         value={value}
         onChange={(e) => setValue(e.target.value)}

@@ -45,12 +45,12 @@ body {
 }
 
 .snippet-show {
-  height: calc(100vh - 131px);
+  height: calc(100vh - 121px);
   overflow-y: auto;
 }
 
 .new-snippet {
-  height: calc(100vh - 146px);
+  height: calc(100vh - 136px);
   overflow-y: auto;
 }
 .new-snippet .nql-or-rules-select label {
@@ -62,6 +62,7 @@ body {
 
 .files-to-include label, .files-to-exclude label {
   width: 175px;
+  margin-bottom: 0;
 }
 
 /* test results */
@@ -75,11 +76,14 @@ body {
   padding-left: 15px;
   padding-right: 15px;
 }
+.search-results .files-to-include, .search-results .files-to-exclude {
+  margin-bottom: 10px;
+}
 .search-results > ul {
-  height: calc(100vh - 458px);
+  height: calc(100vh - 326px);
   overflow-y: auto;
 }
-.search-results, .search-actions {
+.search-results ul, .search-actions {
   list-style: none;
   padding-left: 0;
 }
