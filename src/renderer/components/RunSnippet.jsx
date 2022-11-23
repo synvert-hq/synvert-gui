@@ -112,7 +112,7 @@ export default () => {
     dispatch({ type: SET_LOADING, loading: true, loadingText: 'Searching... it may take a while' });
   };
 
-  const run = () => {
+  const replaceAll = () => {
     const path = getWorkingDir();
     const onlyPaths = getOnlyPaths();
     const skipPaths = getSkipPaths();
@@ -169,8 +169,8 @@ export default () => {
         <button className="btn btn-primary ml-2" disabled={!path || (snippetCode.length === 0)} onClick={search}>
           Search
         </button>
-        <button className="btn btn-primary ml-2" disabled={!path || (snippetCode.length === 0)} onClick={run}>
-          Run
+        <button className="btn btn-primary ml-2" disabled={!path || (snippetCode.length === 0)} onClick={replaceAll}>
+          Replace
         </button>
       </div>
       <div className="container-fluid mt-2">
