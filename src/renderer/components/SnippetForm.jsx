@@ -11,6 +11,14 @@ export default () => {
   const { register, control, handleSubmit, formState: { errors } } = useForm({ defaultValues: { inputs_outputs: [{ input: '', output: '' }], nql_or_rules: 'nql' } });
   const { fields, append, remove } = useFieldArray({ control, name: 'inputs_outputs' });
 
+  const addMore = () => append({ input: '', output: '' })
+
+  const removeLast = () => {
+    if (fields.length > 1) {
+      remove(fields.length - 1);
+    }
+  }
+
   const composeGeneratedSnippet = (data, result) => {
     let generatedSnippet = "Synvert::Rewriter.new 'group', 'name' do\n";
     if (data.rubyVersion) {
@@ -142,12 +150,14 @@ export default () => {
           ))}
           <div className="form-group d-flex justify-content-between">
             <div>
-              <button type="button" className="btn btn-link" onClick={() => append({ input: '', output: '' })}>
+              <button type="button" className="btn btn-link" onClick={addMore}>
                 Add More Input/Output
               </button>
-              <button type="button" className="btn btn-link" onClick={() => remove(fields.length - 1)}>
-                Remove Last Input/Output
-              </button>
+              {fields.length > 1 && (
+                <button type="button" className="btn btn-link" onClick={removeLast}>
+                  Remove Last Input/Output
+                </button>
+              )}
             </div>
             <div className="nql-or-rules-select">
               <label htmlFor="nql">
