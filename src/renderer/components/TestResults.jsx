@@ -15,13 +15,12 @@ import {
   SET_CURRENT_RESULT_INDEX,
   SET_CURRENT_ACTION_INDEX,
 } from "../constants";
-import { getWorkingDir } from "../utils";
 import SnippetCode from "./SnippetCode";
 import FilesToInclude from "./FilesToInclude";
 import FilesToExclude from "./FilesToExclude";
 
 const TestResults = () => {
-  const { testResults, currentResultIndex, currentActionIndex, dispatch } = useContext(AppContext);
+  const { rootPath, testResults, currentResultIndex, currentActionIndex, dispatch } = useContext(AppContext);
 
   const [filesCollapse, setFilesCollapse] = useState({});
 
@@ -37,7 +36,7 @@ const TestResults = () => {
   }
 
   const replaceResult = (resultIndex) => {
-    dispatch({ type: REPLACE_TEST_RESULT, rootPath: getWorkingDir(), resultIndex });
+    dispatch({ type: REPLACE_TEST_RESULT, rootPath, resultIndex });
   }
 
   const removeResult = (resultIndex) => {
@@ -45,7 +44,7 @@ const TestResults = () => {
   }
 
   const replaceAction = (resultIndex, actionIndex) => {
-    dispatch({ type: REPLACE_TEST_ACTION, rootPath: getWorkingDir(), resultIndex, actionIndex });
+    dispatch({ type: REPLACE_TEST_ACTION, rootPath, resultIndex, actionIndex });
   }
 
   const removeAction = (resultIndex, actionIndex) => {

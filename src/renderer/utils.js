@@ -1,4 +1,4 @@
-import { WORKING_DIR, ONLY_PATHS, SKIP_PATHS } from "./constants"
+import { ROOT_PATH, ONLY_PATHS, SKIP_PATHS } from "./constants"
 
 const savePreference = (section, key, value) => {
     const preferences = window.electronAPI.getPreferences()
@@ -11,14 +11,14 @@ const getPreference = (section, key) => {
     return preferences[section][key]
 }
 
-export const getWorkingDir = () => localStorage.getItem(WORKING_DIR);
-export const saveWorkingDir = (path) => localStorage.setItem(WORKING_DIR, path);
+export const getRootPath = () => localStorage.getItem(ROOT_PATH) || "";
+export const saveRootPath = (path) => localStorage.setItem(ROOT_PATH, path);
 
-export const getOnlyPaths = () => localStorage.getItem(getWorkingDir() + ":" + ONLY_PATHS);
-export const saveOnlyPaths = (path) => localStorage.setItem(getWorkingDir() + ":" + ONLY_PATHS, path);
+export const getOnlyPaths = () => localStorage.getItem(getRootPath() + ":" + ONLY_PATHS) || "";
+export const saveOnlyPaths = (path) => localStorage.setItem(getRootPath() + ":" + ONLY_PATHS, path);
 
-export const getSkipPaths = () => localStorage.getItem(getWorkingDir() + ":" + SKIP_PATHS);
-export const saveSkipPaths = (path) => localStorage.setItem(getWorkingDir() + ":" + SKIP_PATHS, path);
+export const getSkipPaths = () => localStorage.getItem(getRootPath() + ":" + SKIP_PATHS) || "**/node_modules/**,**/dist/**";
+export const saveSkipPaths = (path) => localStorage.setItem(getRootPath() + ":" + SKIP_PATHS, path);
 
 export const convertSnippetsToStore = (snippets) =>
     snippets.reduce(

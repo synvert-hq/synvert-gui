@@ -12,6 +12,9 @@ import {
     REMOVE_TEST_ACTION,
     SET_CURRENT_ACTION_INDEX,
     SET_CURRENT_RESULT_INDEX,
+    SET_ROOT_PATH,
+    SET_ONLY_PATHS,
+    SET_SKIP_PATHS,
 } from './constants'
 import { getNewSource } from './utils';
 
@@ -132,6 +135,24 @@ export default (state = {}, action) => {
                 ...state,
                 currentResultIndex: action.resultIndex,
                 currentActionIndex: action.actionIndex,
+            }
+        }
+        case SET_ROOT_PATH: {
+            return {
+                ...state,
+                rootPath: action.rootPath,
+            }
+        }
+        case SET_ONLY_PATHS: {
+            return {
+                ...state,
+                onlyPaths: action.onlyPaths,
+            }
+        }
+        case SET_SKIP_PATHS: {
+            return {
+                ...state,
+                skipPaths: action.skipPaths,
             }
         }
         default:

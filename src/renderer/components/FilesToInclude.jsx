@@ -1,19 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 
-import { getOnlyPaths, saveOnlyPaths } from "../utils";
+import AppContext from "../context";
+import { SET_ONLY_PATHS } from "../constants";
+import { saveOnlyPaths } from "../utils";
 
 const FilesToInclude = () => {
-  const [onlyPaths, setOnlyPaths] = useState("");
+  const { onlyPaths, dispatch } = useContext(AppContext);
+  const [value, setValue] = useState(onlyPaths);
 
-  useEffect(() => {
-    if (getOnlyPaths()) {
-      setOnlyPaths(getOnlyPaths());
-    }
-  }, [getOnlyPaths()]);
-
-  const handleOnlyPathsChanged = (event) => {
+  const handleValueChanged = (event) => {
     const onlyPaths = event.target.value;
-    setOnlyPaths(onlyPaths);
+    dispatch({ type: SET_ONLY_PATHS, onlyPaths });
     saveOnlyPaths(onlyPaths);
   }
 
@@ -23,9 +20,9 @@ const FilesToInclude = () => {
       <input
         className="form-control"
         placeholder="e.g. frontend/src"
-        value={onlyPaths}
-        onChange={(e) => setOnlyPaths(e.target.value)}
-        onBlur={handleOnlyPathsChanged}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        onBlur={handleValueChanged}
       />
     </div>
   )

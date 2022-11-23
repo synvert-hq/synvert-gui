@@ -1,19 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 
-import { getSkipPaths, saveSkipPaths } from "../utils";
+import AppContext from "../context";
+import { SET_SKIP_PATHS } from "../constants";
+import { saveSkipPaths } from "../utils";
 
 const FilesToExclude = () => {
-  const [skipPaths, setSkipPaths] = useState("**/node_modules/**,**/dist/**");
+  const { skipPaths, dispatch } = useContext(AppContext);
+  const [value, setValue] = useState(skipPaths);
 
-  useEffect(() => {
-    if (getSkipPaths()) {
-      setSkipPaths(getSkipPaths());
-    }
-  }, [getSkipPaths()]);
-
-  const handleSkipPathsChanged = (event) => {
+  const handleValueChanged = (event) => {
     const skipPaths = event.target.value;
-    setSkipPaths(skipPaths);
+    dispatch({ type: SET_SKIP_PATHS, skipPaths });
     saveSkipPaths(skipPaths);
   }
 
@@ -22,9 +19,9 @@ const FilesToExclude = () => {
       <label>Files to exclude:</label>
       <input
         className="form-control"
-        value={skipPaths}
-        onChange={(e) => setSkipPaths(e.target.value)}
-        onBlur={handleSkipPathsChanged}
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        onBlur={handleValueChanged}
       />
     </div>
   )
