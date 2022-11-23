@@ -15,6 +15,7 @@ import {
     SET_ROOT_PATH,
     SET_ONLY_PATHS,
     SET_SKIP_PATHS,
+    REPLACE_ALL_TEST_RESULTS,
 } from './constants'
 import { getNewSource } from './utils';
 
@@ -121,6 +122,21 @@ export default (state = {}, action) => {
             return {
                 ...state,
                 testResults,
+            }
+        }
+        case REPLACE_ALL_TEST_RESULTS: {
+            const testResults = state.testResults;
+            testResults.forEach(testResult => {
+                const absolutePath = window.electronAPI.pathJoin(action.rootPath, testResult.filePath);
+                let source = window.electronAPI.readFile(absolutePath, "utf-8");
+                const newSource = getNewSource(source, testResult);
+                window.electronAPI.writeFile(absolutePath, newSource);
+            });
+            return {
+                ...state,
+                testResults: [],
+                currentResultIndex: 0,
+                currentActionIndex: 0,
             }
         }
         case SET_CURRENT_RESULT_INDEX: {

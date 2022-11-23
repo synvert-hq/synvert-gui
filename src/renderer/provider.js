@@ -17,6 +17,8 @@ const initialState = {
     showForm: true,
     showTestResults: false,
     testResults: [],
+    currentResultIndex: 0,
+    currentActionIndex: 0,
 }
 
 export default ({ children }) => {

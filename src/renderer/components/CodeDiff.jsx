@@ -7,6 +7,8 @@ import { getNewSource } from "../utils";
 const CodeDiff = () => {
   const { testResults, currentResultIndex } = useContext(AppContext);
   const currentTestResult = testResults[currentResultIndex];
+  if (!currentTestResult) return null;
+
   const fileSource = currentTestResult.fileSource;
   const newFileSource = getNewSource(fileSource, currentTestResult);
 

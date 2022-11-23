@@ -41,7 +41,7 @@ export default () => {
   useEffect(() => { loadSnippets() }, []);
 
   if (!loaded) {
-    return <div className="text-center">Loading Official Snippets...</div>;
+    return <div className="text-center mt-4">Loading Official Snippets...</div>;
   }
 
   if (error) {
