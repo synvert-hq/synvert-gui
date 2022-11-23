@@ -7,6 +7,7 @@ import ReplaceSvg from "./svgs/replace.svg";
 import ReplaceAllSvg from "./svgs/replace-all.svg";
 import CloseSvg from "./svgs/close.svg";
 import {
+  SET_SHOW_TEST_RESULTS,
   REMOVE_TEST_ACTION,
   REMOVE_TEST_RESULT,
   REPLACE_TEST_ACTION,
@@ -29,6 +30,10 @@ const TestResults = () => {
       ...filesCollapse,
       ...{ [filePath]: !filesCollapse[filePath] }
     });
+  }
+
+  const back = () => {
+    dispatch({ type: SET_SHOW_TEST_RESULTS, showTestResults: false });
   }
 
   const replaceResult = (resultIndex) => {
@@ -57,6 +62,7 @@ const TestResults = () => {
 
   return (
     <div className="search-results">
+      <button className="btn btn-back" onClick={back}>&lt;&nbsp;Back</button>
       <form>
         <SnippetCode />
         <FilesToInclude />

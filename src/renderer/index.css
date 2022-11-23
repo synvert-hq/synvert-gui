@@ -66,6 +66,9 @@ body {
 }
 
 /* test results */
+.btn-back {
+  margin-left: 15px;
+}
 .search-results {
   padding-top: 15px;
 }
