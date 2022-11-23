@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context";
 import { SET_SKIP_PATHS } from "../constants";
@@ -7,6 +7,8 @@ import { saveSkipPaths } from "../utils";
 const FilesToExclude = () => {
   const { skipPaths, dispatch } = useContext(AppContext);
   const [value, setValue] = useState(skipPaths);
+
+  useEffect(() => setValue(skipPaths), [skipPaths]);
 
   const handleValueChanged = (event) => {
     const skipPaths = event.target.value;

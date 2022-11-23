@@ -1,8 +1,8 @@
-import React, { useState, useContext } from "react";
+import React, { useContext } from "react";
 import { SET_ROOT_PATH } from "../constants";
 
 import AppContext from "../context";
-import { saveRootPath } from "../utils";
+import { getOnlyPaths, getSkipPaths, saveRootPath } from "../utils";
 
 const WorkingDir = () => {
   const { rootPath, dispatch } = useContext(AppContext);
@@ -11,7 +11,9 @@ const WorkingDir = () => {
     const rootPath = await window.electronAPI.openFile()
     if (rootPath) {
       saveRootPath(rootPath);
-      dispatch({ type: SET_ROOT_PATH, rootPath });
+      const onlyPaths = getOnlyPaths()
+      const skipPaths = getSkipPaths()
+      dispatch({ type: SET_ROOT_PATH, rootPath, onlyPaths, skipPaths });
     }
   };
 

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context";
 import { SET_ONLY_PATHS } from "../constants";
@@ -7,6 +7,8 @@ import { saveOnlyPaths } from "../utils";
 const FilesToInclude = () => {
   const { onlyPaths, dispatch } = useContext(AppContext);
   const [value, setValue] = useState(onlyPaths);
+
+  useEffect(() => setValue(onlyPaths), [onlyPaths]);
 
   const handleValueChanged = (event) => {
     const onlyPaths = event.target.value;

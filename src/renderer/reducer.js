@@ -141,6 +141,8 @@ export default (state = {}, action) => {
             return {
                 ...state,
                 rootPath: action.rootPath,
+                onlyPaths: action.onlyPaths,
+                skipPaths: action.skipPaths,
             }
         }
         case SET_ONLY_PATHS: {

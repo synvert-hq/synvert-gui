@@ -115,7 +115,7 @@ const testSnippet = async (event) => {
     }
     try {
         const testResults = parseJSON(stdout)
-        addFileSourceToTestResults(testResults, path);
+        addFileSourceToTestResults(testResults, rootPath);
         triggerEvent(EVENT_SNIPPET_TESTED, { testResults })
     } catch(e) {
         triggerEvent(EVENT_SNIPPET_TESTED, { error: e.message })
@@ -124,7 +124,7 @@ const testSnippet = async (event) => {
 
 const runSnippet = async (event) => {
     const { detail: { snippetCode, rootPath, onlyPaths, skipPaths } } = event
-    const commandArgs = ["--execute", "test", "--format", "json"];
+    const commandArgs = ["--execute", "run", "--format", "json"];
     if (onlyPaths.length > 0) {
         commandArgs.push("--only-paths");
         commandArgs.push(onlyPaths);
