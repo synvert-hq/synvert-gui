@@ -2,9 +2,10 @@ import React, { useReducer } from 'react'
 
 import appReducer from './reducer'
 import AppContext from './context'
-import { getOnlyPaths, getRootPath, getSkipPaths } from './utils'
+import { getLanguage, getOnlyPaths, getRootPath, getSkipPaths } from './utils'
 
 const initialState = {
+    language: getLanguage(),
     rootPath: getRootPath(),
     onlyPaths: getOnlyPaths(),
     skipPaths: getSkipPaths(),

@@ -7,6 +7,7 @@ import {
   SET_CURRENT_SNIPPET_ID,
   SET_SHOW_FORM,
 } from "../constants";
+import LanguageSelect from "./LanguageSelect";
 
 const snippetClassname = (snippet, currentSnippetId) =>
   currentSnippetId && snippet.id == currentSnippetId
@@ -76,6 +77,7 @@ export default () => {
 
   return (
     <div className="snippets-list">
+      <LanguageSelect />
       <div className="search-box d-flex">
         <input
           className="flex-grow-1 form-control"

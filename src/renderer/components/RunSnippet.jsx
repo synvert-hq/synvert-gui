@@ -60,10 +60,10 @@ export default () => {
       </div>
       <div className="container-fluid mt-3">
         <div className="form-row">
-          <div className="col-md-6">
+          <div className="col">
             <FilesToInclude />
           </div>
-          <div className="col-md-6">
+          <div className="col">
             <FilesToExclude />
           </div>
         </div>

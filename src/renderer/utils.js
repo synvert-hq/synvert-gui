@@ -1,4 +1,4 @@
-import { ROOT_PATH, ONLY_PATHS, SKIP_PATHS } from "./constants"
+import { ROOT_PATH, ONLY_PATHS, SKIP_PATHS, LANGUAGE } from "./constants"
 
 const savePreference = (section, key, value) => {
     const preferences = window.electronAPI.getPreferences()
@@ -10,6 +10,9 @@ const getPreference = (section, key) => {
     const preferences = window.electronAPI.getPreferences()
     return preferences[section][key]
 }
+
+export const getLanguage = () => localStorage.getItem(LANGUAGE) || "ruby";
+export const saveLanguage = (language) => localStorage.setItem(LANGUAGE, language);
 
 export const getRootPath = () => localStorage.getItem(ROOT_PATH) || "";
 export const saveRootPath = (path) => localStorage.setItem(ROOT_PATH, path);

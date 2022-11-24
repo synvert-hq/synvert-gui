@@ -16,11 +16,18 @@ import {
     SET_ONLY_PATHS,
     SET_SKIP_PATHS,
     REPLACE_ALL_TEST_RESULTS,
+    SET_LANGUAGE,
 } from './constants'
 import { getNewSource } from './utils';
 
 export default (state = {}, action) => {
     switch (action.type) {
+        case SET_LANGUAGE: {
+            return {
+                ...state,
+                language: action.language,
+            }
+        }
         case SET_SNIPPETS_STORE: {
             return {
                 ...state,
