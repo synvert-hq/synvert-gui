@@ -1,5 +1,7 @@
 import { ROOT_PATH, ONLY_PATHS, SKIP_PATHS, LANGUAGE } from "./constants"
 
+const CUSTOM = "custom";
+
 const savePreference = (section, key, value) => {
     const preferences = window.electronAPI.getPreferences()
     preferences[section][key] = value
@@ -11,17 +13,17 @@ export const getPreference = (section, key) => {
     return preferences[section][key]
 }
 
-export const getLanguage = () => localStorage.getItem(LANGUAGE) || "ruby";
-export const saveLanguage = (language) => localStorage.setItem(LANGUAGE, language);
+export const getLanguage = () => getPreference(CUSTOM, LANGUAGE) || "ruby";
+export const saveLanguage = (language) => savePreference(CUSTOM, LANGUAGE, language);
 
-export const getRootPath = () => localStorage.getItem(ROOT_PATH) || "";
-export const saveRootPath = (path) => localStorage.setItem(ROOT_PATH, path);
+export const getRootPath = () => getPreference(CUSTOM, ROOT_PATH) || "";
+export const saveRootPath = (path) => savePreference(CUSTOM, ROOT_PATH, path);
 
-export const getOnlyPaths = () => localStorage.getItem(getRootPath() + ":" + ONLY_PATHS) || "";
-export const saveOnlyPaths = (path) => localStorage.setItem(getRootPath() + ":" + ONLY_PATHS, path);
+export const getOnlyPaths = () => getPreference(CUSTOM, getRootPath() + ":" + ONLY_PATHS) || "";
+export const saveOnlyPaths = (path) => savePreference(CUSTOM, getRootPath() + ":" + ONLY_PATHS, path);
 
-export const getSkipPaths = () => localStorage.getItem(getRootPath() + ":" + SKIP_PATHS) || "**/node_modules/**,**/dist/**";
-export const saveSkipPaths = (path) => localStorage.setItem(getRootPath() + ":" + SKIP_PATHS, path);
+export const getSkipPaths = () => getPreference(CUSTOM, getRootPath() + ":" + SKIP_PATHS) || "**/node_modules/**,**/dist/**";
+export const saveSkipPaths = (path) => savePreference(CUSTOM, getRootPath() + ":" + SKIP_PATHS, path);
 
 export const convertSnippetsToStore = (snippets) =>
     snippets.reduce(

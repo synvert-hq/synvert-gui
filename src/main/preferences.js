@@ -22,7 +22,8 @@ const preferences = new ElectronPreferences({
         },
         typescript: {
             enabled: true
-        }
+        },
+        custom: {}
     },
     sections: [
         {
