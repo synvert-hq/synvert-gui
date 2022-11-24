@@ -8,7 +8,7 @@ const savePreference = (section, key, value) => {
     window.electronAPI.setPreferences(preferences)
 }
 
-export const getPreference = (section, key) => {
+const getPreference = (section, key) => {
     const preferences = window.electronAPI.getPreferences()
     return preferences[section][key]
 }
@@ -24,6 +24,11 @@ export const saveOnlyPaths = (path) => savePreference(CUSTOM, getRootPath() + ":
 
 export const getSkipPaths = () => getPreference(CUSTOM, getRootPath() + ":" + SKIP_PATHS) || "**/node_modules/**,**/dist/**";
 export const saveSkipPaths = (path) => savePreference(CUSTOM, getRootPath() + ":" + SKIP_PATHS, path);
+
+export const rubyEnabled = () => getPreference("ruby", "enabled").includes("yes");
+export const rubyNumberOfWorkers = () => getPreference("ruby", "number_of_workers");
+export const javascriptEnabled = () => getPreference("javascript", "enabled").includes("yes");
+export const typescriptEnabled = () => getPreference("typescript", "enabled").includes("yes");
 
 export const convertSnippetsToStore = (snippets) =>
     snippets.reduce(

@@ -11,8 +11,8 @@ const ReplaceButton = () => {
     if (testResults.length > 0) {
       dispatch({ type: REPLACE_ALL_TEST_RESULTS, rootPath, testResults });
     } else {
-      triggerEvent(EVENT_RUN_SNIPPET, { rootPath, snippetCode, onlyPaths, skipPaths });
       dispatch({ type: SET_LOADING, loading: true, loadingText: 'Running... it may take a while' });
+      triggerEvent(EVENT_RUN_SNIPPET, { rootPath, snippetCode, onlyPaths, skipPaths });
     }
   };
 

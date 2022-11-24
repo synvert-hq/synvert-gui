@@ -8,8 +8,8 @@ const SearchButton = () => {
   const { rootPath, onlyPaths, skipPaths, snippetCode, dispatch } = useContext(AppContext);
 
   const search = () => {
-    triggerEvent(EVENT_TEST_SNIPPET, { rootPath, snippetCode, onlyPaths, skipPaths });
     dispatch({ type: SET_LOADING, loading: true, loadingText: 'Searching... it may take a while' });
+    triggerEvent(EVENT_TEST_SNIPPET, { rootPath, snippetCode, onlyPaths, skipPaths });
   };
 
   return (

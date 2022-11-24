@@ -14,14 +14,14 @@ const preferences = new ElectronPreferences({
     },
     defaults: {
         ruby: {
-            enabled: true,
+            enabled: ['yes'],
             number_of_workers: 4,
         },
         javascript: {
-            enabled: true
+            enabled: ['yes']
         },
         typescript: {
-            enabled: true
+            enabled: ['yes']
         },
         custom: {}
     },
@@ -38,7 +38,7 @@ const preferences = new ElectronPreferences({
                                 key: 'enabled',
                                 type: 'checkbox',
                                 options: [
-                                    { label: 'Enabled', value: true }
+                                    { label: 'Enabled', value: 'yes' }
                                 ]
                             },
                             {
@@ -63,7 +63,7 @@ const preferences = new ElectronPreferences({
                                 key: 'enabled',
                                 type: 'checkbox',
                                 options: [
-                                    { label: 'Enabled', value: true }
+                                    { label: 'Enabled', value: 'yes' }
                                 ]
                             }
                         ]
@@ -83,7 +83,7 @@ const preferences = new ElectronPreferences({
                                 key: 'enabled',
                                 type: 'checkbox',
                                 options: [
-                                    { label: 'Enabled', value: true }
+                                    { label: 'Enabled', value: 'yes' }
                                 ]
                             }
                         ]

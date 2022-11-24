@@ -38,7 +38,7 @@ import {
     EVENT_RUN_SNIPPET,
     EVENT_SNIPPET_RUN,
 } from './constants';
-import { getPreference, log, parseJSON, triggerEvent } from './utils'
+import { rubyNumberOfWorkers, log, parseJSON, triggerEvent, rubyEnabled } from './utils'
 
 const isRealError = stderr => stderr && !stderr.startsWith('warning:') && !stderr.startsWith('Cloning into ') &&
   !stderr.startsWith("error: pathspec '.' did not match any file(s) known to git")
@@ -65,6 +65,9 @@ const installGem = async () => {
 }
 
 const checkDependencies = async () => {
+    if (!rubyEnabled()) {
+        return;
+    }
     let { stdout, stderr } = await runRubyCommand('ruby', ['--version']);
     if (stderr) {
         toast.error("ruby is not available!");
@@ -97,6 +100,10 @@ const addFileSourceToTestResults = (testResults, rootPath) => {
 }
 
 const testSnippet = async (event) => {
+    if (!rubyEnabled()) {
+        triggerEvent(EVENT_SNIPPET_TESTED, { error: "Synvert ruby is not enabled!" });
+        return;
+    }
     const { detail: { snippetCode, rootPath, onlyPaths, skipPaths } } = event
     const commandArgs = ["--execute", "test"];
     if (onlyPaths.length > 0) {
@@ -107,15 +114,15 @@ const testSnippet = async (event) => {
         commandArgs.push("--skip-paths");
         commandArgs.push(skipPaths);
     }
-    if (getPreference("ruby", "number_of_workers")) {
+    if (rubyNumberOfWorkers()) {
         commandArgs.push("--number-of-workers");
-        commandArgs.push(getPreference("ruby", "number_of_workers"));
+        commandArgs.push(rubyNumberOfWorkers());
     }
     commandArgs.push(rootPath);
     const { stdout, stderr } = await runRubyCommand('synvert-ruby', commandArgs, { input: snippetCode });
     if (stderr) {
         triggerEvent(EVENT_SNIPPET_TESTED, { error: 'Failed to run snippet!' })
-        return
+        return;
     }
     try {
         const testResults = parseJSON(stdout)
@@ -127,6 +134,10 @@ const testSnippet = async (event) => {
 }
 
 const runSnippet = async (event) => {
+    if (!rubyEnabled()) {
+        triggerEvent(EVENT_SNIPPET_RUN, { error: "Synvert ruby is not enabled!" });
+        return;
+    }
     const { detail: { snippetCode, rootPath, onlyPaths, skipPaths } } = event
     const commandArgs = ["--execute", "run", "--format", "json"];
     if (onlyPaths.length > 0) {
