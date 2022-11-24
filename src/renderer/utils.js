@@ -6,7 +6,7 @@ const savePreference = (section, key, value) => {
     window.electronAPI.setPreferences(preferences)
 }
 
-const getPreference = (section, key) => {
+export const getPreference = (section, key) => {
     const preferences = window.electronAPI.getPreferences()
     return preferences[section][key]
 }

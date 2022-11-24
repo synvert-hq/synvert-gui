@@ -38,7 +38,7 @@ import {
     EVENT_RUN_SNIPPET,
     EVENT_SNIPPET_RUN,
 } from './constants';
-import { log, parseJSON, triggerEvent } from './utils'
+import { getPreference, log, parseJSON, triggerEvent } from './utils'
 
 const isRealError = stderr => stderr && !stderr.startsWith('warning:') && !stderr.startsWith('Cloning into ') &&
   !stderr.startsWith("error: pathspec '.' did not match any file(s) known to git")
@@ -106,6 +106,10 @@ const testSnippet = async (event) => {
     if (skipPaths.length > 0) {
         commandArgs.push("--skip-paths");
         commandArgs.push(skipPaths);
+    }
+    if (getPreference("ruby", "number_of_workers")) {
+        commandArgs.push("--number-of-workers");
+        commandArgs.push(getPreference("ruby", "number_of_workers"));
     }
     commandArgs.push(rootPath);
     const { stdout, stderr } = await runRubyCommand('synvert-ruby', commandArgs, { input: snippetCode });
