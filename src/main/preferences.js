@@ -14,8 +14,15 @@ const preferences = new ElectronPreferences({
     },
     defaults: {
         ruby: {
+            enabled: true,
             number_of_workers: 4,
         },
+        javascript: {
+            enabled: true
+        },
+        typescript: {
+            enabled: true
+        }
     },
     sections: [
         {
@@ -24,12 +31,59 @@ const preferences = new ElectronPreferences({
             form: {
                 groups: [
                     {
-                        label: 'Ruby',
                         fields: [
+                            {
+                                label: 'Enable synvert ruby',
+                                key: 'enabled',
+                                type: 'checkbox',
+                                options: [
+                                    { label: 'Enabled', value: true }
+                                ]
+                            },
                             {
                                 label: 'Number of workers to run in parallel',
                                 key: 'number_of_workers',
                                 type: 'number',
+                            }
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            id: 'javascript',
+            label: 'Javascript',
+            form: {
+                groups: [
+                    {
+                        fields: [
+                            {
+                                label: 'Enable synvert javascript',
+                                key: 'enabled',
+                                type: 'checkbox',
+                                options: [
+                                    { label: 'Enabled', value: true }
+                                ]
+                            }
+                        ]
+                    },
+                ]
+            }
+        },
+        {
+            id: 'typescript',
+            label: 'Typescript',
+            form: {
+                groups: [
+                    {
+                        fields: [
+                            {
+                                label: 'Enable synvert typescript',
+                                key: 'enabled',
+                                type: 'checkbox',
+                                options: [
+                                    { label: 'Enabled', value: true }
+                                ]
                             }
                         ]
                     },
