@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { machineIdSync } from 'node-machine-id';
+import { spawn } from "child_process";
 import { rubySpawn } from 'ruby-spawn';
 import { execaCommand } from 'execa';
 import { EVENT_SYNC_SNIPPETS } from './renderer/constants';
@@ -20,6 +21,35 @@ contextBridge.exposeInMainWorld('electronAPI', {
   runRubyCommand: async (command, args, input = null) => {
     const { output, error } = await new Promise((resolve) => {
       const child = rubySpawn(command, args, { encoding: 'utf8' }, true);
+      if (child.stdin && input) {
+        child.stdin.write(input);
+        child.stdin.end();
+      }
+      let output = '';
+      if (child.stdout) {
+        child.stdout.on('data', data => {
+          output += data;
+        });
+      }
+      let error = "";
+      if (child.stderr) {
+        child.stderr.on('data', data => {
+          error += data;
+        });
+      }
+      child.on('error', (e) => {
+        return resolve({ error: e.message });
+      });
+      child.on('exit', () => {
+        return resolve({ output, error });
+      });
+    });
+    return { stdout: output, stderr: error };
+  },
+
+  runJavascriptCommand: async (command, args, input = null) => {
+    const { output, error } = await new Promise((resolve) => {
+      const child = spawn(command, args, { env: process.env, encoding: 'utf8' }, true);
       if (child.stdin && input) {
         child.stdin.write(input);
         child.stdin.end();

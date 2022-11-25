@@ -5,11 +5,11 @@ import { EVENT_TEST_SNIPPET, SET_LOADING } from "../constants";
 import { triggerEvent } from "../utils";
 
 const SearchButton = () => {
-  const { rootPath, onlyPaths, skipPaths, snippetCode, dispatch } = useContext(AppContext);
+  const { language, rootPath, onlyPaths, skipPaths, snippetCode, dispatch } = useContext(AppContext);
 
   const search = () => {
     dispatch({ type: SET_LOADING, loading: true, loadingText: 'Searching... it may take a while' });
-    triggerEvent(EVENT_TEST_SNIPPET, { rootPath, snippetCode, onlyPaths, skipPaths });
+    triggerEvent(EVENT_TEST_SNIPPET, { language, rootPath, snippetCode, onlyPaths, skipPaths });
   };
 
   return (

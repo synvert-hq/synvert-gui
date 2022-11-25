@@ -38,21 +38,33 @@ import {
     EVENT_RUN_SNIPPET,
     EVENT_SNIPPET_RUN,
 } from './constants';
-import { rubyNumberOfWorkers, log, parseJSON, triggerEvent, rubyEnabled } from './utils'
+import { rubyNumberOfWorkers, log, parseJSON, triggerEvent, rubyEnabled, javascriptEnabled } from './utils'
 
 const isRealError = stderr => stderr && !stderr.startsWith('warning:') && !stderr.startsWith('Cloning into ') &&
   !stderr.startsWith("error: pathspec '.' did not match any file(s) known to git")
 
 const runRubyCommand = async (command, args, { input } = {}) => {
-    try {
-        log({ type: 'runCommand', command: [command].concat(args).join(' ') });
-        const { stdout, stderr } = await window.electronAPI.runRubyCommand(command, args, input);
-        log({ type: 'runCommand', stdout, stderr });
-        return { stdout, stderr: isRealError(stderr) ? stderr : null };
-    } catch (e) {
-        log({ type: 'runCommand error', e });
-        return { stderr: e.message };
-    }
+  try {
+    log({ type: 'runCommand', command: [command].concat(args).join(' ') });
+    const { stdout, stderr } = await window.electronAPI.runRubyCommand(command, args, input);
+    log({ type: 'runCommand', stdout, stderr });
+    return { stdout, stderr: isRealError(stderr) ? stderr : null };
+  } catch (e) {
+    log({ type: 'runCommand error', e });
+    return { stderr: e.message };
+  }
+}
+
+const runJavascriptCommand = async (command, args, { input } = {}) => {
+  try {
+    log({ type: 'runCommand', command: [command].concat(args).join(' ') });
+    const { stdout, stderr } = await window.electronAPI.runJavascriptCommand(command, args, input);
+    log({ type: 'runCommand', stdout, stderr });
+    return { stdout, stderr: isRealError(stderr) ? stderr : null };
+  } catch (e) {
+    log({ type: 'runCommand error', e });
+    return { stderr: e.message };
+  }
 }
 
 const installGem = async () => {
@@ -64,7 +76,16 @@ const installGem = async () => {
     }
 }
 
-const checkDependencies = async () => {
+const installNpm = async () => {
+    const { stdout, stderr } = await runJavascriptCommand('npm', ['install', '-g', 'synvert']);
+    if (stderr) {
+        toast.error("Failed to install the synvert gem. ") + stderr;
+    } else {
+        toast.success("Successfully installed the synvert gem.")
+    }
+}
+
+const checkRubyDependencies = async () => {
     if (!rubyEnabled()) {
         return;
     }
@@ -91,6 +112,38 @@ const checkDependencies = async () => {
     }
 }
 
+const checkJavascriptDependencies = async () => {
+    if (!javascriptEnabled()) {
+        return;
+    }
+    let { stdout, stderr } = await runJavascriptCommand('node', ['--version']);
+    if (stderr) {
+        toast.error("nodejs is not available!");
+        return;
+    }
+    ({ stdout, stderr } = await runJavascriptCommand('synvert-javascript', ['--version']));
+    if (stderr) {
+        toast((t) => (
+            <div>
+                <p>Synvert npm not found. Run `npm install -g synvert`.</p>
+                <div className="d-flex justify-content-between">
+                    <button className="btn btn-primary btn-sm" onClick={() => {
+                        installNpm();
+                        toast.dismiss(t.id);
+                    }}>Install Now</button>
+                    <button className="btn btn-info btn-sm" onClick={() => toast.dismiss(t.id)}>Dismiss</button>
+                </div>
+            </div>
+        ));
+        return;
+    }
+}
+
+const checkDependencies = async () => {
+  await checkRubyDependencies();
+  await checkJavascriptDependencies();
+}
+
 const addFileSourceToTestResults = (testResults, rootPath) => {
     testResults.forEach((testResult) => {
         const fileSource = window.electronAPI.readFile(window.electronAPI.pathJoin(rootPath, testResult.filePath));
@@ -99,67 +152,146 @@ const addFileSourceToTestResults = (testResults, rootPath) => {
     });
 }
 
+const testRubySnippet = async (event) => {
+  if (!rubyEnabled()) {
+    triggerEvent(EVENT_SNIPPET_TESTED, { error: "Synvert ruby is not enabled!" });
+    return;
+  }
+  const { detail: { snippetCode, rootPath, onlyPaths, skipPaths } } = event
+  const commandArgs = ["--execute", "test"];
+  if (onlyPaths.length > 0) {
+    commandArgs.push("--only-paths");
+    commandArgs.push(onlyPaths);
+  }
+  if (skipPaths.length > 0) {
+    commandArgs.push("--skip-paths")
+    commandArgs.push(skipPaths);
+  }
+  if (rubyNumberOfWorkers()) {
+    commandArgs.push("--number-of-workers");
+    commandArgs.push(rubyNumberOfWorkers());
+  }
+  commandArgs.push(rootPath);
+  const { stdout, stderr } = await runRubyCommand('synvert-ruby', commandArgs, { input: snippetCode });
+  if (stderr) {
+    triggerEvent(EVENT_SNIPPET_TESTED, { error: 'Failed to run snippet!' })
+    return;
+  }
+  try {
+    const testResults = parseJSON(stdout)
+    addFileSourceToTestResults(testResults, rootPath);
+    triggerEvent(EVENT_SNIPPET_TESTED, { testResults })
+  } catch(e) {
+    triggerEvent(EVENT_SNIPPET_TESTED, { error: e.message })
+  }
+}
+
+const testJavascriptSnippet = async (event) => {
+  if (!javascriptEnabled()) {
+    triggerEvent(EVENT_SNIPPET_TESTED, { error: "Synvert javascript is not enabled!" });
+    return;
+  }
+  const { detail: { snippetCode, rootPath, onlyPaths, skipPaths } } = event
+  const commandArgs = ["--execute", "test"];
+  if (onlyPaths.length > 0) {
+    commandArgs.push("--onlyPaths");
+    commandArgs.push(onlyPaths);
+  }
+  if (skipPaths.length > 0) {
+    commandArgs.push("--skipPaths");
+    commandArgs.push(skipPaths);
+  }
+  commandArgs.push("--rootPath");
+  commandArgs.push(rootPath);
+  const { stdout, stderr } = await runJavascriptCommand('synvert-javascript', commandArgs, { input: snippetCode });
+  if (stderr) {
+    triggerEvent(EVENT_SNIPPET_TESTED, { error: 'Failed to run snippet!' })
+    return;
+  }
+  try {
+    const testResults = parseJSON(stdout)
+    addFileSourceToTestResults(testResults, rootPath);
+    triggerEvent(EVENT_SNIPPET_TESTED, { testResults })
+  } catch(e) {
+    triggerEvent(EVENT_SNIPPET_TESTED, { error: e.message })
+  }
+}
+
 const testSnippet = async (event) => {
-    if (!rubyEnabled()) {
-        triggerEvent(EVENT_SNIPPET_TESTED, { error: "Synvert ruby is not enabled!" });
-        return;
-    }
-    const { detail: { snippetCode, rootPath, onlyPaths, skipPaths } } = event
-    const commandArgs = ["--execute", "test"];
-    if (onlyPaths.length > 0) {
-        commandArgs.push("--only-paths");
-        commandArgs.push(onlyPaths);
-    }
-    if (skipPaths.length > 0) {
-        commandArgs.push("--skip-paths");
-        commandArgs.push(skipPaths);
-    }
-    if (rubyNumberOfWorkers()) {
-        commandArgs.push("--number-of-workers");
-        commandArgs.push(rubyNumberOfWorkers());
-    }
-    commandArgs.push(rootPath);
-    const { stdout, stderr } = await runRubyCommand('synvert-ruby', commandArgs, { input: snippetCode });
-    if (stderr) {
-        triggerEvent(EVENT_SNIPPET_TESTED, { error: 'Failed to run snippet!' })
-        return;
-    }
-    try {
-        const testResults = parseJSON(stdout)
-        addFileSourceToTestResults(testResults, rootPath);
-        triggerEvent(EVENT_SNIPPET_TESTED, { testResults })
-    } catch(e) {
-        triggerEvent(EVENT_SNIPPET_TESTED, { error: e.message })
-    }
+  const { detail: { language } } = event;
+  if (language === "ruby") {
+    await testRubySnippet(event);
+  } else {
+    await testJavascriptSnippet(event);
+  }
+}
+
+const runRubySnippet = async (event) => {
+  if (!rubyEnabled()) {
+    triggerEvent(EVENT_SNIPPET_RUN, { error: "Synvert ruby is not enabled!" });
+    return;
+  }
+  const { detail: { snippetCode, rootPath, onlyPaths, skipPaths } } = event
+  const commandArgs = ["--execute", "run", "--format", "json"];
+  if (onlyPaths.length > 0) {
+    commandArgs.push("--only-paths");
+    commandArgs.push(onlyPaths);
+  }
+  if (skipPaths.length > 0) {
+    commandArgs.push("--skip-paths");
+    commandArgs.push(skipPaths);
+  }
+  commandArgs.push(rootPath);
+  const { stdout, stderr } = await runRubyCommand('synvert-ruby', commandArgs, { input: snippetCode });
+  if (stderr) {
+    triggerEvent(EVENT_SNIPPET_RUN, { error: 'Failed to run snippet!' })
+    return
+  }
+  try {
+    const output = JSON.parse(stdout)
+    triggerEvent(EVENT_SNIPPET_RUN, { affectedFiles: output.affected_files })
+  } catch(e) {
+    triggerEvent(EVENT_SNIPPET_RUN, { error: e.message })
+  }
+}
+
+const runJavascriptSnippet = async (event) => {
+  if (!javascriptEnabled()) {
+    triggerEvent(EVENT_SNIPPET_RUN, { error: "Synvert javascript is not enabled!" });
+    return;
+  }
+  const { detail: { snippetCode, rootPath, onlyPaths, skipPaths } } = event
+  const commandArgs = ["--execute", "run", "--format", "json"];
+  if (onlyPaths.length > 0) {
+    commandArgs.push("--onlyPaths");
+    commandArgs.push(onlyPaths);
+  }
+  if (skipPaths.length > 0) {
+    commandArgs.push("--skipPaths");
+    commandArgs.push(skipPaths);
+  }
+  commandArgs.push("--rootPath");
+  commandArgs.push(rootPath);
+  const { stdout, stderr } = await runJavascriptCommand('synvert-javascript', commandArgs, { input: snippetCode });
+  if (stderr) {
+    triggerEvent(EVENT_SNIPPET_RUN, { error: 'Failed to run snippet!' })
+    return
+  }
+  try {
+    const output = JSON.parse(stdout)
+    triggerEvent(EVENT_SNIPPET_RUN, { affectedFiles: output.affected_files })
+  } catch(e) {
+    triggerEvent(EVENT_SNIPPET_RUN, { error: e.message })
+  }
 }
 
 const runSnippet = async (event) => {
-    if (!rubyEnabled()) {
-        triggerEvent(EVENT_SNIPPET_RUN, { error: "Synvert ruby is not enabled!" });
-        return;
-    }
-    const { detail: { snippetCode, rootPath, onlyPaths, skipPaths } } = event
-    const commandArgs = ["--execute", "run", "--format", "json"];
-    if (onlyPaths.length > 0) {
-        commandArgs.push("--only-paths");
-        commandArgs.push(onlyPaths);
-    }
-    if (skipPaths.length > 0) {
-        commandArgs.push("--skip-paths");
-        commandArgs.push(skipPaths);
-    }
-    commandArgs.push(rootPath);
-    const { stdout, stderr } = await runRubyCommand('synvert-ruby', commandArgs, { input: snippetCode });
-    if (stderr) {
-        triggerEvent(EVENT_SNIPPET_RUN, { error: 'Failed to run snippet!' })
-        return
-    }
-    try {
-        const output = JSON.parse(stdout)
-        triggerEvent(EVENT_SNIPPET_RUN, { affectedFiles: output.affected_files })
-    } catch(e) {
-        triggerEvent(EVENT_SNIPPET_RUN, { error: e.message })
-    }
+  const { detail: { language } } = event;
+  if (language === "ruby") {
+    await runRubySnippet(event);
+  } else {
+    await runJavascriptSnippet(event);
+  }
 }
 
 const syncSnippets = async () => {
