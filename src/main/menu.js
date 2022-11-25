@@ -3,7 +3,6 @@ import defaultMenu from 'electron-default-menu';
 
 import preferences from './preferences';
 import { createMainWindow, getOrCreateMainWindow } from './window';
-import { EVENT_SYNC_SNIPPETS } from '../renderer/constants';
 
 const isSubmenu = (submenu) => {
   return !!submenu && Array.isArray(submenu);
@@ -84,10 +83,6 @@ const getFileMenu = () => {
       label: 'New Window',
       click: () => createMainWindow(),
       accelerator: 'CmdOrCtrl+Shift+N',
-    },
-    {
-      label: 'Sync Snippets',
-      click: () => getOrCreateMainWindow().webContents.send(EVENT_SYNC_SNIPPETS),
     },
   ];
 

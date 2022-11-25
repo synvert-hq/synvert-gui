@@ -4,7 +4,6 @@ import { machineIdSync } from 'node-machine-id';
 import { spawn } from "child_process";
 import { rubySpawn } from 'ruby-spawn';
 import { execaCommand } from 'execa';
-import { EVENT_SYNC_SNIPPETS } from './renderer/constants';
 const { contextBridge, ipcRenderer } = require('electron')
 
 contextBridge.exposeInMainWorld('electronAPI', {
@@ -79,7 +78,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
   runCommand: async (command) => {
     const { stdout, stderr } = await execaCommand(command, { shell: true });
     return { stdout, stderr };
-  },
-
-  onSyncSnippets: (callback) => ipcRenderer.on(EVENT_SYNC_SNIPPETS, callback),
+  }
 })

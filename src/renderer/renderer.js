@@ -294,21 +294,8 @@ const runSnippet = async (event) => {
   }
 }
 
-const syncSnippets = async () => {
-    const toastId = toast.loading('Syncing snippets...');
-    const { stdout, stderr } = await runRubyCommand('synvert-ruby', ['--sync']);
-    toast.dismiss(toastId);
-    if (stderr) {
-        toast.error("Failed to sync snippets. " + stderr);
-    } else {
-        toast.success("Snippets are successfully synced.")
-    }
-}
-
 window.addEventListener(EVENT_TEST_SNIPPET, testSnippet)
 window.addEventListener(EVENT_RUN_SNIPPET, runSnippet)
-
-window.electronAPI.onSyncSnippets(syncSnippets);
 
 // check dependencies every time app starts
 setTimeout(checkDependencies, 100)
