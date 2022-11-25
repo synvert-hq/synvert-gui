@@ -19,11 +19,11 @@ export default () => {
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(null);
 
-  const { currentSnippetId, snippetsStore, dispatch } = useContext(AppContext);
+  const { language, currentSnippetId, snippetsStore, dispatch } = useContext(AppContext);
 
-  const loadSnippets = async () => {
+  const loadSnippets = async (language) => {
     try {
-      const response = await fetch(`${baseUrl()}/snippets`, {
+      const response = await fetch(`${baseUrl(language)}/snippets`, {
         headers: {
           "Content-Type": "application/json",
           "X-SYNVERT-TOKEN": window.electronAPI.getToken(),
@@ -39,7 +39,7 @@ export default () => {
     }
   }
 
-  useEffect(() => { loadSnippets() }, []);
+  useEffect(() => { loadSnippets(language) }, [language]);
 
   if (!loaded) {
     return <div className="text-center mt-4">Loading Official Snippets...</div>;

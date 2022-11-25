@@ -7,7 +7,7 @@ import { SET_LOADING, SET_GENERATED_SNIPPET } from "../constants";
 import SnippetCode from "./SnippetCode";
 
 export default () => {
-  const { dispatch } = useContext(AppContext);
+  const { language, dispatch } = useContext(AppContext);
   const { register, control, handleSubmit, formState: { errors } } = useForm({ defaultValues: { inputs_outputs: [{ input: '', output: '' }], nql_or_rules: 'nql' } });
   const { fields, append, remove } = useFieldArray({ control, name: 'inputs_outputs' });
 
@@ -55,7 +55,7 @@ export default () => {
     const inputs = inputs_outputs.map(input_output => input_output.input);
     const outputs = inputs_outputs.map(input_output => input_output.output);
     try {
-      const response = await fetch(`${baseUrl()}/generate-snippet`, {
+      const response = await fetch(`${baseUrl(language)}/generate-snippet`, {
         method: "POST",
         headers: {
           Accept: "application/json",

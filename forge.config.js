@@ -51,7 +51,7 @@ const config = {
             }
           ],
         },
-        devContentSecurityPolicy: "script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:9292 http://api-ruby.synvert.net; img-src 'self' http://localhost:9292 http://api-ruby.synvert.net; default-src 'self' http://localhost:9292 https://api-ruby.synvert.net;"
+        devContentSecurityPolicy: "script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; connect-src 'self' http://localhost:9292 http://localhost:4000 http://api-ruby.synvert.net; img-src 'self' http://localhost:9292 http://localhost:4000 http://api-ruby.synvert.net; default-src 'self' http://localhost:9292 http://localhost:4000 https://api-ruby.synvert.net;"
       }
     }
   ]

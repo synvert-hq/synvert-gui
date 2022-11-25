@@ -51,7 +51,6 @@ export default (state = {}, action) => {
             }
         }
         case SET_LOADING: {
-            console.log('set loading', action)
             return {
                 ...state,
                 loading: action.loading,

@@ -81,7 +81,25 @@ export const getNewSource = (oldSource, testResult) => {
     return newSource;
 }
 
-export const baseUrl = () => window.electronAPI.isDev() ? 'http://localhost:9292' : 'https://api-ruby.synvert.net'
+const LOCAL_API_SERVERS = {
+    ruby: 'http://localhost:9292',
+    javascript: 'http://localhost:4000',
+    typescript: 'http://localhost:4000',
+}
+
+const REMOTE_API_SERVERS = {
+    ruby: 'https://api-ruby.synvert.net',
+    javascript: 'https://api-javascript.synvert.net',
+    typescript: 'https://api-javascript.synvert.net',
+}
+
+export const baseUrl = (language) => {
+    if (window.electronAPI.isDev()) {
+        return LOCAL_API_SERVERS[language];
+    } else {
+        return REMOTE_API_SERVERS[language];
+    }
+}
 
 export const log = (...args) => {
     if (window.electronAPI.isDev()) {
