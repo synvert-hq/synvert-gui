@@ -1,15 +1,19 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 
 import AppContext from "../context";
-import { baseUrl, log } from '../utils'
+import { baseUrlByLanguage, composeGeneratedSnippet, defaultValueByLanguage, log, placeholderByLanguage } from '../utils'
 import { SET_LOADING, SET_GENERATED_SNIPPET } from "../constants";
 import SnippetCode from "./SnippetCode";
 
 export default () => {
   const { language, dispatch } = useContext(AppContext);
-  const { register, control, handleSubmit, formState: { errors } } = useForm({ defaultValues: { inputs_outputs: [{ input: '', output: '' }], nql_or_rules: 'nql' } });
+  const { register, control, setValue, handleSubmit, formState: { errors } } = useForm({ defaultValues: { inputs_outputs: [{ input: '', output: '' }], nql_or_rules: 'nql' } });
   const { fields, append, remove } = useFieldArray({ control, name: 'inputs_outputs' });
+
+  useEffect(() => {
+    setValue("filePattern", defaultValueByLanguage(language));
+  }, [language]);
 
   const addMore = () => append({ input: '', output: '' })
 
@@ -18,28 +22,6 @@ export default () => {
       remove(fields.length - 1);
     }
   }
-
-  const composeGeneratedSnippet = (data, result) => {
-    let generatedSnippet = "Synvert::Rewriter.new 'group', 'name' do\n";
-    if (data.rubyVersion) {
-      generatedSnippet += `  if_ruby '${data.rubyVersion}'\n`;
-    }
-    if (data.gemVersion) {
-      const index = data.gemVersion.indexOf(" ");
-      const name = data.gemVersion.substring(0, index);
-      const version = data.gemVersion.substring(index + 1);
-      generatedSnippet += `  if_gem '${name}', '${version}'\n`;
-    }
-    generatedSnippet += `  within_files '${data.filePattern}' do\n`;
-    if (result.snippet) {
-      generatedSnippet += "    ";
-      generatedSnippet += result.snippet.replace(/\n/g, "\n    ");
-      generatedSnippet += "\n";
-    }
-    generatedSnippet += "  end\n";
-    generatedSnippet += "end";
-    return generatedSnippet;
-  };
 
   const updateSnippetCode = ({ snippetCode, snippetError }) => {
     dispatch({
@@ -55,7 +37,7 @@ export default () => {
     const inputs = inputs_outputs.map(input_output => input_output.input);
     const outputs = inputs_outputs.map(input_output => input_output.output);
     try {
-      const response = await fetch(`${baseUrl(language)}/generate-snippet`, {
+      const response = await fetch(`${baseUrlByLanguage(language)}/generate-snippet`, {
         method: "POST",
         headers: {
           Accept: "application/json",
@@ -72,7 +54,7 @@ export default () => {
       } else if (!result.snippet) {
         updateSnippetCode({ snippetCode: "", snippetError: "Failed to generate snippet" });
       } else {
-        const snippetCode = composeGeneratedSnippet(data, result);
+        const snippetCode = composeGeneratedSnippet(language, data, result);
         updateSnippetCode({ snippetCode, snippetError: "" });
       }
     } catch {
@@ -90,35 +72,63 @@ export default () => {
             <label>File Pattern:</label>
             <input
               className={`form-control ${errors.filePattern && "is-invalid"}`}
-              defaultValue="**/*.rb"
+              defaultValue={defaultValueByLanguage(language)}
               {...register("filePattern", { required: true })}
             />
             {errors.filePattern && (
               <div className="invalid-feedback">required</div>
             )}
           </div>
-          <div className="form-group">
-            <label>Minimum Ruby Version:</label>
-            <input
-              className={`form-control ${errors.rubyVersion && "is-invalid"}`}
-              placeholder="e.g. 2.4.5"
-              {...register("rubyVersion", { pattern: /\d\.\d\.\d/ })}
-            />
-            {errors.rubyVersion && (
-              <div className="invalid-feedback">format is incorrect</div>
-            )}
-          </div>
-          <div className="form-group">
-            <label>Gem Version:</label>
-            <input
-              className={`form-control ${errors.gemVersion && "is-invalid"}`}
-              placeholder="e.g. rails ~> 5.0.0"
-              {...register("gemVersion", { pattern: /\w+\ / })}
-            />
-            {errors.gemVersion && (
-              <div className="invalid-feedback">format is incorrect</div>
-            )}
-          </div>
+          {language === "ruby" ? (
+            <div className="form-group">
+              <label>Minimum Ruby Version:</label>
+              <input
+                className={`form-control ${errors.rubyVersion && "is-invalid"}`}
+                placeholder="e.g. 2.4.5"
+                {...register("rubyVersion", { pattern: /\d\.\d\.\d/ })}
+              />
+              {errors.rubyVersion && (
+                <div className="invalid-feedback">format is incorrect</div>
+              )}
+            </div>
+          ) : (
+            <div className="form-group">
+              <label>Minimum Node Version:</label>
+              <input
+                className={`form-control ${errors.rubyVersion && "is-invalid"}`}
+                placeholder="e.g. 14.0.0"
+                {...register("nodeVersion", { pattern: /\d\.\d\.\d/ })}
+              />
+              {errors.nodeVersion && (
+                <div className="invalid-feedback">format is incorrect</div>
+              )}
+            </div>
+          )}
+          {language === "ruby" ? (
+            <div className="form-group">
+              <label>Gem Version:</label>
+              <input
+                className={`form-control ${errors.gemVersion && "is-invalid"}`}
+                placeholder="e.g. rails ~> 5.0.0"
+                {...register("gemVersion", { pattern: /\w+\ / })}
+              />
+              {errors.gemVersion && (
+                <div className="invalid-feedback">format is incorrect</div>
+              )}
+            </div>
+          ) : (
+            <div className="form-group">
+              <label>Npm Version:</label>
+              <input
+                className={`form-control ${errors.npmVersion && "is-invalid"}`}
+                placeholder="e.g. express ^4.0.0"
+                {...register("npmVersion", { pattern: /\w+\ / })}
+              />
+              {errors.gemVersion && (
+                <div className="invalid-feedback">format is incorrect</div>
+              )}
+            </div>
+          )}
           <div className="form-row">
             <div className="col-md-6">
               <label>Inputs</label>
@@ -134,7 +144,7 @@ export default () => {
                 <textarea
                   className="form-control"
                   rows="3"
-                  placeholder="FactoryBot.create(:user)"
+                  placeholder={placeholderByLanguage(language).input}
                   {...register(`inputs_outputs.${index}.input`)}
                 ></textarea>
               </div>
@@ -142,7 +152,7 @@ export default () => {
                 <textarea
                   className="form-control"
                   rows="3"
-                  placeholder="create(:user)"
+                  placeholder={placeholderByLanguage(language).output}
                   {...register(`inputs_outputs.${index}.output`)}
                 ></textarea>
               </div>

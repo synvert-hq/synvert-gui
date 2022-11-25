@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context";
-import { baseUrl, searchSnippets, sortSnippets, convertSnippetsToStore } from "../utils";
+import { searchSnippets, sortSnippets, convertSnippetsToStore, baseUrlByLanguage } from "../utils";
 import {
   SET_SNIPPETS_STORE,
   SET_CURRENT_SNIPPET_ID,
@@ -23,7 +23,7 @@ export default () => {
 
   const loadSnippets = async (language) => {
     try {
-      const response = await fetch(`${baseUrl(language)}/snippets`, {
+      const response = await fetch(`${baseUrlByLanguage(language)}/snippets`, {
         headers: {
           "Content-Type": "application/json",
           "X-SYNVERT-TOKEN": window.electronAPI.getToken(),

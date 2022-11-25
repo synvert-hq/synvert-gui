@@ -81,6 +81,58 @@ export const getNewSource = (oldSource, testResult) => {
     return newSource;
 }
 
+const composeRubyGeneratedSnippet = (data, result) => {
+    let generatedSnippet = "Synvert::Rewriter.new 'group', 'name' do\n";
+    if (data.rubyVersion) {
+      generatedSnippet += `  if_ruby '${data.rubyVersion}'\n`;
+    }
+    if (data.gemVersion) {
+      const index = data.gemVersion.indexOf(" ");
+      const name = data.gemVersion.substring(0, index);
+      const version = data.gemVersion.substring(index + 1);
+      generatedSnippet += `  if_gem '${name}', '${version}'\n`;
+    }
+    generatedSnippet += `  within_files '${data.filePattern}' do\n`;
+    if (result.snippet) {
+      generatedSnippet += "    ";
+      generatedSnippet += result.snippet.replace(/\n/g, "\n    ");
+      generatedSnippet += "\n";
+    }
+    generatedSnippet += "  end\n";
+    generatedSnippet += "end";
+    return generatedSnippet;
+};
+
+const composeJavascriptGeneratedSnippet = (data, result) => {
+    let generatedSnippet = `const Synvert = require("synvert-core");\n\nnew Synvert::Rewriter("group", "name", () => {\n`;
+    if (data.nodeVersion) {
+      generatedSnippet += `  ifNode("${data.nodeVersion}");\n`;
+    }
+    if (data.npmVersion) {
+      const index = data.npmVersion.indexOf(" ");
+      const name = data.npmVersion.substring(0, index);
+      const version = data.npmVersion.substring(index + 1);
+      generatedSnippet += `  ifNpm("${name}", "${version}");\n`;
+    }
+    generatedSnippet += `  withinFiles("${data.filePattern}", () => {\n`;
+    if (result.snippet) {
+      generatedSnippet += "    ";
+      generatedSnippet += result.snippet.replace(/\n/g, "\n    ");
+      generatedSnippet += "\n";
+    }
+    generatedSnippet += "  });\n";
+    generatedSnippet += "});";
+    return generatedSnippet;
+};
+
+export const composeGeneratedSnippet = (language, data, result) => {
+    if (language === "ruby") {
+      return composeRubyGeneratedSnippet(data, result);
+    } else {
+      return composeJavascriptGeneratedSnippet(data, result);
+    }
+}
+
 const LOCAL_API_SERVERS = {
     ruby: 'http://localhost:9292',
     javascript: 'http://localhost:4000',
@@ -93,13 +145,38 @@ const REMOTE_API_SERVERS = {
     typescript: 'https://api-javascript.synvert.net',
 }
 
-export const baseUrl = (language) => {
+export const baseUrlByLanguage = (language) => {
     if (window.electronAPI.isDev()) {
         return LOCAL_API_SERVERS[language];
     } else {
         return REMOTE_API_SERVERS[language];
     }
 }
+
+const PLACEHODERS = {
+  ruby: {
+    input: "FactoryBot.create(:user)",
+    output: "create(:user)",
+  },
+  javascript: {
+    input: "foo.substring(indexStart, indexEnd)",
+    output: "foo.slice(indexStart, indexEnd)",
+  },
+  typescript: {
+    input: "const x: Array<string> = ['a', 'b']",
+    output: "const x: string[] = ['a', 'b']",
+  }
+}
+
+export const placeholderByLanguage = (language) => PLACEHODERS[language];
+
+const DEFAULT_VALUES = {
+  ruby: "**/*.rb",
+  javascript: "**/*.js",
+  typescript: "**/*.ts",
+}
+
+export const defaultValueByLanguage = (language) => DEFAULT_VALUES[language];
 
 export const log = (...args) => {
     if (window.electronAPI.isDev()) {
