@@ -11,6 +11,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getToken: () => machineIdSync({ original: true }),
   getPreferences: () => ipcRenderer.sendSync("getPreferences"),
   setPreferences: (preferences) => ipcRenderer.sendSync("setPreferences", preferences),
+  onPreferenceUpdated: (callback) => ipcRenderer.on('preferencesUpdated', callback),
   openFile: () => ipcRenderer.invoke('dialog:openFile'),
 
   pathJoin: (path1, path2) => path.join(path1, path2),

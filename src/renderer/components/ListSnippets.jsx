@@ -15,11 +15,11 @@ const snippetClassname = (snippet, currentSnippetId) =>
     : "list-group-item";
 
 export default () => {
+  const { language, currentSnippetId, snippetsStore, dispatch } = useContext(AppContext);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(null);
-
-  const { language, currentSnippetId, snippetsStore, dispatch } = useContext(AppContext);
 
   const loadSnippets = async (language) => {
     try {

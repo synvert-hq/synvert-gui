@@ -1,4 +1,4 @@
-import { ROOT_PATH, ONLY_PATHS, SKIP_PATHS, LANGUAGE } from "./constants"
+import { ROOT_PATH, ONLY_PATHS, SKIP_PATHS, LANGUAGE, LANGUAGES } from "./constants"
 
 const CUSTOM = "custom";
 
@@ -13,7 +13,24 @@ const getPreference = (section, key) => {
     return preferences[section][key]
 }
 
-export const getLanguage = () => getPreference(CUSTOM, LANGUAGE) || "ruby";
+export const rubyEnabled = () => getPreference("ruby", "enabled").includes("yes");
+export const rubyNumberOfWorkers = () => getPreference("ruby", "number_of_workers");
+export const javascriptEnabled = () => getPreference("javascript", "enabled").includes("yes");
+export const typescriptEnabled = () => getPreference("typescript", "enabled").includes("yes");
+export const languageEnabled = (language) => getPreference(language, "enabled").includes("yes");
+
+export const firstEnabledLanguage = () => LANGUAGES.find(language => languageEnabled(language));
+
+export const getLanguage = () => {
+  const language = getPreference(CUSTOM, LANGUAGE);
+  if (!language) {
+    return firstEnabledLanguage();
+  }
+  if (!languageEnabled(language)) {
+    return firstEnabledLanguage();
+  }
+  return language;
+}
 export const saveLanguage = (language) => savePreference(CUSTOM, LANGUAGE, language);
 
 export const getRootPath = () => getPreference(CUSTOM, ROOT_PATH) || "";
@@ -24,11 +41,6 @@ export const saveOnlyPaths = (path) => savePreference(CUSTOM, getRootPath() + ":
 
 export const getSkipPaths = () => getPreference(CUSTOM, getRootPath() + ":" + SKIP_PATHS) || "**/node_modules/**,**/dist/**";
 export const saveSkipPaths = (path) => savePreference(CUSTOM, getRootPath() + ":" + SKIP_PATHS, path);
-
-export const rubyEnabled = () => getPreference("ruby", "enabled").includes("yes");
-export const rubyNumberOfWorkers = () => getPreference("ruby", "number_of_workers");
-export const javascriptEnabled = () => getPreference("javascript", "enabled").includes("yes");
-export const typescriptEnabled = () => getPreference("typescript", "enabled").includes("yes");
 
 export const convertSnippetsToStore = (snippets) =>
     snippets.reduce(
