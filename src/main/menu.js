@@ -2,7 +2,7 @@ import { app, shell, Menu } from 'electron';
 import defaultMenu from 'electron-default-menu';
 
 import preferences from './preferences';
-import { createMainWindow, getOrCreateMainWindow } from './window';
+import { createMainWindow } from './window';
 
 const isSubmenu = (submenu) => {
   return !!submenu && Array.isArray(submenu);

@@ -31,7 +31,7 @@ import './index.css';
 
 import React from "react";
 import toast from 'react-hot-toast';
-import { compare, compareVersions } from 'compare-versions';
+import { compareVersions } from 'compare-versions';
 
 import {
     EVENT_TEST_SNIPPET,
@@ -59,7 +59,8 @@ const runRubyCommand = async (command, args, { input } = {}) => {
 const runJavascriptCommand = async (command, args, { input } = {}) => {
   try {
     log({ type: 'runCommand', command: [command].concat(args).join(' ') });
-    const { stdout, stderr } = await window.electronAPI.runJavascriptCommand(command, args, input);
+    // use window.electronAPI.runRubyCommand to fix shell path
+    const { stdout, stderr } = await window.electronAPI.runRubyCommand(command, args, input);
     log({ type: 'runCommand', stdout, stderr });
     return { stdout, stderr: isRealError(stderr) ? stderr : null };
   } catch (e) {
