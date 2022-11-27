@@ -23,6 +23,7 @@ export default () => {
 
   const loadSnippets = async (language) => {
     try {
+      setLoaded(false);
       const response = await fetch(`${baseUrlByLanguage(language)}/snippets`, {
         headers: {
           "Content-Type": "application/json",
@@ -40,18 +41,6 @@ export default () => {
   }
 
   useEffect(() => { loadSnippets(language) }, [language]);
-
-  if (!loaded) {
-    return <div className="text-center mt-4">Loading Official Snippets...</div>;
-  }
-
-  if (error) {
-    return (
-      <div className="ml-4 mr-4">
-        <p>{error}</p>
-      </div>
-    )
-  }
 
   const newSnippet = () => {
     dispatch({
@@ -94,18 +83,25 @@ export default () => {
           New
         </button>
       </div>
-      <ul className="list-group list-group-flush mt-2">
-        {searchSnippets(sortSnippets((Object.values(snippetsStore))), searchTerm).map((snippet) => (
-          <li
-            role="button"
-            className={snippetClassname(snippet, currentSnippetId)}
-            key={`${snippet.group}/${snippet.name}`}
-            onClick={() => snippetClicked(snippet)}
-          >
-            {snippet.group}/{snippet.name}
-          </li>
-        ))}
-      </ul>
+      {error && (
+        <div className="text-center text-danger mt-2">{error}</div>
+      )}
+      {loaded ? (
+        <ul className="list-group list-group-flush mt-2">
+          {searchSnippets(sortSnippets((Object.values(snippetsStore))), searchTerm).map((snippet) => (
+            <li
+              role="button"
+              className={snippetClassname(snippet, currentSnippetId)}
+              key={`${snippet.group}/${snippet.name}`}
+              onClick={() => snippetClicked(snippet)}
+            >
+              {snippet.group}/{snippet.name}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div className="text-center mt-2">Loading Official Snippets...</div>
+      )}
     </div>
   );
 };
