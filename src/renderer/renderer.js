@@ -38,8 +38,9 @@ import {
     EVENT_SNIPPET_TESTED,
     EVENT_RUN_SNIPPET,
     EVENT_SNIPPET_RUN,
+    EVENT_CHECK_DEPENDENCIES,
 } from './constants';
-import { rubyNumberOfWorkers, log, parseJSON, triggerEvent, rubyEnabled, javascriptEnabled, baseUrlByLanguage, typescriptEnabled } from './utils'
+import { rubyNumberOfWorkers, log, parseJSON, triggerEvent, rubyEnabled, javascriptEnabled, baseUrlByLanguage, typescriptEnabled, getInited } from './utils'
 
 const isRealError = stderr => stderr && !stderr.startsWith('warning:') && !stderr.startsWith('Cloning into ') &&
   !stderr.startsWith("error: pathspec '.' did not match any file(s) known to git")
@@ -319,8 +320,12 @@ const runSnippet = async (event) => {
   }
 }
 
-window.addEventListener(EVENT_TEST_SNIPPET, testSnippet)
-window.addEventListener(EVENT_RUN_SNIPPET, runSnippet)
+window.addEventListener(EVENT_TEST_SNIPPET, testSnippet);
+window.addEventListener(EVENT_RUN_SNIPPET, runSnippet);
+// check dependencies after first inited.
+window.addEventListener(EVENT_CHECK_DEPENDENCIES, checkDependencies);
 
-// check dependencies every time app starts
-setTimeout(checkDependencies, 100)
+if (getInited()) {
+  // check dependencies every time app starts
+  setTimeout(checkDependencies, 100)
+}

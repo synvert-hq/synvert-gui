@@ -1,3 +1,4 @@
+export const EVENT_CHECK_DEPENDENCIES = "event.check_dependencies"
 export const EVENT_TEST_SNIPPET = "event.test_snippet"
 export const EVENT_SNIPPET_TESTED = "event.snippet_tested"
 export const EVENT_RUN_SNIPPET = "event.run_snippet"

@@ -1,8 +1,8 @@
 import React, { useContext, useState } from "react";
 
 import AppContext from "../context";
-import { SET_INITED } from "../constants";
-import { saveInited, saveLanguageEnabled } from "../utils";
+import { EVENT_CHECK_DEPENDENCIES, SET_INITED } from "../constants";
+import { saveInited, saveLanguageEnabled, triggerEvent } from "../utils";
 
 const FirstTimeConfig = () => {
   const { dispatch } = useContext(AppContext);
@@ -20,6 +20,7 @@ const FirstTimeConfig = () => {
     saveLanguageEnabled("typescript", typescriptChecked);
     saveLanguageEnabled("javascript", javascriptChecked);
     saveInited(true);
+    triggerEvent(EVENT_CHECK_DEPENDENCIES);
     dispatch({ type: SET_INITED, inited: true });
   }
 
