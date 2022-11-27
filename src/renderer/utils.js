@@ -13,14 +13,23 @@ const getPreference = (section, key) => {
     return preferences[section][key]
 }
 
+export const saveInited = (inited) => savePreference(CUSTOM, "inited", inited);
+export const getInited = () => getPreference(CUSTOM, "inited");
+
 export const rubyEnabled = () => getPreference("ruby", "enabled").includes("yes");
 export const rubyNumberOfWorkers = () => getPreference("ruby", "number_of_workers");
 export const javascriptEnabled = () => getPreference("javascript", "enabled").includes("yes");
 export const typescriptEnabled = () => getPreference("typescript", "enabled").includes("yes");
 export const languageEnabled = (language) => getPreference(language, "enabled").includes("yes");
+export const saveLanguageEnabled = (language, enabled) => {
+  if (enabled) {
+    savePreference(language, "enabled", ["yes"]);
+  } else {
+    savePreference(language, "enabled", []);
+  }
+}
 
 export const firstEnabledLanguage = () => LANGUAGES.find(language => languageEnabled(language));
-
 export const getLanguage = () => {
   const language = getPreference(CUSTOM, LANGUAGE);
   if (!language) {

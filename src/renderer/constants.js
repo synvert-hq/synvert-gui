@@ -5,6 +5,7 @@ export const EVENT_SNIPPET_RUN = "event.snippet_run"
 
 export const LANGUAGES = ['ruby', 'typescript', 'javascript'];
 
+export const SET_INITED = "SET_INITED"
 export const SET_LANGUAGE = "SET_LANGUAGE"
 export const SET_SNIPPETS_STORE = "SET_SNIPPETS_STORE"
 export const SET_CURRENT_SNIPPET_ID = "SET_CURRENT_SNIPPET_ID"

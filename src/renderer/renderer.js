@@ -39,7 +39,7 @@ import {
     EVENT_RUN_SNIPPET,
     EVENT_SNIPPET_RUN,
 } from './constants';
-import { rubyNumberOfWorkers, log, parseJSON, triggerEvent, rubyEnabled, javascriptEnabled, baseUrlByLanguage } from './utils'
+import { rubyNumberOfWorkers, log, parseJSON, triggerEvent, rubyEnabled, javascriptEnabled, baseUrlByLanguage, typescriptEnabled } from './utils'
 
 const isRealError = stderr => stderr && !stderr.startsWith('warning:') && !stderr.startsWith('Cloning into ') &&
   !stderr.startsWith("error: pathspec '.' did not match any file(s) known to git")
@@ -134,7 +134,7 @@ const checkRubyDependencies = async () => {
 }
 
 const checkJavascriptDependencies = async () => {
-  if (!javascriptEnabled()) {
+  if (!javascriptEnabled() && !typescriptEnabled()) {
     return;
   }
   let { stdout, stderr } = await runJavascriptCommand('node', ['--version']);
@@ -211,7 +211,7 @@ const testRubySnippet = async (event) => {
 }
 
 const testJavascriptSnippet = async (event) => {
-  if (!javascriptEnabled()) {
+  if (!javascriptEnabled() && !typescriptEnabled()) {
     triggerEvent(EVENT_SNIPPET_TESTED, { error: "Synvert javascript is not enabled!" });
     return;
   }
@@ -280,7 +280,7 @@ const runRubySnippet = async (event) => {
 }
 
 const runJavascriptSnippet = async (event) => {
-  if (!javascriptEnabled()) {
+  if (!javascriptEnabled() && !typescriptEnabled()) {
     triggerEvent(EVENT_SNIPPET_RUN, { error: "Synvert javascript is not enabled!" });
     return;
   }

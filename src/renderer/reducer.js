@@ -17,11 +17,18 @@ import {
     SET_SKIP_PATHS,
     REPLACE_ALL_TEST_RESULTS,
     SET_LANGUAGE,
+    SET_INITED,
 } from './constants'
 import { getNewSource } from './utils';
 
 export default (state = {}, action) => {
     switch (action.type) {
+        case SET_INITED: {
+            return {
+                ...state,
+                inited: action.inited,
+            }
+        }
         case SET_LANGUAGE: {
             return {
                 ...state,

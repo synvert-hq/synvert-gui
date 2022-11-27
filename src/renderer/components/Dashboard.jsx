@@ -4,6 +4,8 @@ import { Allotment } from "allotment";
 import "allotment/dist/style.css";
 
 import AppContext from "../context";
+import { getInited } from "../utils";
+import FirstTimeConfig from "./FirstTimeConfig";
 import ListSnippets from "./ListSnippets";
 import ShowSnippet from "./ShowSnippet";
 import RunSnippet from "./RunSnippet";
@@ -13,7 +15,11 @@ import CodeDiff from "./CodeDiff";
 
 export default () => {
   const { showForm, showTestResults, loading, loadingText } = useContext(AppContext);
+  const inited = getInited();
 
+  if (!inited) {
+    return <FirstTimeConfig />;
+  }
   return (
     <LoadingOverlay active={loading} text={loadingText} spinner>
       {showTestResults ? (
