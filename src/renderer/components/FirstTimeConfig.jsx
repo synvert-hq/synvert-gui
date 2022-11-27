@@ -25,9 +25,9 @@ const FirstTimeConfig = () => {
   }
 
   return (
-    <div className="container mt-4">
+    <div className="container mt-8">
       <p>
-        What programming language do you want to use? It will ask you to install the dependencies.
+        What programming language do you want to use? Synvert will ask you to install the dependencies.
         <br/>
         (It can be chagned in the preferences later.)
       </p>
