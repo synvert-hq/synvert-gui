@@ -31,6 +31,7 @@ import './index.css';
 
 import React from "react";
 import toast from 'react-hot-toast';
+import { compare, compareVersions } from 'compare-versions';
 
 import {
     EVENT_TEST_SNIPPET,
@@ -38,7 +39,7 @@ import {
     EVENT_RUN_SNIPPET,
     EVENT_SNIPPET_RUN,
 } from './constants';
-import { rubyNumberOfWorkers, log, parseJSON, triggerEvent, rubyEnabled, javascriptEnabled } from './utils'
+import { rubyNumberOfWorkers, log, parseJSON, triggerEvent, rubyEnabled, javascriptEnabled, baseUrlByLanguage } from './utils'
 
 const isRealError = stderr => stderr && !stderr.startsWith('warning:') && !stderr.startsWith('Cloning into ') &&
   !stderr.startsWith("error: pathspec '.' did not match any file(s) known to git")
@@ -67,76 +68,99 @@ const runJavascriptCommand = async (command, args, { input } = {}) => {
   }
 }
 
-const installGem = async () => {
-    const { stdout, stderr } = await runRubyCommand('gem', ['install', 'synvert']);
-    if (stderr) {
-        toast.error("Failed to install the synvert gem. ") + stderr;
-    } else {
-        toast.success("Successfully installed the synvert gem.")
-    }
+const installGem = async (name) => {
+  const { stdout, stderr } = await runRubyCommand('gem', ['install', name]);
+  if (stderr) {
+    toast.error(`Failed to install the ${name} gem. `) + stderr;
+  } else {
+    toast.success(`Successfully installed the ${name} gem.`);
+  }
 }
 
-const installNpm = async () => {
-    const { stdout, stderr } = await runJavascriptCommand('npm', ['install', '-g', 'synvert']);
-    if (stderr) {
-        toast.error("Failed to install the synvert gem. ") + stderr;
-    } else {
-        toast.success("Successfully installed the synvert gem.")
-    }
+const installNpm = async (name) => {
+  const { stdout, stderr } = await runJavascriptCommand('npm', ['install', '-g', name]);
+  if (stderr) {
+    toast.error(`Failed to install the ${name} gem.`) + stderr;
+  } else {
+    toast.success(`Successfully installed the ${name} gem.`);
+  }
 }
+
+const showErrorMesage = (message, buttonTitle, buttonAction) => {
+  toast((t) => (
+    <div>
+      <p>{message}</p>
+      <div className="d-flex justify-content-between">
+        <button className="btn btn-primary btn-sm" onClick={() => {
+          buttonAction();
+          toast.dismiss(t.id);
+        }}>{buttonTitle}</button>
+        <button className="btn btn-info btn-sm" onClick={() => toast.dismiss(t.id)}>Dismiss</button>
+      </div>
+    </div>
+  ), { duration: Infinity });
+}
+
+const VERSION_REGEXP = /(\d+\.\d+\.\d+) \(with synvert-core (\d+\.\d+\.\d+)/;
 
 const checkRubyDependencies = async () => {
-    if (!rubyEnabled()) {
-        return;
+  if (!rubyEnabled()) {
+    return;
+  }
+  let { stdout, stderr } = await runRubyCommand('ruby', ['--version']);
+  if (stderr) {
+    toast.error("ruby is not available!");
+    return;
+  }
+  ({ stdout, stderr } = await runRubyCommand('synvert-ruby', ['--version']));
+  if (stderr) {
+    showErrorMesage("Synvert gem not found. Run `gem install synvert` or update your Gemfile.", "Install Now", () => installGem("synvert"));
+    return;
+  } else {
+    const result = stdout.match(VERSION_REGEXP);
+    const localSynvertVersion = result[1];
+    const localSynvertCoreVersion = result[2];
+    const response = await fetch(baseUrlByLanguage("ruby") + "/check-versions");
+    const json = await response.json();
+    const remoteSynvertVersion = json['synvert_version'];
+    const remoteSynvertCoreVersion = json['synvert_core_version'];
+    if (compareVersions(remoteSynvertVersion, localSynvertVersion) === 1) {
+      showErrorMesage(`synvert gem version ${remoteSynvertVersion} is available. (Current version: ${localSynvertVersion})`, "Update Now", () => installGem("synvert"));
     }
-    let { stdout, stderr } = await runRubyCommand('ruby', ['--version']);
-    if (stderr) {
-        toast.error("ruby is not available!");
-        return;
+    if (compareVersions(remoteSynvertCoreVersion, localSynvertCoreVersion) === 1) {
+      showErrorMesage(`synvert-core gem version ${remoteSynvertCoreVersion} is available. (Current Version: ${localSynvertCoreVersion})`, "Update Now", () => installGem("synvert-core"));
     }
-    ({ stdout, stderr } = await runRubyCommand('synvert-ruby', ['--version']));
-    if (stderr) {
-        toast((t) => (
-            <div>
-                <p>Synvert gem not found. Run `gem install synvert` or update your Gemfile.</p>
-                <div className="d-flex justify-content-between">
-                    <button className="btn btn-primary btn-sm" onClick={() => {
-                        installGem();
-                        toast.dismiss(t.id);
-                    }}>Install Now</button>
-                    <button className="btn btn-info btn-sm" onClick={() => toast.dismiss(t.id)}>Dismiss</button>
-                </div>
-            </div>
-        ));
-        return;
-    }
+  }
 }
 
 const checkJavascriptDependencies = async () => {
-    if (!javascriptEnabled()) {
-        return;
+  if (!javascriptEnabled()) {
+    return;
+  }
+  let { stdout, stderr } = await runJavascriptCommand('node', ['--version']);
+  if (stderr) {
+    toast.error("nodejs is not available!");
+    return;
+  }
+  ({ stdout, stderr } = await runJavascriptCommand('synvert-javascript', ['--version']));
+  if (stderr) {
+    showErrorMesage("Synvert npm not found. Run `npm install -g synvert`.", "Install Now", () => installNpm("synvert"));
+    return;
+  } else {
+    const result = stdout.match(VERSION_REGEXP);
+    const localSynvertVersion = result[1];
+    const localSynvertCoreVersion = result[2];
+    const response = await fetch(baseUrlByLanguage("javascript") + "/check-versions");
+    const json = await response.json();
+    const remoteSynvertVersion = json['synvert_version'];
+    const remoteSynvertCoreVersion = json['synvert_core_version'];
+    if (compareVersions(remoteSynvertVersion, localSynvertVersion) === 1) {
+      showErrorMesage(`synvert npm version ${remoteSynvertVersion} is available. (Current version: ${localSynvertVersion})`, "Update Now", () => installNpm("synvert"));
     }
-    let { stdout, stderr } = await runJavascriptCommand('node', ['--version']);
-    if (stderr) {
-        toast.error("nodejs is not available!");
-        return;
+    if (compareVersions(remoteSynvertCoreVersion, localSynvertCoreVersion) === 1) {
+      showErrorMesage(`synvert-core npm version ${remoteSynvertCoreVersion} is available. (Current Version: ${localSynvertCoreVersion})`, "Update Now", () => installNpm("synvert-core"));
     }
-    ({ stdout, stderr } = await runJavascriptCommand('synvert-javascript', ['--version']));
-    if (stderr) {
-        toast((t) => (
-            <div>
-                <p>Synvert npm not found. Run `npm install -g synvert`.</p>
-                <div className="d-flex justify-content-between">
-                    <button className="btn btn-primary btn-sm" onClick={() => {
-                        installNpm();
-                        toast.dismiss(t.id);
-                    }}>Install Now</button>
-                    <button className="btn btn-info btn-sm" onClick={() => toast.dismiss(t.id)}>Dismiss</button>
-                </div>
-            </div>
-        ));
-        return;
-    }
+  }
 }
 
 const checkDependencies = async () => {

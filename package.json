@@ -48,6 +48,7 @@
     "@use-it/event-listener": "^0.1.7",
     "allotment": "^1.17.0",
     "bootstrap": "^4.6.2",
+    "compare-versions": "^5.0.1",
     "electron-default-menu": "^1.0.2",
     "electron-preferences": "^2.8.0",
     "electron-squirrel-startup": "^1.0.0",
