@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 
 import AppContext from "../context";
-import { LANGUAGES, SET_LANGUAGE } from "../constants";
+import { LANGUAGES, SET_LANGUAGE, SET_SHOW_FORM } from "../constants";
 import { saveLanguage, languageEnabled, rubyEnabled, javascriptEnabled, typescriptEnabled, firstEnabledLanguage } from "../utils";
 
 const LanguageSelect = () => {
@@ -31,6 +31,7 @@ const LanguageSelect = () => {
     const language = event.target.value;
     saveLanguage(language);
     dispatch({ type: SET_LANGUAGE, language });
+    dispatch({ type: SET_SHOW_FORM, showForm: true });
   }
 
   return (
