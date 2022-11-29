@@ -2,7 +2,6 @@ import { app, shell, Menu } from 'electron';
 import defaultMenu from 'electron-default-menu';
 
 import preferences from './preferences';
-import { createMainWindow } from './window';
 
 const isSubmenu = (submenu) => {
   return !!submenu && Array.isArray(submenu);
@@ -78,28 +77,9 @@ const getQuitItems = () => {
 }
 
 const getFileMenu = () => {
-  const fileMenu = [
-    {
-      label: 'New Window',
-      click: () => createMainWindow(),
-      accelerator: 'CmdOrCtrl+Shift+N',
-    },
-  ];
+  const fileMenu = [...getPreferencesItems(), ...getQuitItems()];
 
-  // macOS has these items in the "Synvert" menu
-  if (process.platform !== 'darwin') {
-    fileMenu.splice(
-      fileMenu.length,
-      0,
-      ...getPreferencesItems(),
-      ...getQuitItems(),
-    );
-  }
-
-  return {
-    label: 'File',
-    submenu: fileMenu,
-  };
+  return { label: 'File', submenu: fileMenu };
 }
 
 export const setupMenu = () => {
@@ -124,11 +104,12 @@ export const setupMenu = () => {
     return item;
   });
 
-  menu.splice(
-    process.platform === 'darwin' ? 1 : 0,
-    0,
-    getFileMenu(),
-  );
+  if (process.platform !== "darwin") {
+    menu.splice(0, 2);
+    menu.splice(0, 0, getFileMenu());
+  } else {
+    menu.splice(1, 2);
+  }
 
   Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
 }

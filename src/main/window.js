@@ -57,9 +57,3 @@ export const createMainWindow = () => {
 
   return browserWindow;
 };
-
-export function getOrCreateMainWindow() {
-  return (
-    BrowserWindow.getFocusedWindow() || browserWindows[0] || createMainWindow()
-  );
-}

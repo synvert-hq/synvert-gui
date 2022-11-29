@@ -1,5 +1,5 @@
 import { app, BrowserWindow, dialog, ipcMain } from 'electron';
-import { getOrCreateMainWindow } from './window';
+import { createMainWindow } from './window';
 import { setupAboutPanel } from './about-panel';
 import { setupMenu } from './menu';
 import { setupUpdates } from './update';
@@ -25,7 +25,7 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   ipcMain.handle('dialog:openFile', handleFileOpen);
-  getOrCreateMainWindow();
+  createMainWindow();
   setupAboutPanel();
   setupMenu();
   setupUpdates();
@@ -33,7 +33,7 @@ app.whenReady().then(() => {
     // On OS X it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) {
-      getOrCreateMainWindow();
+      createMainWindow();
     }
   });
 });
