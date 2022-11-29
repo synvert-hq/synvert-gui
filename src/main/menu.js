@@ -111,12 +111,12 @@ export const setupMenu = () => {
   });
 
   if (!showDevTools()) {
-    // Remove "Edit" and "View" items
+    // Remove "View" items
     if (process.platform !== "darwin") {
-      menu.splice(0, 2);
+      menu.splice(1, 2);
       menu.splice(0, 0, getFileMenu());
     } else {
-      menu.splice(1, 2);
+      menu.splice(2, 2);
     }
   }
 
