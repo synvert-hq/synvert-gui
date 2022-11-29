@@ -96,6 +96,10 @@ export const setupMenu = () => {
       item.submenu.splice(2, 0, ...getPreferencesItems());
     }
 
+    if (process.platform === 'darwin' && label === 'Window' && isSubmenu(item.submenu)) {
+      item.submenu.splice(1, 1);
+    }
+
     // Append items to "Help"
     if (label === 'Help' && isSubmenu(item.submenu)) {
       item.submenu = getHelpItems();
