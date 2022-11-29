@@ -7,11 +7,12 @@ import { app } from 'electron';
  */
 export const setupAboutPanel = () => {
   app.setAboutPanelOptions({
-    applicationName: 'Synvert GUI',
+    applicationName: 'Synvert',
     applicationVersion: app.getVersion(),
     authors: [{ name: 'Richrd Huang' }],
-    copyright: '© Xinmin Labs',
-    version: process.versions.electron,
+    copyright: '© 2021 - 2022 Xinmin Labs',
+    version: "",
+    authors: ["Richard Huang <flyerhzm@gmail.com>"],
     website: 'https://synvert.net',
   });
 }
