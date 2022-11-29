@@ -4,13 +4,17 @@ import AppContext from "../context";
 import { SET_GENERATED_SNIPPET } from "../constants";
 
 const SnippetCode = ({ rows }) => {
-  const { dispatch, snippetCode, snippetError } = useContext(AppContext);
+  const { language, snippetCode, snippetError, dispatch } = useContext(AppContext);
   const [code, setCode] = useState("")
   const [error, setError] = useState("")
 
   useEffect(() => {
     setCode(snippetCode);
   }, [snippetCode])
+
+  useEffect(() => {
+    setCode("");
+  }, [language]);
 
   useEffect(() => {
     setError(snippetError);

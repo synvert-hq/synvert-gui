@@ -9,10 +9,15 @@ import SnippetCode from "./SnippetCode";
 export default () => {
   const { language, dispatch } = useContext(AppContext);
   const { register, control, setValue, handleSubmit, formState: { errors } } = useForm({ defaultValues: { inputs_outputs: [{ input: '', output: '' }], nql_or_rules: 'nql' } });
-  const { fields, append, remove } = useFieldArray({ control, name: 'inputs_outputs' });
+  const { fields, append, remove, replace } = useFieldArray({ control, name: 'inputs_outputs' });
 
   useEffect(() => {
     setValue("filePattern", defaultValueByLanguage(language));
+    setValue("rubyVersion", "");
+    setValue("nodeVersion", "");
+    setValue("gemVersion", "");
+    setValue("npmVersion", "");
+    replace([{ input: "", output: "" }]);
   }, [language]);
 
   const addMore = () => append({ input: '', output: '' })
