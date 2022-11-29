@@ -1,11 +1,8 @@
-import React, { useEffect } from "react";
-import Prism from "prismjs";
+import React from "react";
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { tomorrow } from 'react-syntax-highlighter/dist/cjs/styles/prism';
 
-export default ({ snippet, close }) => {
-  useEffect(() => {
-    Prism.highlightAll();
-  });
-
+export default ({ snippet, language, close }) => {
   return (
     <>
       <div
@@ -24,9 +21,9 @@ export default ({ snippet, close }) => {
               </button>
             </div>
             <div className="modal-body">
-              <pre className="language-ruby">
-                <code className="language-ruby">{snippet.source_code}</code>
-              </pre>
+              <SyntaxHighlighter language={language} style={tomorrow}>
+                {snippet.source_code}
+              </SyntaxHighlighter>
             </div>
             <div className="modal-footer">
               <button
