@@ -35,15 +35,13 @@ const LanguageSelect = () => {
   }
 
   return (
-    <div className="language-select d-flex justify-content-end mr-3 mb-2">
-      <form className="form-inline">
-        <label>Language:</label>
-        <select className="form-control ml-2" value={language} onChange={handleLanguageChanged}>
-          {LANGUAGES.map(language => (
-            languageEnabled(language) ? <option key={language} value={language}>{language}</option> : null
-          ))}
-        </select>
-      </form>
+    <div className="language-select d-flex align-items-center ml-3 mr-3 mb-2">
+      <label>Language:</label>
+      <select className="form-control ml-3" value={language} onChange={handleLanguageChanged}>
+        {LANGUAGES.map(language => (
+          languageEnabled(language) ? <option key={language} value={language}>{language}</option> : null
+        ))}
+      </select>
     </div>
   )
 }
