@@ -2,6 +2,7 @@ import { app, shell, Menu } from 'electron';
 import defaultMenu from 'electron-default-menu';
 
 import preferences from './preferences';
+import { showDevTools } from './utils';
 
 const isSubmenu = (submenu) => {
   return !!submenu && Array.isArray(submenu);
@@ -96,6 +97,7 @@ export const setupMenu = () => {
       item.submenu.splice(2, 0, ...getPreferencesItems());
     }
 
+    // Remove "Close" item
     if (process.platform === 'darwin' && label === 'Window' && isSubmenu(item.submenu)) {
       item.submenu.splice(1, 1);
     }
@@ -108,11 +110,14 @@ export const setupMenu = () => {
     return item;
   });
 
-  if (process.platform !== "darwin") {
-    menu.splice(0, 2);
-    menu.splice(0, 0, getFileMenu());
-  } else {
-    menu.splice(1, 2);
+  if (!showDevTools()) {
+    // Remove "Edit" and "View" items
+    if (process.platform !== "darwin") {
+      menu.splice(0, 2);
+      menu.splice(0, 0, getFileMenu());
+    } else {
+      menu.splice(1, 2);
+    }
   }
 
   Menu.setApplicationMenu(Menu.buildFromTemplate(menu))
