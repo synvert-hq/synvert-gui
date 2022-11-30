@@ -3,13 +3,7 @@ import useEventListener from "@use-it/event-listener";
 import toast from 'react-hot-toast';
 
 import AppContext from "../context";
-import {
-  EVENT_SNIPPET_RUN,
-  SET_LOADING,
-  SET_TEST_RESULTS,
-  SET_SHOW_TEST_RESULTS,
-  EVENT_SNIPPET_TESTED,
-} from "../constants";
+import { EVENT_SNIPPET_RUN, SET_LOADING } from "../constants";
 import WorkingDir from "./WorkingDir";
 import FilesToInclude from "./FilesToInclude";
 import FilesToExclude from "./FilesToExclude";
@@ -18,23 +12,6 @@ import ReplaceButton from "./ReplaceButton";
 
 export default () => {
   const { dispatch } = useContext(AppContext);
-
-  useEventListener(
-    EVENT_SNIPPET_TESTED,
-    ({ detail: { testResults, error } = {} }) => {
-      dispatch({ type: SET_LOADING, loading: false });
-      if (error) {
-        toast.error(error);
-        return;
-      }
-      if (testResults.length === 0) {
-        toast('No file affected by this snippet');
-        return;
-      }
-      dispatch({ type: SET_TEST_RESULTS, testResults });
-      dispatch({ type: SET_SHOW_TEST_RESULTS, showTestResults: true });
-    }
-  )
 
   useEventListener(
     EVENT_SNIPPET_RUN,

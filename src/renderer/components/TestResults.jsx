@@ -64,7 +64,7 @@ const TestResults = () => {
   return (
     <div className="search-results">
       <button className="btn btn-sm btn-back" onClick={back}>&lt;&nbsp;Back</button>
-      <form>
+      <div className="ml-3 mr-3">
         <SnippetCode rows={5} />
         <FilesToInclude />
         <FilesToExclude />
@@ -72,7 +72,7 @@ const TestResults = () => {
           <SearchButton />
           <ReplaceButton />
         </div>
-      </form>
+      </div>
       <ul className="mt-3">
         {testResults.map((result, resultIndex) => (
           <li key={resultIndex}>
