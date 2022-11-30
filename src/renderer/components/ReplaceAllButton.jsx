@@ -4,7 +4,7 @@ import AppContext from "../context";
 import { EVENT_RUN_SNIPPET, REPLACE_ALL_TEST_RESULTS, SET_LOADING } from "../constants";
 import { triggerEvent } from "../utils";
 
-const ReplaceButton = () => {
+const ReplaceAllButton = () => {
   const { language, rootPath, onlyPaths, skipPaths, snippetCode, testResults, dispatch } = useContext(AppContext);
 
   const replace = () => {
@@ -17,10 +17,10 @@ const ReplaceButton = () => {
   };
 
   return (
-    <button className="btn btn-primary btn-sm ml-2" disabled={!rootPath || (snippetCode.length === 0)} onClick={replace}>
-      Replace
+    <button className="btn btn-primary ml-2" disabled={!rootPath || (snippetCode.length === 0)} onClick={replace}>
+      Replace All
     </button>
   )
 }
 
-export default ReplaceButton;
+export default ReplaceAllButton;

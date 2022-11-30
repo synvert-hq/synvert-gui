@@ -8,7 +8,7 @@ import WorkingDir from "./WorkingDir";
 import FilesToInclude from "./FilesToInclude";
 import FilesToExclude from "./FilesToExclude";
 import SearchButton from "./SearchButton";
-import ReplaceButton from "./ReplaceButton";
+import ReplaceAllButton from "./ReplaceAllButton";
 
 export default () => {
   const { dispatch } = useContext(AppContext);
@@ -30,10 +30,12 @@ export default () => {
 
   return (
     <div className="run-snippet">
-      <div className="container-fluid mt-3 d-flex flex-row">
+      <div className="container-fluid mt-3 d-flex flex-row align-items-center">
         <WorkingDir />
-        <SearchButton />
-        <ReplaceButton />
+        <div className="actions">
+          <SearchButton />
+          <ReplaceAllButton />
+        </div>
       </div>
       <div className="container-fluid mt-3">
         <div className="form-row">

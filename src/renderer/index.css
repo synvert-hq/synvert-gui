@@ -60,6 +60,10 @@ body {
   margin-right: 5px;
 }
 
+.run-snippet .actions {
+  white-space: nowrap;
+}
+
 .files-to-include label, .files-to-exclude label {
   width: 175px;
   margin-bottom: 0;
@@ -80,7 +84,7 @@ body {
   margin-bottom: 10px;
 }
 .search-results > ul {
-  height: calc(100vh - 326px);
+  height: calc(100vh - 334px);
   overflow-y: auto;
 }
 .search-results ul, .search-actions {

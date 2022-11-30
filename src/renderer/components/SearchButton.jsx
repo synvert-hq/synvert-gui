@@ -13,7 +13,7 @@ const SearchButton = () => {
   };
 
   return (
-    <button className="btn btn-primary btn-sm ml-2" disabled={!rootPath || (snippetCode.length === 0)} onClick={search}>
+    <button className="btn btn-primary ml-2" disabled={!rootPath || (snippetCode.length === 0)} onClick={search}>
       Search
     </button>
   )

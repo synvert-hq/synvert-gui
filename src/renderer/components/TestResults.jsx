@@ -19,7 +19,7 @@ import SnippetCode from "./SnippetCode";
 import FilesToInclude from "./FilesToInclude";
 import FilesToExclude from "./FilesToExclude";
 import SearchButton from "./SearchButton";
-import ReplaceButton from "./ReplaceButton";
+import ReplaceAllButton from "./ReplaceAllButton";
 
 const TestResults = () => {
   const { rootPath, testResults, currentResultIndex, currentActionIndex, dispatch } = useContext(AppContext);
@@ -70,7 +70,7 @@ const TestResults = () => {
         <FilesToExclude />
         <div className="d-flex justify-content-end">
           <SearchButton />
-          <ReplaceButton />
+          <ReplaceAllButton />
         </div>
       </div>
       <ul className="mt-3">
