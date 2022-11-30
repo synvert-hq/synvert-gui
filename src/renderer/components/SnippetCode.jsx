@@ -9,12 +9,12 @@ const SnippetCode = ({ rows }) => {
   const [error, setError] = useState("")
 
   useEffect(() => {
-    setCode(snippetCode);
-  }, [snippetCode])
-
-  useEffect(() => {
     setCode("");
   }, [language]);
+
+  useEffect(() => {
+    setCode(snippetCode);
+  }, [snippetCode])
 
   useEffect(() => {
     setError(snippetError);
