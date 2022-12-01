@@ -116,7 +116,7 @@ const checkRubyDependencies = async () => {
   }
   ({ stdout, stderr } = await runRubyCommand('synvert-ruby', ['--version']));
   if (stderr) {
-    showErrorMesage("Synvert gem not found. Run `gem install synvert` or update your Gemfile.", "Install Now", () => installGem("synvert"));
+    showErrorMesage("Synvert gem not found. Run `gem install synvert`.", "Install Now", () => installGem("synvert"));
     return;
   } else {
     const result = stdout.match(VERSION_REGEXP);
@@ -149,19 +149,20 @@ const checkJavascriptDependencies = async () => {
     showErrorMesage("Synvert npm not found. Run `npm install -g synvert`.", "Install Now", () => installNpm("synvert"));
     return;
   } else {
+    // Install synvert-core globally doesn't make any sense
     const result = stdout.match(VERSION_REGEXP);
     const localSynvertVersion = result[1];
-    const localSynvertCoreVersion = result[2];
+    // const localSynvertCoreVersion = result[2];
     const response = await fetch(baseUrlByLanguage("javascript") + "/check-versions");
     const json = await response.json();
     const remoteSynvertVersion = json['synvert_version'];
-    const remoteSynvertCoreVersion = json['synvert_core_version'];
+    // const remoteSynvertCoreVersion = json['synvert_core_version'];
     if (compareVersions(remoteSynvertVersion, localSynvertVersion) === 1) {
       showErrorMesage(`synvert npm version ${remoteSynvertVersion} is available. (Current version: ${localSynvertVersion})`, "Update Now", () => installNpm("synvert"));
     }
-    if (compareVersions(remoteSynvertCoreVersion, localSynvertCoreVersion) === 1) {
-      showErrorMesage(`synvert-core npm version ${remoteSynvertCoreVersion} is available. (Current Version: ${localSynvertCoreVersion})`, "Update Now", () => installNpm("synvert-core"));
-    }
+    // if (compareVersions(remoteSynvertCoreVersion, localSynvertCoreVersion) === 1) {
+    //   showErrorMesage(`synvert-core npm version ${remoteSynvertCoreVersion} is available. (Current Version: ${localSynvertCoreVersion})`, "Update Now", () => installNpm("synvert-core"));
+    // }
   }
 }
 
