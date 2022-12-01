@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import toast from 'react-hot-toast';
 import useEventListener from "@use-it/event-listener";
 import LoadingOverlay from "@murasoftware/react-loading-overlay";
 import { Allotment } from "allotment";
