@@ -85,7 +85,7 @@ export default (state = {}, action) => {
             }
         }
         case REPLACE_TEST_RESULT: {
-            const testResults = state.testResults;
+            const testResults = [...state.testResults];
             const testResult = testResults[action.resultIndex];
             const absolutePath = window.electronAPI.pathJoin(action.rootPath, testResult.filePath);
             let source = window.electronAPI.readFile(absolutePath, "utf-8");
@@ -98,7 +98,7 @@ export default (state = {}, action) => {
             }
         }
         case REMOVE_TEST_RESULT: {
-            const testResults = state.testResults;
+            const testResults = [...state.testResults];
             testResults.splice(action.resultIndex, 1);
             return {
                 ...state,
@@ -106,7 +106,7 @@ export default (state = {}, action) => {
             }
         }
         case REPLACE_TEST_ACTION: {
-            const testResults = state.testResults;
+            const testResults = [...state.testResults];
             const testResult = testResults[action.resultIndex];
             const actions = testResult.actions;
             const resultAction = actions[action.actionIndex];
@@ -131,7 +131,7 @@ export default (state = {}, action) => {
             }
         }
         case REMOVE_TEST_ACTION: {
-            const testResults = state.testResults;
+            const testResults = [...state.testResults];
             testResults[action.resultIndex].actions.splice(action.actionIndex, 1);
             return {
                 ...state,

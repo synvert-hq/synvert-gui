@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import AppContext from "../context";
 import ChevronRightSvg from "./svgs/chevron-right.svg";
@@ -25,6 +25,12 @@ const TestResults = () => {
   const { rootPath, testResults, currentResultIndex, currentActionIndex, dispatch } = useContext(AppContext);
 
   const [filesCollapse, setFilesCollapse] = useState({});
+
+  useEffect(() => {
+    if (testResults.length === 0) {
+      dispatch({ type: SET_SHOW_TEST_RESULTS, showTestResults: false });
+    }
+  }, [testResults]);
 
   const toggleResult = (filePath) => {
     setFilesCollapse({
