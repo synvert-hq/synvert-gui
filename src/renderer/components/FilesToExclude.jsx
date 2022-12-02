@@ -4,9 +4,11 @@ import AppContext from "../context";
 import { SET_SKIP_PATHS } from "../constants";
 import { saveSkipPaths } from "../utils";
 
+const DEFAULT_JAVASCRIPT_SKIP_PATHS = "**/node_modules/**,**/dist/**,public/packs/**,public/packs-test/**,tmp/**";
+
 const FilesToExclude = () => {
   const { skipPaths, dispatch } = useContext(AppContext);
-  const [value, setValue] = useState(skipPaths);
+  const [value, setValue] = useState(skipPaths || DEFAULT_JAVASCRIPT_SKIP_PATHS);
 
   useEffect(() => setValue(skipPaths), [skipPaths]);
 
