@@ -82,9 +82,9 @@ const installGem = async (name) => {
 const installNpm = async (name) => {
   const { stdout, stderr } = await runJavascriptCommand('npm', ['install', '-g', name]);
   if (stderr) {
-    toast.error(`Failed to install the ${name} gem.`) + stderr;
+    toast.error(`Failed to install the ${name} npm.`) + stderr;
   } else {
-    toast.success(`Successfully installed the ${name} gem.`);
+    toast.success(`Successfully installed the ${name} npm.`);
   }
 }
 
