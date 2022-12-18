@@ -18,7 +18,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   runRubyCommand: async (command, args, input = null) => {
     const { output, error } = await new Promise((resolve) => {
-      const child = rubySpawn(command, args, { encoding: 'utf8' }, true);
+      const child = rubySpawn(command, args, { encoding: 'utf8', env: { PATH: process.env.PATH } }, true);
       if (child.stdin && input) {
         child.stdin.write(input);
         child.stdin.end();
