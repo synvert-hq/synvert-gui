@@ -18,10 +18,12 @@ const preferences = new ElectronPreferences({
             number_of_workers: 4,
         },
         javascript: {
-            enabled: ['yes']
+            enabled: ['yes'],
+            max_file_size: 100,
         },
         typescript: {
-            enabled: ['yes']
+            enabled: ['yes'],
+            max_file_size: 100,
         },
         custom: {}
     },
@@ -65,6 +67,11 @@ const preferences = new ElectronPreferences({
                                 options: [
                                     { label: 'Enabled', value: 'yes' }
                                 ]
+                            },
+                            {
+                                label: 'Skip file if its size is more than the size. (KB)',
+                                key: 'max_file_size',
+                                type: 'number',
                             }
                         ]
                     },
@@ -85,6 +92,11 @@ const preferences = new ElectronPreferences({
                                 options: [
                                     { label: 'Enabled', value: 'yes' }
                                 ]
+                            },
+                            {
+                                label: 'Skip file if its size is more than the size. (KB)',
+                                key: 'max_file_size',
+                                type: 'number',
                             }
                         ]
                     },

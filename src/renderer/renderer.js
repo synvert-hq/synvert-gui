@@ -40,7 +40,7 @@ import {
     EVENT_SNIPPET_RUN,
     EVENT_CHECK_DEPENDENCIES,
 } from './constants';
-import { rubyNumberOfWorkers, log, parseJSON, triggerEvent, rubyEnabled, javascriptEnabled, baseUrlByLanguage, typescriptEnabled, getInited } from './utils'
+import { rubyNumberOfWorkers, log, parseJSON, triggerEvent, rubyEnabled, javascriptEnabled, baseUrlByLanguage, typescriptEnabled, getInited, javascriptMaxFileSize, typescriptMaxFileSize } from './utils'
 
 const isRealError = stderr => stderr && !stderr.startsWith('warning:') && !stderr.startsWith('Cloning into ') &&
   !stderr.startsWith("error: pathspec '.' did not match any file(s) known to git")
@@ -214,7 +214,7 @@ const testRubySnippet = async (event) => {
 }
 
 const testJavascriptSnippet = async (event) => {
-  if (!javascriptEnabled() && !typescriptEnabled()) {
+  if (!javascriptEnabled()) {
     triggerEvent(EVENT_SNIPPET_TESTED, { error: "Synvert javascript is not enabled!" });
     return;
   }
@@ -228,6 +228,41 @@ const testJavascriptSnippet = async (event) => {
     commandArgs.push("--skipPaths");
     commandArgs.push(skipPaths);
   }
+  commandArgs.push("--maxFileSize");
+  commandArgs.push(javascriptMaxFileSize() * 1024);
+  commandArgs.push("--rootPath");
+  commandArgs.push(rootPath);
+  const { stdout, stderr } = await runJavascriptCommand('synvert-javascript', commandArgs, { input: snippetCode });
+  if (stderr) {
+    triggerEvent(EVENT_SNIPPET_TESTED, { error: 'Failed to run snippet!' })
+    return;
+  }
+  try {
+    const testResults = parseJSON(stdout)
+    addFileSourceToTestResults(testResults, rootPath);
+    triggerEvent(EVENT_SNIPPET_TESTED, { testResults })
+  } catch(e) {
+    triggerEvent(EVENT_SNIPPET_TESTED, { error: e.message })
+  }
+}
+
+const testTypescriptSnippet = async (event) => {
+  if (!typescriptEnabled()) {
+    triggerEvent(EVENT_SNIPPET_TESTED, { error: "Synvert typescript is not enabled!" });
+    return;
+  }
+  const { detail: { snippetCode, rootPath, onlyPaths, skipPaths } } = event
+  const commandArgs = ["--execute", "test"];
+  if (onlyPaths.length > 0) {
+    commandArgs.push("--onlyPaths");
+    commandArgs.push(onlyPaths);
+  }
+  if (skipPaths.length > 0) {
+    commandArgs.push("--skipPaths");
+    commandArgs.push(skipPaths);
+  }
+  commandArgs.push("--maxFileSize");
+  commandArgs.push(typescriptMaxFileSize());
   commandArgs.push("--rootPath");
   commandArgs.push(rootPath);
   const { stdout, stderr } = await runJavascriptCommand('synvert-javascript', commandArgs, { input: snippetCode });
@@ -246,10 +281,13 @@ const testJavascriptSnippet = async (event) => {
 
 const testSnippet = async (event) => {
   const { detail: { language } } = event;
-  if (language === "ruby") {
-    await testRubySnippet(event);
-  } else {
-    await testJavascriptSnippet(event);
+  switch (language) {
+    case "ruby":
+      return await testRubySnippet(event);
+    case "javascript":
+      return await testJavascriptSnippet(event);
+    case "typescript":
+      return await testTypescriptSnippet(event);
   }
 }
 
@@ -283,7 +321,7 @@ const runRubySnippet = async (event) => {
 }
 
 const runJavascriptSnippet = async (event) => {
-  if (!javascriptEnabled() && !typescriptEnabled()) {
+  if (!javascriptEnabled()) {
     triggerEvent(EVENT_SNIPPET_RUN, { error: "Synvert javascript is not enabled!" });
     return;
   }
@@ -297,6 +335,8 @@ const runJavascriptSnippet = async (event) => {
     commandArgs.push("--skipPaths");
     commandArgs.push(skipPaths);
   }
+  commandArgs.push("--maxFileSize");
+  commandArgs.push(javascriptMaxFileSize() * 1024);
   commandArgs.push("--rootPath");
   commandArgs.push(rootPath);
   const { stdout, stderr } = await runJavascriptCommand('synvert-javascript', commandArgs, { input: snippetCode });
@@ -312,12 +352,46 @@ const runJavascriptSnippet = async (event) => {
   }
 }
 
+const runTypescriptSnippet = async (event) => {
+  if (!typescriptEnabled()) {
+    triggerEvent(EVENT_SNIPPET_RUN, { error: "Synvert typescript is not enabled!" });
+    return;
+  }
+  const { detail: { snippetCode, rootPath, onlyPaths, skipPaths } } = event
+  const commandArgs = ["--execute", "run", "--format", "json"];
+  if (onlyPaths.length > 0) {
+    commandArgs.push("--onlyPaths");
+    commandArgs.push(onlyPaths);
+  }
+  if (skipPaths.length > 0) {
+    commandArgs.push("--skipPaths");
+    commandArgs.push(skipPaths);
+  }
+  commandArgs.push("--maxFileSize");
+  commandArgs.push(typescriptMaxFileSize());
+  commandArgs.push("--rootPath");
+  commandArgs.push(rootPath);
+  const { stdout, stderr } = await runJavascriptCommand('synvert-javascript', commandArgs, { input: snippetCode });
+  if (stderr) {
+    triggerEvent(EVENT_SNIPPET_RUN, { error: 'Failed to run snippet!' })
+    return
+  }
+  try {
+    const output = JSON.parse(stdout)
+    triggerEvent(EVENT_SNIPPET_RUN, { affectedFiles: output.affected_files })
+  } catch(e) {
+    triggerEvent(EVENT_SNIPPET_RUN, { error: e.message })
+  }
+}
 const runSnippet = async (event) => {
   const { detail: { language } } = event;
-  if (language === "ruby") {
-    await runRubySnippet(event);
-  } else {
-    await runJavascriptSnippet(event);
+  switch (language) {
+    case "ruby":
+      return await runRubySnippet(event);
+    case "javascript":
+      return await runJavascriptSnippet(event);
+    case "typescript":
+      return await runTypescriptSnippet(event);
   }
 }
 
