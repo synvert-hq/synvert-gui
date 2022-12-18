@@ -2,7 +2,6 @@ import fs from "fs";
 import path from "path";
 import { machineIdSync } from 'node-machine-id';
 import { rubySpawn } from 'ruby-spawn';
-import { execaCommand } from 'execa';
 const { contextBridge, ipcRenderer } = require('electron')
 
 contextBridge.exposeInMainWorld('electronAPI', {
@@ -44,10 +43,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
       });
     });
     return { stdout: output, stderr: error };
-  },
-
-  runCommand: async (command) => {
-    const { stdout, stderr } = await execaCommand(command, { shell: true });
-    return { stdout, stderr };
   }
 })
