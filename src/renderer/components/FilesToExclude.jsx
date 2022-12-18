@@ -10,7 +10,7 @@ const FilesToExclude = () => {
   const { skipPaths, dispatch } = useContext(AppContext);
   const [value, setValue] = useState(skipPaths || DEFAULT_JAVASCRIPT_SKIP_PATHS);
 
-  useEffect(() => setValue(skipPaths), [skipPaths]);
+  useEffect(() => setValue(skipPaths || DEFAULT_JAVASCRIPT_SKIP_PATHS), [skipPaths]);
 
   const handleValueChanged = (event) => {
     const skipPaths = event.target.value;
