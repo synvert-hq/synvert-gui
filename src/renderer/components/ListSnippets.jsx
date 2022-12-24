@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
+import { sortSnippets, filterSnippets } from "synvert-ui-common";
 
 import AppContext from "../context";
-import { searchSnippets, sortSnippets, convertSnippetsToStore, baseUrlByLanguage } from "../utils";
+import { convertSnippetsToStore, baseUrlByLanguage } from "../utils";
 import {
   SET_SNIPPETS_STORE,
   SET_CURRENT_SNIPPET_ID,
@@ -88,7 +89,7 @@ export default () => {
       )}
       {loaded ? (
         <ul className="list-group list-group-flush mt-2">
-          {searchSnippets(sortSnippets((Object.values(snippetsStore))), searchTerm).map((snippet) => (
+          {sortSnippets(filterSnippets(Object.values(snippetsStore), searchTerm), searchTerm).map((snippet) => (
             <li
               role="button"
               className={snippetClassname(snippet, currentSnippetId)}
