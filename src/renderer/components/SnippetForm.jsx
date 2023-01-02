@@ -50,7 +50,7 @@ export default () => {
           "X-SYNVERT-TOKEN": window.electronAPI.getToken(),
           "X-SYNVERT-PLATFORM": "gui",
         },
-        body: JSON.stringify({ inputs, outputs, nql_or_rules }),
+        body: JSON.stringify({ language, inputs, outputs, nql_or_rules }),
       });
       const result = await response.json();
       if (result.error) {
