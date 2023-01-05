@@ -10,7 +10,7 @@ export const setupAboutPanel = () => {
     applicationName: 'Synvert',
     applicationVersion: app.getVersion(),
     authors: [{ name: 'Richrd Huang' }],
-    copyright: '© 2021 - 2022 Xinmin Labs',
+    copyright: `© ${new Date().getFullYear()} Xinmin Labs`,
     version: "",
     authors: ["Richard Huang <flyerhzm@gmail.com>"],
     website: 'https://synvert.net',
