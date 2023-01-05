@@ -118,7 +118,7 @@ const composeRubyGeneratedSnippet = (data, result) => {
 };
 
 const composeJavascriptGeneratedSnippet = (data, result) => {
-    let generatedSnippet = `const Synvert = require("synvert-core");\n\nnew Synvert::Rewriter("group", "name", () => {\n`;
+    let generatedSnippet = `const Synvert = require("synvert-core");\n\nnew Synvert.Rewriter("group", "name", () => {\n`;
     if (data.nodeVersion) {
       generatedSnippet += `  ifNode("${data.nodeVersion}");\n`;
     }
