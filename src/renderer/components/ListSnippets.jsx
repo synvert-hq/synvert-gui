@@ -35,7 +35,8 @@ export default () => {
       const result = await response.json();
       const snippetsStore = convertSnippetsToStore(result.snippets);
       dispatch({ type: SET_SNIPPETS_STORE, snippetsStore });
-      setLoaded(true)
+      setLoaded(true);
+      setError(null);
     } catch(e) {
       setError(e.message);
     }

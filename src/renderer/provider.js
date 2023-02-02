@@ -21,6 +21,8 @@ const initialState = {
     testResults: [],
     currentResultIndex: 0,
     currentActionIndex: 0,
+    currentActionStart: 0,
+    currentActionEnd: 0,
 }
 
 export default ({ children }) => {

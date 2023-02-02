@@ -82,6 +82,8 @@ export default (state = {}, action) => {
                 testResults: action.testResults,
                 currentResultIndex: 0,
                 currentActionIndex: 0,
+                currentActionStart: 0,
+                currentActionEnd: 0,
             }
         }
         case REPLACE_TEST_RESULT: {
@@ -151,13 +153,17 @@ export default (state = {}, action) => {
                 testResults: [],
                 currentResultIndex: 0,
                 currentActionIndex: 0,
+                currentActionStart: 0,
+                currentActionEnd: 0,
             }
         }
         case SET_CURRENT_RESULT_INDEX: {
             return {
                 ...state,
                 currentResultIndex: action.resultIndex,
-                currentActionIndex: null,
+                currentActionIndex: 0,
+                currentActionStart: 0,
+                currentActionEnd: 0,
             }
         }
         case SET_CURRENT_ACTION_INDEX: {
@@ -165,6 +171,8 @@ export default (state = {}, action) => {
                 ...state,
                 currentResultIndex: action.resultIndex,
                 currentActionIndex: action.actionIndex,
+                currentActionStart: action.actionStart,
+                currentActionEnd: action.actionEnd,
             }
         }
         case SET_ROOT_PATH: {

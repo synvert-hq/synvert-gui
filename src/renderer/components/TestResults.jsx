@@ -63,8 +63,8 @@ const TestResults = () => {
     dispatch({ type: SET_CURRENT_RESULT_INDEX, resultIndex });
   }
 
-  const actionClicked = (resultIndex, actionIndex) => {
-    dispatch({ type: SET_CURRENT_ACTION_INDEX, resultIndex, actionIndex });
+  const actionClicked = (resultIndex, actionIndex, actionStart, actionEnd) => {
+    dispatch({ type: SET_CURRENT_ACTION_INDEX, resultIndex, actionIndex, actionStart, actionEnd });
   }
 
   return (
@@ -108,7 +108,7 @@ const TestResults = () => {
               <ul className="search-actions">
                 {result.actions.map((action, actionIndex) => (
                   <li key={actionIndex}>
-                    <div className={resultIndex === currentResultIndex && actionIndex === currentActionIndex ? "action active" : "action"} onClick={() => actionClicked(resultIndex, actionIndex)}>
+                    <div className={resultIndex === currentResultIndex && actionIndex === currentActionIndex ? "action active" : "action"} onClick={() => actionClicked(resultIndex, actionIndex, action.start, action.end)}>
                       <div className="toolkit">
                         {typeof action.newCode !== "undefined" && (
                           <a href="#" onClick={() => replaceAction(resultIndex, actionIndex)}>
