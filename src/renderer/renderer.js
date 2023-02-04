@@ -71,7 +71,7 @@ function outputContainsError(stdout) {
 const runRubyCommand = async (command, args, { input } = {}) => {
   try {
     log({ type: 'runCommand', command: [command].concat(args).join(' ') });
-    const { stdout, stderr } = await window.electronAPI.runRubyCommand(command, args, input);
+    const { stdout, stderr } = await window.electronAPI.runShellCommand(command, args, input);
     log({ type: 'runCommand', stdout, stderr });
     let error;
     if (isRealError(stderr)) {
@@ -90,8 +90,7 @@ const runRubyCommand = async (command, args, { input } = {}) => {
 const runJavascriptCommand = async (command, args, { input } = {}) => {
   try {
     log({ type: 'runCommand', command: [command].concat(args).join(' ') });
-    // use window.electronAPI.runRubyCommand to fix shell path
-    const { stdout, stderr } = await window.electronAPI.runRubyCommand(command, args, input);
+    const { stdout, stderr } = await window.electronAPI.runShellCommand(command, args, input);
     log({ type: 'runCommand', stdout, stderr });
     return { stdout, stderr: isRealError(stderr) ? stderr : null };
   } catch (e) {
