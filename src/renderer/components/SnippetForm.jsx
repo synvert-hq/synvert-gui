@@ -1,12 +1,14 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
+import useEventListener from "@use-it/event-listener";
 
 import AppContext from "../context";
 import { baseUrlByLanguage, composeGeneratedSnippet, defaultValueByLanguage, log, placeholderByLanguage } from '../utils'
-import { SET_LOADING, SET_GENERATED_SNIPPET } from "../constants";
+import { SET_LOADING, SET_GENERATED_SNIPPET, EVENT_SNIPPET_RUN, EVENT_SNIPPET_TESTED } from "../constants";
 import SnippetCode from "./SnippetCode";
 
 export default () => {
+  const [errorMessage, setErrorMessage] = useState("");
   const { language, dispatch } = useContext(AppContext);
   const { register, control, setValue, handleSubmit, formState: { errors } } = useForm({ defaultValues: { inputs_outputs: [{ input: '', output: '' }], nql_or_rules: 'nql' } });
   const { fields, append, remove, replace } = useFieldArray({ control, name: 'inputs_outputs' });
@@ -19,6 +21,20 @@ export default () => {
     setValue("npmVersion", "");
     replace([{ input: "", output: "" }]);
   }, [language]);
+
+  useEventListener(
+    EVENT_SNIPPET_TESTED,
+    ({ detail: { error } = {} }) => {
+      setErrorMessage(error);
+    }
+  );
+
+  useEventListener(
+    EVENT_SNIPPET_RUN,
+    ({ detail: { error } = {} }) => {
+      setErrorMessage(error);
+    }
+  );
 
   const addMore = () => append({ input: '', output: '' })
 
@@ -200,6 +216,11 @@ export default () => {
               />
             </div>
           </div>
+          {errorMessage && (
+            <div className="text-danger">
+              {errorMessage}
+            </div>
+          )}
           <SnippetCode rows={10} />
         </form>
       </div>

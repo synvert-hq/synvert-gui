@@ -34,7 +34,7 @@ export default () => {
     ({ detail: { testResults, error } = {} }) => {
       dispatch({ type: SET_LOADING, loading: false });
       if (error) {
-        toast.error(error);
+        // it will show error in SnippetForm
         return;
       }
       if (testResults.length === 0) {

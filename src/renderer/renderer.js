@@ -42,18 +42,48 @@ import {
 } from './constants';
 import { rubyNumberOfWorkers, log, parseJSON, triggerEvent, rubyEnabled, javascriptEnabled, baseUrlByLanguage, typescriptEnabled, getInited, javascriptMaxFileSize, typescriptMaxFileSize } from './utils'
 
-const isRealError = stderr => stderr && !stderr.startsWith('warning:') && !stderr.startsWith('Cloning into ') &&
-  !stderr.startsWith("error: pathspec '.' did not match any file(s) known to git")
+function isRealError(stderr) {
+  return (
+    stderr &&
+    !stderr.startsWith('warning:') &&
+    !stderr.startsWith('Cloning into ') &&
+    !stderr.startsWith("error: pathspec '.' did not match any file(s) known to git")
+  );
+}
+
+function isJsonString(str) {
+  try {
+    JSON.parse(str);
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
+
+function outputContainsError(stdout) {
+  return (
+    stdout &&
+    isJsonString(stdout) &&
+    JSON.parse(stdout).error
+  );
+}
 
 const runRubyCommand = async (command, args, { input } = {}) => {
   try {
     log({ type: 'runCommand', command: [command].concat(args).join(' ') });
     const { stdout, stderr } = await window.electronAPI.runRubyCommand(command, args, input);
     log({ type: 'runCommand', stdout, stderr });
-    return { stdout, stderr: isRealError(stderr) ? stderr : null };
+    let error;
+    if (isRealError(stderr)) {
+      error = stderr;
+    }
+    if (outputContainsError(stdout)) {
+      error = JSON.parse(stdout).error;
+    }
+    return { output: stdout, error };
   } catch (e) {
     log({ type: 'runCommand error', e });
-    return { stderr: e.message };
+    return { error: e.message };
   }
 }
 
@@ -71,9 +101,9 @@ const runJavascriptCommand = async (command, args, { input } = {}) => {
 }
 
 const installGem = async (name) => {
-  const { stdout, stderr } = await runRubyCommand('gem', ['install', name]);
-  if (stderr) {
-    toast.error(`Failed to install the ${name} gem. `) + stderr;
+  const { output, error } = await runRubyCommand('gem', ['install', name]);
+  if (error) {
+    toast.error(`Failed to install the ${name} gem. `) + error;
   } else {
     toast.success(`Successfully installed the ${name} gem.`);
   }
@@ -109,17 +139,17 @@ const checkRubyDependencies = async () => {
   if (!rubyEnabled()) {
     return;
   }
-  let { stdout, stderr } = await runRubyCommand('ruby', ['--version']);
-  if (stderr) {
+  let { output, error } = await runRubyCommand('ruby', ['--version']);
+  if (error) {
     toast.error("ruby is not available!");
     return;
   }
-  ({ stdout, stderr } = await runRubyCommand('synvert-ruby', ['--version']));
-  if (stderr) {
+  ({ output, error } = await runRubyCommand('synvert-ruby', ['--version']));
+  if (error) {
     showErrorMesage("Synvert gem not found. Run `gem install synvert`.", "Install Now", () => installGem("synvert"));
     return;
   } else {
-    const result = stdout.match(VERSION_REGEXP);
+    const result = output.match(VERSION_REGEXP);
     const localSynvertVersion = result[1];
     const localSynvertCoreVersion = result[2];
     const response = await fetch(baseUrlByLanguage("ruby") + "/check-versions");
@@ -199,13 +229,13 @@ const testRubySnippet = async (event) => {
     commandArgs.push(rubyNumberOfWorkers());
   }
   commandArgs.push(rootPath);
-  const { stdout, stderr } = await runRubyCommand('synvert-ruby', commandArgs, { input: snippetCode });
-  if (stderr) {
-    triggerEvent(EVENT_SNIPPET_TESTED, { error: 'Failed to run snippet!' })
+  const { output, error } = await runRubyCommand('synvert-ruby', commandArgs, { input: snippetCode });
+  if (error) {
+    triggerEvent(EVENT_SNIPPET_TESTED, { error })
     return;
   }
   try {
-    const testResults = parseJSON(stdout)
+    const testResults = parseJSON(output)
     addFileSourceToTestResults(testResults, rootPath);
     triggerEvent(EVENT_SNIPPET_TESTED, { testResults })
   } catch(e) {
@@ -307,14 +337,13 @@ const runRubySnippet = async (event) => {
     commandArgs.push(skipPaths);
   }
   commandArgs.push(rootPath);
-  const { stdout, stderr } = await runRubyCommand('synvert-ruby', commandArgs, { input: snippetCode });
-  if (stderr) {
+  const { output, error } = await runRubyCommand('synvert-ruby', commandArgs, { input: snippetCode });
+  if (error) {
     triggerEvent(EVENT_SNIPPET_RUN, { error: 'Failed to run snippet!' })
     return
   }
   try {
-    const output = JSON.parse(stdout)
-    triggerEvent(EVENT_SNIPPET_RUN, { affectedFiles: output.affected_files })
+    triggerEvent(EVENT_SNIPPET_RUN, { affectedFiles: JSON.parse(output).affected_files })
   } catch(e) {
     triggerEvent(EVENT_SNIPPET_RUN, { error: e.message })
   }
