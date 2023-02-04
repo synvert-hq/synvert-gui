@@ -32,7 +32,7 @@ import './index.css';
 import React from "react";
 import toast from 'react-hot-toast';
 import { compareVersions } from 'compare-versions';
-import { parseJSON } from 'synvert-ui-common';
+import { parseJSON, formatCommandResult } from 'synvert-ui-common';
 
 import {
     EVENT_TEST_SNIPPET,
@@ -43,45 +43,12 @@ import {
 } from './constants';
 import { rubyNumberOfWorkers, log, triggerEvent, rubyEnabled, javascriptEnabled, baseUrlByLanguage, typescriptEnabled, getInited, javascriptMaxFileSize, typescriptMaxFileSize } from './utils'
 
-function isRealError(stderr) {
-  return (
-    stderr &&
-    !stderr.startsWith('warning:') &&
-    !stderr.startsWith('Cloning into ') &&
-    !stderr.startsWith("error: pathspec '.' did not match any file(s) known to git")
-  );
-}
-
-function isJsonString(str) {
-  try {
-    JSON.parse(str);
-  } catch (e) {
-    return false;
-  }
-  return true;
-}
-
-function outputContainsError(stdout) {
-  return (
-    stdout &&
-    isJsonString(stdout) &&
-    JSON.parse(stdout).error
-  );
-}
-
 const runRubyCommand = async (command, args, { input } = {}) => {
   try {
     log({ type: 'runCommand', command: [command].concat(args).join(' ') });
     const { stdout, stderr } = await window.electronAPI.runShellCommand(command, args, input);
     log({ type: 'runCommand', stdout, stderr });
-    let error;
-    if (isRealError(stderr)) {
-      error = stderr;
-    }
-    if (outputContainsError(stdout)) {
-      error = JSON.parse(stdout).error;
-    }
-    return { output: stdout, error };
+    return formatCommandResult({ stdout, stderr });
   } catch (e) {
     log({ type: 'runCommand error', e });
     return { error: e.message };
