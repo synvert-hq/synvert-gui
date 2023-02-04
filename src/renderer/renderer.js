@@ -32,6 +32,7 @@ import './index.css';
 import React from "react";
 import toast from 'react-hot-toast';
 import { compareVersions } from 'compare-versions';
+import { parseJSON } from 'synvert-ui-common';
 
 import {
     EVENT_TEST_SNIPPET,
@@ -40,7 +41,7 @@ import {
     EVENT_SNIPPET_RUN,
     EVENT_CHECK_DEPENDENCIES,
 } from './constants';
-import { rubyNumberOfWorkers, log, parseJSON, triggerEvent, rubyEnabled, javascriptEnabled, baseUrlByLanguage, typescriptEnabled, getInited, javascriptMaxFileSize, typescriptMaxFileSize } from './utils'
+import { rubyNumberOfWorkers, log, triggerEvent, rubyEnabled, javascriptEnabled, baseUrlByLanguage, typescriptEnabled, getInited, javascriptMaxFileSize, typescriptMaxFileSize } from './utils'
 
 function isRealError(stderr) {
   return (

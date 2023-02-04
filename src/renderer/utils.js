@@ -74,20 +74,6 @@ export const triggerEvent = (name, detail) => {
     }
 }
 
-const snakeToCamel = (str) => str.replace(/([-_]\w)/g, g => g[1].toUpperCase());
-
-export const parseJSON = (str) => {
-  return JSON.parse(str, function(key, value) {
-    const camelCaseKey = snakeToCamel(key);
-
-    if (this instanceof Array || camelCaseKey === key) {
-      return value;
-    } else {
-      this[camelCaseKey] = value;
-    }
-  });
-};
-
 export const getNewSource = (oldSource, testResult) => {
     let newSource = oldSource;
     JSON.parse(JSON.stringify(testResult.actions)).reverse().forEach(action => {
