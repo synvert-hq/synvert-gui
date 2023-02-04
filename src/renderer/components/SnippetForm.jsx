@@ -20,6 +20,7 @@ export default () => {
     setValue("gemVersion", "");
     setValue("npmVersion", "");
     replace([{ input: "", output: "" }]);
+    setErrorMessage("");
   }, [language]);
 
   useEventListener(
