@@ -43,7 +43,7 @@ import {
 } from './constants';
 import { rubyNumberOfWorkers, log, triggerEvent, rubyEnabled, javascriptEnabled, baseUrlByLanguage, typescriptEnabled, getInited, javascriptMaxFileSize, typescriptMaxFileSize } from './utils'
 
-const runRubyCommand = async (command, args, { input } = {}) => {
+const runCommand = async (command, args, { input } = {}) => {
   try {
     log({ type: 'runCommand', command: [command].concat(args).join(' ') });
     const { stdout, stderr } = await window.electronAPI.runShellCommand(command, args, input);
@@ -55,20 +55,8 @@ const runRubyCommand = async (command, args, { input } = {}) => {
   }
 }
 
-const runJavascriptCommand = async (command, args, { input } = {}) => {
-  try {
-    log({ type: 'runCommand', command: [command].concat(args).join(' ') });
-    const { stdout, stderr } = await window.electronAPI.runShellCommand(command, args, input);
-    log({ type: 'runCommand', stdout, stderr });
-    return formatCommandResult({ stdout, stderr });
-  } catch (e) {
-    log({ type: 'runCommand error', e });
-    return { stderr: e.message };
-  }
-}
-
 const installGem = async (name) => {
-  const { output, error } = await runRubyCommand('gem', ['install', name]);
+  const { output, error } = await runCommand('gem', ['install', name]);
   if (error) {
     toast.error(`Failed to install the ${name} gem. `) + error;
   } else {
@@ -77,7 +65,7 @@ const installGem = async (name) => {
 }
 
 const installNpm = async (name) => {
-  const { output, error } = await runJavascriptCommand('npm', ['install', '-g', name]);
+  const { output, error } = await runCommand('npm', ['install', '-g', name]);
   if (error) {
     toast.error(`Failed to install the ${name} npm. `) + error;
   } else {
@@ -106,12 +94,12 @@ const checkRubyDependencies = async () => {
   if (!rubyEnabled()) {
     return;
   }
-  let { output, error } = await runRubyCommand('ruby', ['--version']);
+  let { output, error } = await runCommand('ruby', ['--version']);
   if (error) {
     toast.error("ruby is not available!");
     return;
   }
-  ({ output, error } = await runRubyCommand('synvert-ruby', ['--version']));
+  ({ output, error } = await runCommand('synvert-ruby', ['--version']));
   if (error) {
     showErrorMesage("Synvert gem not found. Run `gem install synvert`.", "Install Now", () => installGem("synvert"));
     return;
@@ -136,12 +124,12 @@ const checkJavascriptDependencies = async () => {
   if (!javascriptEnabled() && !typescriptEnabled()) {
     return;
   }
-  let { output, error } = await runJavascriptCommand('node', ['--version']);
+  let { output, error } = await runCommand('node', ['--version']);
   if (error) {
     toast.error("nodejs is not available!");
     return;
   }
-  ({ output, error } = await runJavascriptCommand('synvert-javascript', ['--version']));
+  ({ output, error } = await runCommand('synvert-javascript', ['--version']));
   if (error) {
     showErrorMesage("Synvert npm not found. Run `npm install -g synvert`.", "Install Now", () => installNpm("synvert"));
     return;
@@ -196,7 +184,7 @@ const testRubySnippet = async (event) => {
     commandArgs.push(rubyNumberOfWorkers());
   }
   commandArgs.push(rootPath);
-  const { output, error } = await runRubyCommand('synvert-ruby', commandArgs, { input: snippetCode });
+  const { output, error } = await runCommand('synvert-ruby', commandArgs, { input: snippetCode });
   if (error) {
     triggerEvent(EVENT_SNIPPET_TESTED, { error })
     return;
@@ -229,7 +217,7 @@ const testJavascriptSnippet = async (event) => {
   commandArgs.push(javascriptMaxFileSize() * 1024);
   commandArgs.push("--rootPath");
   commandArgs.push(rootPath);
-  const { output, error } = await runJavascriptCommand('synvert-javascript', commandArgs, { input: snippetCode });
+  const { output, error } = await runCommand('synvert-javascript', commandArgs, { input: snippetCode });
   if (error) {
     triggerEvent(EVENT_SNIPPET_TESTED, { error })
     return;
@@ -262,7 +250,7 @@ const testTypescriptSnippet = async (event) => {
   commandArgs.push(typescriptMaxFileSize());
   commandArgs.push("--rootPath");
   commandArgs.push(rootPath);
-  const { output, error } = await runJavascriptCommand('synvert-javascript', commandArgs, { input: snippetCode });
+  const { output, error } = await runCommand('synvert-javascript', commandArgs, { input: snippetCode });
   if (error) {
     triggerEvent(EVENT_SNIPPET_TESTED, { error })
     return;
@@ -304,7 +292,7 @@ const runRubySnippet = async (event) => {
     commandArgs.push(skipPaths);
   }
   commandArgs.push(rootPath);
-  const { output, error } = await runRubyCommand('synvert-ruby', commandArgs, { input: snippetCode });
+  const { output, error } = await runCommand('synvert-ruby', commandArgs, { input: snippetCode });
   if (error) {
     triggerEvent(EVENT_SNIPPET_RUN, { error })
     return
@@ -335,7 +323,7 @@ const runJavascriptSnippet = async (event) => {
   commandArgs.push(javascriptMaxFileSize() * 1024);
   commandArgs.push("--rootPath");
   commandArgs.push(rootPath);
-  const { output, error } = await runJavascriptCommand('synvert-javascript', commandArgs, { input: snippetCode });
+  const { output, error } = await runCommand('synvert-javascript', commandArgs, { input: snippetCode });
   if (error) {
     triggerEvent(EVENT_SNIPPET_RUN, { error })
     return
@@ -366,7 +354,7 @@ const runTypescriptSnippet = async (event) => {
   commandArgs.push(typescriptMaxFileSize());
   commandArgs.push("--rootPath");
   commandArgs.push(rootPath);
-  const { output, error } = await runJavascriptCommand('synvert-javascript', commandArgs, { input: snippetCode });
+  const { output, error } = await runCommand('synvert-javascript', commandArgs, { input: snippetCode });
   if (error) {
     triggerEvent(EVENT_SNIPPET_RUN, { error })
     return
