@@ -1,7 +1,7 @@
 {
   "name": "synvert",
   "productName": "Synvert",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "Synvert GUI",
   "repository": "github:xinminlabs/synvert-gui",
   "main": ".webpack/main",
