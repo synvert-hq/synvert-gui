@@ -60,7 +60,7 @@ const runJavascriptCommand = async (command, args, { input } = {}) => {
     log({ type: 'runCommand', command: [command].concat(args).join(' ') });
     const { stdout, stderr } = await window.electronAPI.runShellCommand(command, args, input);
     log({ type: 'runCommand', stdout, stderr });
-    return { stdout, stderr: isRealError(stderr) ? stderr : null };
+    return formatCommandResult({ stdout, stderr });
   } catch (e) {
     log({ type: 'runCommand error', e });
     return { stderr: e.message };
@@ -77,9 +77,9 @@ const installGem = async (name) => {
 }
 
 const installNpm = async (name) => {
-  const { stdout, stderr } = await runJavascriptCommand('npm', ['install', '-g', name]);
-  if (stderr) {
-    toast.error(`Failed to install the ${name} npm.`) + stderr;
+  const { output, error } = await runJavascriptCommand('npm', ['install', '-g', name]);
+  if (error) {
+    toast.error(`Failed to install the ${name} npm. `) + error;
   } else {
     toast.success(`Successfully installed the ${name} npm.`);
   }
@@ -136,18 +136,18 @@ const checkJavascriptDependencies = async () => {
   if (!javascriptEnabled() && !typescriptEnabled()) {
     return;
   }
-  let { stdout, stderr } = await runJavascriptCommand('node', ['--version']);
-  if (stderr) {
+  let { output, error } = await runJavascriptCommand('node', ['--version']);
+  if (error) {
     toast.error("nodejs is not available!");
     return;
   }
-  ({ stdout, stderr } = await runJavascriptCommand('synvert-javascript', ['--version']));
-  if (stderr) {
+  ({ output, error } = await runJavascriptCommand('synvert-javascript', ['--version']));
+  if (error) {
     showErrorMesage("Synvert npm not found. Run `npm install -g synvert`.", "Install Now", () => installNpm("synvert"));
     return;
   } else {
     // Install synvert-core globally doesn't make any sense
-    const result = stdout.match(VERSION_REGEXP);
+    const result = output.match(VERSION_REGEXP);
     const localSynvertVersion = result[1];
     // const localSynvertCoreVersion = result[2];
     const response = await fetch(baseUrlByLanguage("javascript") + "/check-versions");
@@ -202,7 +202,7 @@ const testRubySnippet = async (event) => {
     return;
   }
   try {
-    const testResults = parseJSON(output)
+    const testResults = parseJSON(output);
     addFileSourceToTestResults(testResults, rootPath);
     triggerEvent(EVENT_SNIPPET_TESTED, { testResults })
   } catch(e) {
@@ -229,13 +229,13 @@ const testJavascriptSnippet = async (event) => {
   commandArgs.push(javascriptMaxFileSize() * 1024);
   commandArgs.push("--rootPath");
   commandArgs.push(rootPath);
-  const { stdout, stderr } = await runJavascriptCommand('synvert-javascript', commandArgs, { input: snippetCode });
-  if (stderr) {
-    triggerEvent(EVENT_SNIPPET_TESTED, { error: 'Failed to run snippet!' })
+  const { output, error } = await runJavascriptCommand('synvert-javascript', commandArgs, { input: snippetCode });
+  if (error) {
+    triggerEvent(EVENT_SNIPPET_TESTED, { error })
     return;
   }
   try {
-    const testResults = parseJSON(stdout)
+    const testResults = parseJSON(output);
     addFileSourceToTestResults(testResults, rootPath);
     triggerEvent(EVENT_SNIPPET_TESTED, { testResults })
   } catch(e) {
@@ -262,13 +262,13 @@ const testTypescriptSnippet = async (event) => {
   commandArgs.push(typescriptMaxFileSize());
   commandArgs.push("--rootPath");
   commandArgs.push(rootPath);
-  const { stdout, stderr } = await runJavascriptCommand('synvert-javascript', commandArgs, { input: snippetCode });
-  if (stderr) {
-    triggerEvent(EVENT_SNIPPET_TESTED, { error: 'Failed to run snippet!' })
+  const { output, error } = await runJavascriptCommand('synvert-javascript', commandArgs, { input: snippetCode });
+  if (error) {
+    triggerEvent(EVENT_SNIPPET_TESTED, { error })
     return;
   }
   try {
-    const testResults = parseJSON(stdout)
+    const testResults = parseJSON(output);
     addFileSourceToTestResults(testResults, rootPath);
     triggerEvent(EVENT_SNIPPET_TESTED, { testResults })
   } catch(e) {
@@ -306,7 +306,7 @@ const runRubySnippet = async (event) => {
   commandArgs.push(rootPath);
   const { output, error } = await runRubyCommand('synvert-ruby', commandArgs, { input: snippetCode });
   if (error) {
-    triggerEvent(EVENT_SNIPPET_RUN, { error: 'Failed to run snippet!' })
+    triggerEvent(EVENT_SNIPPET_RUN, { error })
     return
   }
   try {
@@ -335,14 +335,13 @@ const runJavascriptSnippet = async (event) => {
   commandArgs.push(javascriptMaxFileSize() * 1024);
   commandArgs.push("--rootPath");
   commandArgs.push(rootPath);
-  const { stdout, stderr } = await runJavascriptCommand('synvert-javascript', commandArgs, { input: snippetCode });
-  if (stderr) {
-    triggerEvent(EVENT_SNIPPET_RUN, { error: 'Failed to run snippet!' })
+  const { output, error } = await runJavascriptCommand('synvert-javascript', commandArgs, { input: snippetCode });
+  if (error) {
+    triggerEvent(EVENT_SNIPPET_RUN, { error })
     return
   }
   try {
-    const output = JSON.parse(stdout)
-    triggerEvent(EVENT_SNIPPET_RUN, { affectedFiles: output.affected_files })
+    triggerEvent(EVENT_SNIPPET_RUN, { affectedFiles: JSON.parse(output).affected_files })
   } catch(e) {
     triggerEvent(EVENT_SNIPPET_RUN, { error: e.message })
   }
@@ -367,14 +366,13 @@ const runTypescriptSnippet = async (event) => {
   commandArgs.push(typescriptMaxFileSize());
   commandArgs.push("--rootPath");
   commandArgs.push(rootPath);
-  const { stdout, stderr } = await runJavascriptCommand('synvert-javascript', commandArgs, { input: snippetCode });
-  if (stderr) {
-    triggerEvent(EVENT_SNIPPET_RUN, { error: 'Failed to run snippet!' })
+  const { output, error } = await runJavascriptCommand('synvert-javascript', commandArgs, { input: snippetCode });
+  if (error) {
+    triggerEvent(EVENT_SNIPPET_RUN, { error })
     return
   }
   try {
-    const output = JSON.parse(stdout)
-    triggerEvent(EVENT_SNIPPET_RUN, { affectedFiles: output.affected_files })
+    triggerEvent(EVENT_SNIPPET_RUN, { affectedFiles: JSON.parse(output).affected_files })
   } catch(e) {
     triggerEvent(EVENT_SNIPPET_RUN, { error: e.message })
   }
