@@ -247,7 +247,7 @@ const testTypescriptSnippet = async (event) => {
     commandArgs.push(skipPaths);
   }
   commandArgs.push("--max-file-size");
-  commandArgs.push(typescriptMaxFileSize());
+  commandArgs.push(typescriptMaxFileSize() * 1024);
   commandArgs.push("--root-path");
   commandArgs.push(rootPath);
   const { output, error } = await runCommand('synvert-javascript', commandArgs, { input: snippetCode });
@@ -351,7 +351,7 @@ const runTypescriptSnippet = async (event) => {
     commandArgs.push(skipPaths);
   }
   commandArgs.push("--max-file-size");
-  commandArgs.push(typescriptMaxFileSize());
+  commandArgs.push(typescriptMaxFileSize() * 1024);
   commandArgs.push("--root-path");
   commandArgs.push(rootPath);
   const { output, error } = await runCommand('synvert-javascript', commandArgs, { input: snippetCode });
