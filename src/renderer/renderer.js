@@ -206,16 +206,16 @@ const testJavascriptSnippet = async (event) => {
   const { detail: { snippetCode, rootPath, onlyPaths, skipPaths } } = event
   const commandArgs = ["--execute", "test"];
   if (onlyPaths.length > 0) {
-    commandArgs.push("--onlyPaths");
+    commandArgs.push("--only-paths");
     commandArgs.push(onlyPaths);
   }
   if (skipPaths.length > 0) {
-    commandArgs.push("--skipPaths");
+    commandArgs.push("--skip-paths");
     commandArgs.push(skipPaths);
   }
-  commandArgs.push("--maxFileSize");
+  commandArgs.push("--max-file-size");
   commandArgs.push(javascriptMaxFileSize() * 1024);
-  commandArgs.push("--rootPath");
+  commandArgs.push("--root-path");
   commandArgs.push(rootPath);
   const { output, error } = await runCommand('synvert-javascript', commandArgs, { input: snippetCode });
   if (error) {
@@ -239,16 +239,16 @@ const testTypescriptSnippet = async (event) => {
   const { detail: { snippetCode, rootPath, onlyPaths, skipPaths } } = event
   const commandArgs = ["--execute", "test"];
   if (onlyPaths.length > 0) {
-    commandArgs.push("--onlyPaths");
+    commandArgs.push("--only-paths");
     commandArgs.push(onlyPaths);
   }
   if (skipPaths.length > 0) {
-    commandArgs.push("--skipPaths");
+    commandArgs.push("--skip-paths");
     commandArgs.push(skipPaths);
   }
-  commandArgs.push("--maxFileSize");
+  commandArgs.push("--max-file-size");
   commandArgs.push(typescriptMaxFileSize());
-  commandArgs.push("--rootPath");
+  commandArgs.push("--root-path");
   commandArgs.push(rootPath);
   const { output, error } = await runCommand('synvert-javascript', commandArgs, { input: snippetCode });
   if (error) {
@@ -312,16 +312,16 @@ const runJavascriptSnippet = async (event) => {
   const { detail: { snippetCode, rootPath, onlyPaths, skipPaths } } = event
   const commandArgs = ["--execute", "run", "--format", "json"];
   if (onlyPaths.length > 0) {
-    commandArgs.push("--onlyPaths");
+    commandArgs.push("--only-paths");
     commandArgs.push(onlyPaths);
   }
   if (skipPaths.length > 0) {
-    commandArgs.push("--skipPaths");
+    commandArgs.push("--skip-paths");
     commandArgs.push(skipPaths);
   }
-  commandArgs.push("--maxFileSize");
+  commandArgs.push("--max-file-size");
   commandArgs.push(javascriptMaxFileSize() * 1024);
-  commandArgs.push("--rootPath");
+  commandArgs.push("--root-path");
   commandArgs.push(rootPath);
   const { output, error } = await runCommand('synvert-javascript', commandArgs, { input: snippetCode });
   if (error) {
@@ -343,16 +343,16 @@ const runTypescriptSnippet = async (event) => {
   const { detail: { snippetCode, rootPath, onlyPaths, skipPaths } } = event
   const commandArgs = ["--execute", "run", "--format", "json"];
   if (onlyPaths.length > 0) {
-    commandArgs.push("--onlyPaths");
+    commandArgs.push("--only-paths");
     commandArgs.push(onlyPaths);
   }
   if (skipPaths.length > 0) {
-    commandArgs.push("--skipPaths");
+    commandArgs.push("--skip-paths");
     commandArgs.push(skipPaths);
   }
-  commandArgs.push("--maxFileSize");
+  commandArgs.push("--max-file-size");
   commandArgs.push(typescriptMaxFileSize());
-  commandArgs.push("--rootPath");
+  commandArgs.push("--root-path");
   commandArgs.push(rootPath);
   const { output, error } = await runCommand('synvert-javascript', commandArgs, { input: snippetCode });
   if (error) {
