@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import toast from 'react-hot-toast';
+import toast from "react-hot-toast";
 import useEventListener from "@use-it/event-listener";
 import LoadingOverlay from "@murasoftware/react-loading-overlay";
 import { Allotment } from "allotment";
@@ -7,12 +7,7 @@ import "allotment/dist/style.css";
 
 import AppContext from "../context";
 import { getInited } from "../utils";
-import {
-  SET_LOADING,
-  SET_TEST_RESULTS,
-  SET_SHOW_TEST_RESULTS,
-  EVENT_SNIPPET_TESTED,
-} from "../constants";
+import { SET_LOADING, SET_TEST_RESULTS, SET_SHOW_TEST_RESULTS, EVENT_SNIPPET_TESTED } from "../constants";
 import FirstTimeConfig from "./FirstTimeConfig";
 import ListSnippets from "./ListSnippets";
 import ShowSnippet from "./ShowSnippet";
@@ -29,22 +24,19 @@ export default () => {
     return <FirstTimeConfig />;
   }
 
-  useEventListener(
-    EVENT_SNIPPET_TESTED,
-    ({ detail: { testResults, error } = {} }) => {
-      dispatch({ type: SET_LOADING, loading: false });
-      if (error) {
-        // it will show error in SnippetForm
-        return;
-      }
-      if (testResults.length === 0) {
-        toast('No file affected by this snippet');
-        return;
-      }
-      dispatch({ type: SET_TEST_RESULTS, testResults });
-      dispatch({ type: SET_SHOW_TEST_RESULTS, showTestResults: true });
+  useEventListener(EVENT_SNIPPET_TESTED, ({ detail: { testResults, error } = {} }) => {
+    dispatch({ type: SET_LOADING, loading: false });
+    if (error) {
+      // it will show error in SnippetForm
+      return;
     }
-  )
+    if (testResults.length === 0) {
+      toast("No file affected by this snippet");
+      return;
+    }
+    dispatch({ type: SET_TEST_RESULTS, testResults });
+    dispatch({ type: SET_SHOW_TEST_RESULTS, showTestResults: true });
+  });
 
   return (
     <LoadingOverlay active={loading} text={loadingText} spinner>

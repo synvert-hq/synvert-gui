@@ -1,15 +1,11 @@
 import React from "react";
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { tomorrow } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { tomorrow } from "react-syntax-highlighter/dist/cjs/styles/prism";
 
 export default ({ snippet, language, close }) => {
   return (
     <>
-      <div
-        className="modal fade show"
-        data-backdrop="static"
-        style={{ display: "block" }}
-      >
+      <div className="modal fade show" data-backdrop="static" style={{ display: "block" }}>
         <div className="modal-dialog modal-lg modal-dialog-scrollable">
           <div className="modal-content">
             <div className="modal-header">
@@ -26,11 +22,7 @@ export default ({ snippet, language, close }) => {
               </SyntaxHighlighter>
             </div>
             <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={close}
-              >
+              <button type="button" className="btn btn-secondary" onClick={close}>
                 Close
               </button>
             </div>

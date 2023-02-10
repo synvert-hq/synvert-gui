@@ -1,22 +1,23 @@
-import { app, BrowserWindow, dialog, ipcMain } from 'electron';
-import { createMainWindow } from './window';
-import { setupAboutPanel } from './about-panel';
-import { setupMenu } from './menu';
-import { setupUpdates } from './update';
+import { app, BrowserWindow, dialog, ipcMain } from "electron";
+import { createMainWindow } from "./window";
+import { setupAboutPanel } from "./about-panel";
+import { setupMenu } from "./menu";
+import { setupUpdates } from "./update";
 
 async function handleFileOpen() {
   const { canceled, filePaths } = await dialog.showOpenDialog({
-    properties: ["openDirectory", "openFile"]
+    properties: ["openDirectory", "openFile"],
   });
   if (canceled) {
-    return
+    return;
   } else {
     return filePaths[0];
   }
 }
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
+if (require("electron-squirrel-startup")) {
+  // eslint-disable-line global-require
   app.quit();
 }
 
@@ -24,12 +25,12 @@ if (require('electron-squirrel-startup')) { // eslint-disable-line global-requir
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  ipcMain.handle('dialog:openFile', handleFileOpen);
+  ipcMain.handle("dialog:openFile", handleFileOpen);
   createMainWindow();
   setupAboutPanel();
   setupMenu();
   setupUpdates();
-  app.on('activate', () => {
+  app.on("activate", () => {
     // On OS X it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
     if (BrowserWindow.getAllWindows().length === 0) {
@@ -41,6 +42,6 @@ app.whenReady().then(() => {
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
-app.on('window-all-closed', () => {
+app.on("window-all-closed", () => {
   app.quit();
 });

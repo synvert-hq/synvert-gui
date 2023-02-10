@@ -8,11 +8,11 @@ const WorkingDir = () => {
   const { rootPath, dispatch } = useContext(AppContext);
 
   const selectRootPath = async () => {
-    const rootPath = await window.electronAPI.openFile()
+    const rootPath = await window.electronAPI.openFile();
     if (rootPath) {
       saveRootPath(rootPath);
-      const onlyPaths = getOnlyPaths()
-      const skipPaths = getSkipPaths()
+      const onlyPaths = getOnlyPaths();
+      const skipPaths = getSkipPaths();
       dispatch({ type: SET_ROOT_PATH, rootPath, onlyPaths, skipPaths });
     }
   };
@@ -31,16 +31,12 @@ const WorkingDir = () => {
         onClick={selectRootPath}
       />
       <div className="input-group-append">
-        <button
-          className="btn btn-outline-secondary"
-          type="button"
-          onClick={selectRootPath}
-        >
+        <button className="btn btn-outline-secondary" type="button" onClick={selectRootPath}>
           ...
         </button>
       </div>
     </div>
   );
-}
+};
 
 export default WorkingDir;

@@ -28,7 +28,7 @@ const CodeDiff = () => {
         compareMethod={DiffMethod.WORDS}
       />
     </div>
-  )
-}
+  );
+};
 
 export default CodeDiff;

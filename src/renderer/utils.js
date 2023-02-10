@@ -1,18 +1,18 @@
 import { composeJavascriptGeneratedSnippet, composeRubyGeneratedSnippet } from "synvert-ui-common";
-import { ROOT_PATH, ONLY_PATHS, SKIP_PATHS, LANGUAGE, LANGUAGES } from "./constants"
+import { ROOT_PATH, ONLY_PATHS, SKIP_PATHS, LANGUAGE, LANGUAGES } from "./constants";
 
 const CUSTOM = "custom";
 
 const savePreference = (section, key, value) => {
-    const preferences = window.electronAPI.getPreferences()
-    preferences[section][key] = value
-    window.electronAPI.setPreferences(preferences)
-}
+  const preferences = window.electronAPI.getPreferences();
+  preferences[section][key] = value;
+  window.electronAPI.setPreferences(preferences);
+};
 
 const getPreference = (section, key) => {
-    const preferences = window.electronAPI.getPreferences()
-    return preferences[section][key]
-}
+  const preferences = window.electronAPI.getPreferences();
+  return preferences[section][key];
+};
 
 export const saveInited = (inited) => savePreference(CUSTOM, "inited", inited);
 export const getInited = () => getPreference(CUSTOM, "inited");
@@ -38,9 +38,9 @@ export const saveLanguageEnabled = (language, enabled) => {
   } else {
     savePreference(language, "enabled", []);
   }
-}
+};
 
-export const firstEnabledLanguage = () => LANGUAGES.find(language => languageEnabled(language));
+export const firstEnabledLanguage = () => LANGUAGES.find((language) => languageEnabled(language));
 export const getLanguage = () => {
   const language = getPreference(CUSTOM, LANGUAGE);
   if (!language) {
@@ -50,7 +50,7 @@ export const getLanguage = () => {
     return firstEnabledLanguage();
   }
   return language;
-}
+};
 export const saveLanguage = (language) => savePreference(CUSTOM, LANGUAGE, language);
 
 export const getRootPath = () => getPreference(CUSTOM, ROOT_PATH) || "";
@@ -63,63 +63,64 @@ export const getSkipPaths = () => getPreference(CUSTOM, getRootPath() + ":" + SK
 export const saveSkipPaths = (path) => savePreference(CUSTOM, getRootPath() + ":" + SKIP_PATHS, path);
 
 export const convertSnippetsToStore = (snippets) =>
-    snippets.reduce(
-        (obj, snippet) => ({
-            ...obj,
-            [snippet.id]: snippet
-        }),
-        {}
-    );
-
+  snippets.reduce(
+    (obj, snippet) => ({
+      ...obj,
+      [snippet.id]: snippet,
+    }),
+    {}
+  );
 
 export const triggerEvent = (name, detail) => {
-    if (detail) {
-        log({ type: 'triggerEvent', name, detail })
-        window.dispatchEvent(new CustomEvent(name, { detail }))
-    } else {
-        log({ type: 'triggerEvent', name })
-        window.dispatchEvent(new Event(name))
-    }
-}
+  if (detail) {
+    log({ type: "triggerEvent", name, detail });
+    window.dispatchEvent(new CustomEvent(name, { detail }));
+  } else {
+    log({ type: "triggerEvent", name });
+    window.dispatchEvent(new Event(name));
+  }
+};
 
 export const getNewSource = (oldSource, testResult) => {
-    let newSource = oldSource;
-    JSON.parse(JSON.stringify(testResult.actions)).reverse().forEach(action => {
-        newSource = newSource.slice(0, action.start) + action.newCode + newSource.slice(action.end);
+  let newSource = oldSource;
+  JSON.parse(JSON.stringify(testResult.actions))
+    .reverse()
+    .forEach((action) => {
+      newSource = newSource.slice(0, action.start) + action.newCode + newSource.slice(action.end);
     });
-    return newSource;
-}
+  return newSource;
+};
 
 export const composeGeneratedSnippet = (language, data, result) => {
-    const { snippet } = result;
-    if (language === "ruby") {
-      const { filePattern, rubyVersion, gemVersion } = data;
-      return composeRubyGeneratedSnippet({ filePattern, rubyVersion, gemVersion, snippet });
-    } else {
-      const { filePattern, nodeVersion, npmVersion } = data;
-      return composeJavascriptGeneratedSnippet({ filePattern, nodeVersion, npmVersion, snippet });
-    }
-}
+  const { snippet } = result;
+  if (language === "ruby") {
+    const { filePattern, rubyVersion, gemVersion } = data;
+    return composeRubyGeneratedSnippet({ filePattern, rubyVersion, gemVersion, snippet });
+  } else {
+    const { filePattern, nodeVersion, npmVersion } = data;
+    return composeJavascriptGeneratedSnippet({ filePattern, nodeVersion, npmVersion, snippet });
+  }
+};
 
 const LOCAL_API_SERVERS = {
-    ruby: 'http://localhost:9292',
-    javascript: 'http://localhost:4000',
-    typescript: 'http://localhost:4000',
-}
+  ruby: "http://localhost:9292",
+  javascript: "http://localhost:4000",
+  typescript: "http://localhost:4000",
+};
 
 const REMOTE_API_SERVERS = {
-    ruby: 'https://api-ruby.synvert.net',
-    javascript: 'https://api-javascript.synvert.net',
-    typescript: 'https://api-javascript.synvert.net',
-}
+  ruby: "https://api-ruby.synvert.net",
+  javascript: "https://api-javascript.synvert.net",
+  typescript: "https://api-javascript.synvert.net",
+};
 
 export const baseUrlByLanguage = (language) => {
-    if (window.electronAPI.isDev()) {
-        return LOCAL_API_SERVERS[language];
-    } else {
-        return REMOTE_API_SERVERS[language];
-    }
-}
+  if (window.electronAPI.isDev()) {
+    return LOCAL_API_SERVERS[language];
+  } else {
+    return REMOTE_API_SERVERS[language];
+  }
+};
 
 const PLACEHODERS = {
   ruby: {
@@ -133,8 +134,8 @@ const PLACEHODERS = {
   typescript: {
     input: "const x: Array<string> = ['a', 'b']",
     output: "const x: string[] = ['a', 'b']",
-  }
-}
+  },
+};
 
 export const placeholderByLanguage = (language) => PLACEHODERS[language];
 
@@ -142,12 +143,12 @@ const DEFAULT_VALUES = {
   ruby: "**/*.rb",
   javascript: "**/*.js",
   typescript: "**/*.ts",
-}
+};
 
 export const defaultValueByLanguage = (language) => DEFAULT_VALUES[language];
 
 export const log = (...args) => {
-    if (window.electronAPI.isDev()) {
-        console.log(...args)
-    }
-}
+  if (window.electronAPI.isDev()) {
+    console.log(...args);
+  }
+};

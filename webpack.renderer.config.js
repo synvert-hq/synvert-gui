@@ -1,13 +1,13 @@
-const rules = require('./webpack.rules');
+const rules = require("./webpack.rules");
 
 rules.push({
   test: /\.css$/,
-  use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
+  use: [{ loader: "style-loader" }, { loader: "css-loader" }],
 });
 
 rules.push({
   test: /\.(woff|woff2)$/,
-  use: [{ loader: 'file-loader' }],
+  use: [{ loader: "file-loader" }],
 });
 
 module.exports = {
@@ -16,7 +16,7 @@ module.exports = {
     rules,
   },
   resolve: {
-    extensions: ['.js', '.jsx'],
+    extensions: [".js", ".jsx"],
   },
-  target: "web"
+  target: "web",
 };

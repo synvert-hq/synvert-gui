@@ -6,7 +6,7 @@ import ReactDOM from "react-dom";
 
 import AppProvider from "./provider";
 import Dashboard from "./components/Dashboard";
-import { Toaster } from 'react-hot-toast';
+import { Toaster } from "react-hot-toast";
 
 const App = () => (
   <AppProvider>
@@ -22,5 +22,5 @@ function render() {
 render();
 
 if (module.hot) {
-  module.hot.accept()
+  module.hot.accept();
 }
