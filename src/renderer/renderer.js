@@ -389,7 +389,7 @@ const buildRubyCommandArgs = (executeCommand, rootPath, onlyPaths, skipPaths) =>
   commandArgs.push(rubyTabWidth());
   commandArgs.push(rootPath);
   return commandArgs;
-}
+};
 
 function buildJavascriptCommandArgs(executeCommand, rootPath, onlyPaths, skipPaths) {
   const commandArgs = ["--execute", executeCommand];
