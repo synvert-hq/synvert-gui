@@ -5,8 +5,8 @@ import { SET_GENERATED_SNIPPET } from "../constants";
 
 const SnippetCode = ({ rows }) => {
   const { language, snippetCode, snippetError, dispatch } = useContext(AppContext);
-  const [code, setCode] = useState("")
-  const [error, setError] = useState("")
+  const [code, setCode] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
     setCode("");
@@ -14,7 +14,7 @@ const SnippetCode = ({ rows }) => {
 
   useEffect(() => {
     setCode(snippetCode);
-  }, [snippetCode])
+  }, [snippetCode]);
 
   useEffect(() => {
     setError(snippetError);
@@ -28,11 +28,11 @@ const SnippetCode = ({ rows }) => {
         snippetError: "",
       });
     }
-  }
+  };
 
   return (
     <div className="form-group">
-      {error !== '' && (<span className="text-danger">{error}</span>)}
+      {error !== "" && <span className="text-danger">{error}</span>}
       <textarea
         className="form-control"
         rows={rows}
@@ -41,7 +41,7 @@ const SnippetCode = ({ rows }) => {
         onBlur={(e) => updateSnippetCode(e.target.value)}
       ></textarea>
     </div>
-  )
-}
+  );
+};
 
 export default SnippetCode;

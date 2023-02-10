@@ -35,41 +35,43 @@ const TestResults = () => {
   const toggleResult = (filePath) => {
     setFilesCollapse({
       ...filesCollapse,
-      ...{ [filePath]: !filesCollapse[filePath] }
+      ...{ [filePath]: !filesCollapse[filePath] },
     });
-  }
+  };
 
   const back = () => {
     dispatch({ type: SET_SHOW_TEST_RESULTS, showTestResults: false });
-  }
+  };
 
   const replaceResult = (resultIndex) => {
     dispatch({ type: REPLACE_TEST_RESULT, rootPath, resultIndex });
-  }
+  };
 
   const removeResult = (resultIndex) => {
     dispatch({ type: REMOVE_TEST_RESULT, resultIndex });
-  }
+  };
 
   const replaceAction = (resultIndex, actionIndex) => {
     dispatch({ type: REPLACE_TEST_ACTION, rootPath, resultIndex, actionIndex });
-  }
+  };
 
   const removeAction = (resultIndex, actionIndex) => {
     dispatch({ type: REMOVE_TEST_ACTION, resultIndex, actionIndex });
-  }
+  };
 
   const resultClicked = (resultIndex) => {
     dispatch({ type: SET_CURRENT_RESULT_INDEX, resultIndex });
-  }
+  };
 
   const actionClicked = (resultIndex, actionIndex, actionStart, actionEnd) => {
     dispatch({ type: SET_CURRENT_ACTION_INDEX, resultIndex, actionIndex, actionStart, actionEnd });
-  }
+  };
 
   return (
     <div className="search-results">
-      <button className="btn btn-sm btn-back" onClick={back}>&lt;&nbsp;Back</button>
+      <button className="btn btn-sm btn-back" onClick={back}>
+        &lt;&nbsp;Back
+      </button>
       <div className="ml-3 mr-3">
         <SnippetCode rows={5} />
         <FilesToInclude />
@@ -82,19 +84,16 @@ const TestResults = () => {
       <ul className="mt-3">
         {testResults.map((result, resultIndex) => (
           <li key={resultIndex}>
-            <div className={resultIndex === currentResultIndex && currentActionIndex === null ? "result active" : "result"} onClick={() => resultClicked(resultIndex)}>
+            <div
+              className={resultIndex === currentResultIndex && currentActionIndex === null ? "result active" : "result"}
+              onClick={() => resultClicked(resultIndex)}
+            >
               <a href="#" className="toggle-icon" onClick={() => toggleResult(result.filePath)}>
-                {filesCollapse[result.filePath] ? (
-                  <ChevronRightSvg />
-                ) : (
-                  <ChevronDownSvg />
-                )}
+                {filesCollapse[result.filePath] ? <ChevronRightSvg /> : <ChevronDownSvg />}
               </a>
-              <span title={result.filePath}>
-                {result.filePath}
-              </span>
+              <span title={result.filePath}>{result.filePath}</span>
               <div className="toolkit">
-                {result.actions.every(action => (typeof action.newCode !== "undefined")) && (
+                {result.actions.every((action) => typeof action.newCode !== "undefined") && (
                   <a href="#" onClick={() => replaceResult(resultIndex)}>
                     <ReplaceAllSvg />
                   </a>
@@ -108,7 +107,14 @@ const TestResults = () => {
               <ul className="search-actions">
                 {result.actions.map((action, actionIndex) => (
                   <li key={actionIndex}>
-                    <div className={resultIndex === currentResultIndex && actionIndex === currentActionIndex ? "action active" : "action"} onClick={() => actionClicked(resultIndex, actionIndex, action.start, action.end)}>
+                    <div
+                      className={
+                        resultIndex === currentResultIndex && actionIndex === currentActionIndex
+                          ? "action active"
+                          : "action"
+                      }
+                      onClick={() => actionClicked(resultIndex, actionIndex, action.start, action.end)}
+                    >
                       <div className="toolkit">
                         {typeof action.newCode !== "undefined" && (
                           <a href="#" onClick={() => replaceAction(resultIndex, actionIndex)}>
@@ -134,7 +140,7 @@ const TestResults = () => {
         ))}
       </ul>
     </div>
-  )
-}
+  );
+};
 
 export default TestResults;

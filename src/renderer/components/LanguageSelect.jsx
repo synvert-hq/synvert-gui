@@ -2,7 +2,14 @@ import React, { useContext, useState } from "react";
 
 import AppContext from "../context";
 import { LANGUAGES, SET_LANGUAGE, SET_SHOW_FORM } from "../constants";
-import { saveLanguage, languageEnabled, rubyEnabled, javascriptEnabled, typescriptEnabled, firstEnabledLanguage } from "../utils";
+import {
+  saveLanguage,
+  languageEnabled,
+  rubyEnabled,
+  javascriptEnabled,
+  typescriptEnabled,
+  firstEnabledLanguage,
+} from "../utils";
 
 const LanguageSelect = () => {
   const { language, dispatch } = useContext(AppContext);
@@ -18,7 +25,11 @@ const LanguageSelect = () => {
       // FIXME: we supposed to save the first enabled language in preference,
       // but it will cause a loop to listen and trigger.
       // saveLanguage(firstEnabledLanguage());
-    } else if (currentRubyEnabled !== rubyEnabled() || currentJavascriptEnabled !== javascriptEnabled() || currentTypescriptEnabled !== typescriptEnabled()) {
+    } else if (
+      currentRubyEnabled !== rubyEnabled() ||
+      currentJavascriptEnabled !== javascriptEnabled() ||
+      currentTypescriptEnabled !== typescriptEnabled()
+    ) {
       currentRubyEnabled = rubyEnabled();
       currentJavascriptEnabled = javascriptEnabled();
       currentTypescriptEnabled = typescriptEnabled();
@@ -32,18 +43,22 @@ const LanguageSelect = () => {
     saveLanguage(language);
     dispatch({ type: SET_LANGUAGE, language });
     dispatch({ type: SET_SHOW_FORM, showForm: true });
-  }
+  };
 
   return (
     <div className="language-select d-flex align-items-center ml-3 mr-3 mb-2">
       <label>Language:</label>
       <select className="form-control ml-3" value={language} onChange={handleLanguageChanged}>
-        {LANGUAGES.map(language => (
-          languageEnabled(language) ? <option key={language} value={language}>{language}</option> : null
-        ))}
+        {LANGUAGES.map((language) =>
+          languageEnabled(language) ? (
+            <option key={language} value={language}>
+              {language}
+            </option>
+          ) : null
+        )}
       </select>
     </div>
-  )
-}
+  );
+};
 
 export default LanguageSelect;

@@ -14,7 +14,7 @@ const FilesToInclude = () => {
     const onlyPaths = event.target.value;
     dispatch({ type: SET_ONLY_PATHS, onlyPaths });
     saveOnlyPaths(onlyPaths);
-  }
+  };
 
   return (
     <div className="d-flex align-items-center files-to-include">
@@ -27,7 +27,7 @@ const FilesToInclude = () => {
         onBlur={handleValueChanged}
       />
     </div>
-  )
-}
+  );
+};
 
 export default FilesToInclude;

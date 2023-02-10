@@ -22,13 +22,13 @@ const FirstTimeConfig = () => {
     saveInited(true);
     triggerEvent(EVENT_CHECK_DEPENDENCIES);
     dispatch({ type: SET_INITED, inited: true });
-  }
+  };
 
   return (
     <div className="container mt-8">
       <p>
         What programming language do you want to use? Synvert will ask you to install the dependencies.
-        <br/>
+        <br />
         (It can be chagned in the preferences later.)
       </p>
       <form onSubmit={handleSubmit}>
@@ -37,17 +37,29 @@ const FirstTimeConfig = () => {
           <label className="form-check-label">Ruby</label>
         </div>
         <div className="form-group form-check">
-          <input type="checkbox" className="form-check-input" checked={typescriptChecked} onChange={handleTypescriptChange} />
+          <input
+            type="checkbox"
+            className="form-check-input"
+            checked={typescriptChecked}
+            onChange={handleTypescriptChange}
+          />
           <label className="form-check-label">Typescript</label>
         </div>
         <div className="form-group form-check">
-          <input type="checkbox" className="form-check-input" checked={javascriptChecked} onChange={handleJavascriptChange}  />
+          <input
+            type="checkbox"
+            className="form-check-input"
+            checked={javascriptChecked}
+            onChange={handleJavascriptChange}
+          />
           <label className="form-check-label">Javascript</label>
         </div>
-        <button type="submit" className="btn btn-primary">Continue</button>
+        <button type="submit" className="btn btn-primary">
+          Continue
+        </button>
       </form>
     </div>
-  )
-}
+  );
+};
 
 export default FirstTimeConfig;

@@ -16,7 +16,7 @@ const FilesToExclude = () => {
     const skipPaths = event.target.value;
     dispatch({ type: SET_SKIP_PATHS, skipPaths });
     saveSkipPaths(skipPaths);
-  }
+  };
 
   return (
     <div className="d-flex align-items-center files-to-include">
@@ -28,7 +28,7 @@ const FilesToExclude = () => {
         onBlur={handleValueChanged}
       />
     </div>
-  )
-}
+  );
+};
 
 export default FilesToExclude;

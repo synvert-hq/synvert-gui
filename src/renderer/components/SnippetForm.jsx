@@ -3,15 +3,27 @@ import { useForm, useFieldArray } from "react-hook-form";
 import useEventListener from "@use-it/event-listener";
 
 import AppContext from "../context";
-import { baseUrlByLanguage, composeGeneratedSnippet, defaultValueByLanguage, log, placeholderByLanguage } from '../utils'
+import {
+  baseUrlByLanguage,
+  composeGeneratedSnippet,
+  defaultValueByLanguage,
+  log,
+  placeholderByLanguage,
+} from "../utils";
 import { SET_LOADING, SET_GENERATED_SNIPPET, EVENT_SNIPPET_RUN, EVENT_SNIPPET_TESTED } from "../constants";
 import SnippetCode from "./SnippetCode";
 
 export default () => {
   const [errorMessage, setErrorMessage] = useState("");
   const { language, dispatch } = useContext(AppContext);
-  const { register, control, setValue, handleSubmit, formState: { errors } } = useForm({ defaultValues: { inputs_outputs: [{ input: '', output: '' }], nql_or_rules: 'nql' } });
-  const { fields, append, remove, replace } = useFieldArray({ control, name: 'inputs_outputs' });
+  const {
+    register,
+    control,
+    setValue,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ defaultValues: { inputs_outputs: [{ input: "", output: "" }], nql_or_rules: "nql" } });
+  const { fields, append, remove, replace } = useFieldArray({ control, name: "inputs_outputs" });
 
   useEffect(() => {
     setValue("filePattern", defaultValueByLanguage(language));
@@ -23,41 +35,35 @@ export default () => {
     setErrorMessage("");
   }, [language]);
 
-  useEventListener(
-    EVENT_SNIPPET_TESTED,
-    ({ detail: { error } = {} }) => {
-      setErrorMessage(error);
-    }
-  );
+  useEventListener(EVENT_SNIPPET_TESTED, ({ detail: { error } = {} }) => {
+    setErrorMessage(error);
+  });
 
-  useEventListener(
-    EVENT_SNIPPET_RUN,
-    ({ detail: { error } = {} }) => {
-      setErrorMessage(error);
-    }
-  );
+  useEventListener(EVENT_SNIPPET_RUN, ({ detail: { error } = {} }) => {
+    setErrorMessage(error);
+  });
 
-  const addMore = () => append({ input: '', output: '' })
+  const addMore = () => append({ input: "", output: "" });
 
   const removeLast = () => {
     if (fields.length > 1) {
       remove(fields.length - 1);
     }
-  }
+  };
 
   const updateSnippetCode = ({ snippetCode, snippetError }) => {
     dispatch({
       type: SET_GENERATED_SNIPPET,
       snippetCode,
-      snippetError
+      snippetError,
     });
-  }
+  };
 
   const onSubmit = async (data) => {
     dispatch({ type: SET_LOADING, loading: true, loadingText: "Submitting..." });
     const { inputs_outputs, nql_or_rules } = data;
-    const inputs = inputs_outputs.map(input_output => input_output.input);
-    const outputs = inputs_outputs.map(input_output => input_output.output);
+    const inputs = inputs_outputs.map((input_output) => input_output.input);
+    const outputs = inputs_outputs.map((input_output) => input_output.output);
     try {
       const response = await fetch(`${baseUrlByLanguage(language)}/generate-snippet`, {
         method: "POST",
@@ -80,7 +86,10 @@ export default () => {
         updateSnippetCode({ snippetCode, snippetError: "" });
       }
     } catch {
-      updateSnippetCode({ snippetCode: "", snippetError: "Failed to send request, please check your network setting." });
+      updateSnippetCode({
+        snippetCode: "",
+        snippetError: "Failed to send request, please check your network setting.",
+      });
     }
     dispatch({ type: SET_LOADING, loading: false });
   };
@@ -97,9 +106,7 @@ export default () => {
               defaultValue={defaultValueByLanguage(language)}
               {...register("filePattern", { required: true })}
             />
-            {errors.filePattern && (
-              <div className="invalid-feedback">required</div>
-            )}
+            {errors.filePattern && <div className="invalid-feedback">required</div>}
           </div>
           {language === "ruby" ? (
             <div className="form-group">
@@ -109,9 +116,7 @@ export default () => {
                 placeholder="e.g. 2.4.5"
                 {...register("rubyVersion", { pattern: /\d\.\d\.\d/ })}
               />
-              {errors.rubyVersion && (
-                <div className="invalid-feedback">format is incorrect</div>
-              )}
+              {errors.rubyVersion && <div className="invalid-feedback">format is incorrect</div>}
             </div>
           ) : (
             <div className="form-group">
@@ -121,9 +126,7 @@ export default () => {
                 placeholder="e.g. 14.0.0"
                 {...register("nodeVersion", { pattern: /\d\.\d\.\d/ })}
               />
-              {errors.nodeVersion && (
-                <div className="invalid-feedback">format is incorrect</div>
-              )}
+              {errors.nodeVersion && <div className="invalid-feedback">format is incorrect</div>}
             </div>
           )}
           {language === "ruby" ? (
@@ -134,9 +137,7 @@ export default () => {
                 placeholder="e.g. rails ~> 5.0.0"
                 {...register("gemVersion", { pattern: /\w+\ / })}
               />
-              {errors.gemVersion && (
-                <div className="invalid-feedback">format is incorrect</div>
-              )}
+              {errors.gemVersion && <div className="invalid-feedback">format is incorrect</div>}
             </div>
           ) : (
             <div className="form-group">
@@ -146,9 +147,7 @@ export default () => {
                 placeholder="e.g. express ^4.0.0"
                 {...register("npmVersion", { pattern: /\w+\ / })}
               />
-              {errors.gemVersion && (
-                <div className="invalid-feedback">format is incorrect</div>
-              )}
+              {errors.gemVersion && <div className="invalid-feedback">format is incorrect</div>}
             </div>
           )}
           <div className="form-row">
@@ -156,7 +155,9 @@ export default () => {
               <label>Inputs</label>
             </div>
             <div className="col-md-6">
-              <a href="https://synvert.net/how_to_write_inputs_outputs" className="float-right" target="_blank">How to write inputs/outpus?</a>
+              <a href="https://synvert.net/how_to_write_inputs_outputs" className="float-right" target="_blank">
+                How to write inputs/outpus?
+              </a>
               <label>Outputs</label>
             </div>
           </div>
@@ -193,35 +194,17 @@ export default () => {
             </div>
             <div className="nql-or-rules-select">
               <label htmlFor="nql">
-                <input
-                  {...register("nql_or_rules")}
-                  id="nql"
-                  type="radio"
-                  value="nql"
-                />
+                <input {...register("nql_or_rules")} id="nql" type="radio" value="nql" />
                 NQL
               </label>
               <label htmlFor="rules">
-                <input
-                  {...register("nql_or_rules")}
-                  id="rules"
-                  type="radio"
-                  value="rules"
-                />
+                <input {...register("nql_or_rules")} id="rules" type="radio" value="rules" />
                 Rules
               </label>
-              <input
-                className="btn btn-primary"
-                type="submit"
-                value="Generate Snippet"
-              />
+              <input className="btn btn-primary" type="submit" value="Generate Snippet" />
             </div>
           </div>
-          {errorMessage && (
-            <div className="text-danger">
-              {errorMessage}
-            </div>
-          )}
+          {errorMessage && <div className="text-danger">{errorMessage}</div>}
           <SnippetCode rows={10} />
         </form>
       </div>
