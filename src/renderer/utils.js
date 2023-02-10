@@ -23,6 +23,9 @@ export const rubySingleQuote = () => getPreference("ruby", "single_quote").inclu
 export const rubyTabWidth = () => getPreference("ruby", "tab_width");
 export const javascriptEnabled = () => getPreference("javascript", "enabled").includes("yes");
 export const javascriptMaxFileSize = () => getPreference("javascript", "max_file_size");
+export const javascriptSingleQuote = () => getPreference("javascript", "single_quote").includes("yes");
+export const javascriptSemi = () => getPreference("javascript", "semi").includes("yes");
+export const javascriptTabWidth = () => getPreference("javascript", "tab_width");
 export const typescriptEnabled = () => getPreference("typescript", "enabled").includes("yes");
 export const typescriptMaxFileSize = () => getPreference("typescript", "max_file_size");
 export const languageEnabled = (language) => getPreference(language, "enabled").includes("yes");
