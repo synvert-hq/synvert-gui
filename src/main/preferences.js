@@ -29,6 +29,9 @@ const preferences = new ElectronPreferences({
         typescript: {
             enabled: ['yes'],
             max_file_size: 100,
+            single_quote: ['no'],
+            semi: ['yes'],
+            tab_width: 2,
         },
         custom: {}
     },
@@ -135,6 +138,27 @@ const preferences = new ElectronPreferences({
                             {
                                 label: 'Skip file if its size is more than the size. (KB)',
                                 key: 'max_file_size',
+                                type: 'number',
+                            },
+                            {
+                                label: 'Prefer single quote',
+                                key: 'single_quote',
+                                type: 'checkbox',
+                                options: [
+                                    { label: 'Enabled', value: 'yes' }
+                                ]
+                            },
+                            {
+                                label: 'Prefer semicolon',
+                                key: 'semi',
+                                type: 'checkbox',
+                                options: [
+                                    { label: 'Enabled', value: 'yes' }
+                                ]
+                            },
+                            {
+                                label: 'Prefer tab width',
+                                key: 'tab_width',
                                 type: 'number',
                             }
                         ]

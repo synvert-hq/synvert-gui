@@ -28,6 +28,9 @@ export const javascriptSemi = () => getPreference("javascript", "semi").includes
 export const javascriptTabWidth = () => getPreference("javascript", "tab_width");
 export const typescriptEnabled = () => getPreference("typescript", "enabled").includes("yes");
 export const typescriptMaxFileSize = () => getPreference("typescript", "max_file_size");
+export const typescriptSingleQuote = () => getPreference("typescript", "single_quote").includes("yes");
+export const typescriptSemi = () => getPreference("typescript", "semi").includes("yes");
+export const typescriptTabWidth = () => getPreference("typescript", "tab_width");
 export const languageEnabled = (language) => getPreference(language, "enabled").includes("yes");
 export const saveLanguageEnabled = (language, enabled) => {
   if (enabled) {
