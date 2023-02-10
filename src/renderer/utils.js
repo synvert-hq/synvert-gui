@@ -19,6 +19,8 @@ export const getInited = () => getPreference(CUSTOM, "inited");
 
 export const rubyEnabled = () => getPreference("ruby", "enabled").includes("yes");
 export const rubyNumberOfWorkers = () => getPreference("ruby", "number_of_workers");
+export const rubySingleQuote = () => getPreference("ruby", "single_quote").includes("yes");
+export const rubyTabWidth = () => getPreference("ruby", "tab_width");
 export const javascriptEnabled = () => getPreference("javascript", "enabled").includes("yes");
 export const javascriptMaxFileSize = () => getPreference("javascript", "max_file_size");
 export const typescriptEnabled = () => getPreference("typescript", "enabled").includes("yes");

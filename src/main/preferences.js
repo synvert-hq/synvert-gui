@@ -16,6 +16,8 @@ const preferences = new ElectronPreferences({
         ruby: {
             enabled: ['yes'],
             number_of_workers: 4,
+            single_quote: ['yes'],
+            tab_width: 2,
         },
         javascript: {
             enabled: ['yes'],
@@ -46,6 +48,19 @@ const preferences = new ElectronPreferences({
                             {
                                 label: 'Number of workers to run in parallel',
                                 key: 'number_of_workers',
+                                type: 'number',
+                            },
+                            {
+                                label: 'Prefer single quote',
+                                key: 'single_quote',
+                                type: 'checkbox',
+                                options: [
+                                    { label: 'Enabled', value: 'yes' }
+                                ]
+                            },
+                            {
+                                label: 'Prefer tab width',
+                                key: 'tab_width',
                                 type: 'number',
                             }
                         ]
