@@ -20,6 +20,8 @@ import {
   REPLACE_ALL_TEST_RESULTS,
   SET_LANGUAGE,
   SET_INITED,
+  PREV_GENERATED_SNIPPET,
+  NEXT_GENERATED_SNIPPET,
 } from "./constants";
 import { getNewSource } from "./utils";
 
@@ -73,9 +75,24 @@ export default (state = {}, action) => {
     case SET_GENERATED_SNIPPET: {
       return {
         ...state,
-        generatedSnippets: state.generatedSnippets.map((snippet, index) => {
-          (index === state.generatedSnippetIndex) ? action.generatedSnippet : snippet
-        })
+        generatedSnippets: state.generatedSnippets.map((snippet, index) => (
+          index === state.generatedSnippetIndex ? action.snippetCode : snippet
+        )),
+        snippetCode: action.snippetCode
+      }
+    }
+    case PREV_GENERATED_SNIPPET: {
+      return {
+        ...state,
+        generatedSnippetIndex: state.generatedSnippetIndex - 1,
+        snippetCode: state.generatedSnippets[state.generatedSnippetIndex - 1],
+      }
+    }
+    case NEXT_GENERATED_SNIPPET: {
+      return {
+        ...state,
+        generatedSnippetIndex: state.generatedSnippetIndex + 1,
+        snippetCode: state.generatedSnippets[state.generatedSnippetIndex + 1],
       }
     }
     case SET_LOADING: {

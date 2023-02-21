@@ -12,6 +12,8 @@ const initialState = {
   skipPaths: getSkipPaths(),
   snippetsStore: {},
   currentSnippetId: null,
+  generatedSnippets: [],
+  generatedSnippetIndex: 0,
   snippetCode: "",
   snippetError: "",
   loading: false,
