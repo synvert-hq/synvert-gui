@@ -1,4 +1,3 @@
-import { composeJavascriptGeneratedSnippet, composeRubyGeneratedSnippet } from "synvert-ui-common";
 import { ROOT_PATH, ONLY_PATHS, SKIP_PATHS, LANGUAGE, LANGUAGES } from "./constants";
 
 const CUSTOM = "custom";
@@ -89,17 +88,6 @@ export const getNewSource = (oldSource, testResult) => {
       newSource = newSource.slice(0, action.start) + action.newCode + newSource.slice(action.end);
     });
   return newSource;
-};
-
-export const composeGeneratedSnippet = (language, data, result) => {
-  const { snippet } = result;
-  if (language === "ruby") {
-    const { filePattern, rubyVersion, gemVersion } = data;
-    return composeRubyGeneratedSnippet({ filePattern, rubyVersion, gemVersion, snippet });
-  } else {
-    const { filePattern, nodeVersion, npmVersion } = data;
-    return composeJavascriptGeneratedSnippet({ filePattern, nodeVersion, npmVersion, snippet });
-  }
 };
 
 const LOCAL_API_SERVERS = {

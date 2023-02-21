@@ -5,13 +5,13 @@ import useEventListener from "@use-it/event-listener";
 import AppContext from "../context";
 import {
   baseUrlByLanguage,
-  composeGeneratedSnippet,
   defaultValueByLanguage,
   log,
   placeholderByLanguage,
 } from "../utils";
-import { SET_LOADING, SET_GENERATED_SNIPPET, EVENT_SNIPPET_RUN, EVENT_SNIPPET_TESTED } from "../constants";
+import { SET_LOADING, SET_GENERATED_SNIPPETS, EVENT_SNIPPET_RUN, EVENT_SNIPPET_TESTED } from "../constants";
 import SnippetCode from "./SnippetCode";
+import { composeGeneratedSnippets } from "synvert-ui-common";
 
 export default () => {
   const [errorMessage, setErrorMessage] = useState("");
@@ -51,10 +51,10 @@ export default () => {
     }
   };
 
-  const updateSnippetCode = ({ snippetCode, snippetError }) => {
+  const updateGeneratedSnippets = ({ generatedSnippets, snippetError }) => {
     dispatch({
-      type: SET_GENERATED_SNIPPET,
-      snippetCode,
+      type: SET_GENERATED_SNIPPETS,
+      generatedSnippets,
       snippetError,
     });
   };
@@ -77,17 +77,21 @@ export default () => {
       });
       const result = await response.json();
       if (result.error) {
-        updateSnippetCode({ snippetCode: "", snippetError: result.error });
+        updateGeneratedSnippets({ generatedSnippets: [], snippetError: result.error });
         log(result.error);
-      } else if (!result.snippet) {
-        updateSnippetCode({ snippetCode: "", snippetError: "Failed to generate snippet" });
+      } else if (result.snippets.length === 0) {
+        updateGeneratedSnippets({ generatedSnippets: [], snippetError: "Failed to generate snippet" });
       } else {
-        const snippetCode = composeGeneratedSnippet(language, data, result);
-        updateSnippetCode({ snippetCode, snippetError: "" });
+        const generatedSnippets = composeGeneratedSnippets(
+          language === "ruby" ?
+          { language, filePattern: data.filePattern, rubyVersion: data.rubyVersion, gemVersion: data.gemVersion, snippets: result.snippets } :
+          { language, filePattern: data.filePattern, nodeVersion: data.nodeVersion, npmVersion: data.npmVersion, snippets: result.snippets }
+        );
+        updateGeneratedSnippets({ generatedSnippets, snippetError: "" });
       }
     } catch {
-      updateSnippetCode({
-        snippetCode: "",
+      updateGeneratedSnippets({
+        generatedSnippets: [],
         snippetError: "Failed to send request, please check your network setting.",
       });
     }

@@ -24,8 +24,7 @@ const SnippetCode = ({ rows }) => {
     if (typeof snippetCode !== "undefined") {
       dispatch({
         type: SET_GENERATED_SNIPPET,
-        snippetCode,
-        snippetError: "",
+        snippetCode
       });
     }
   };

@@ -2,6 +2,8 @@ import {
   SET_SNIPPETS_STORE,
   SET_CURRENT_SNIPPET_ID,
   SET_LOADING,
+  SET_GENERATED_SNIPPETS,
+  SET_GENERATED_SNIPPET_INDEX,
   SET_GENERATED_SNIPPET,
   SET_SHOW_FORM,
   SET_SHOW_TEST_RESULTS,
@@ -47,15 +49,34 @@ export default (state = {}, action) => {
         ...state,
         currentSnippetId: action.currentSnippetId,
         snippetCode,
+        generatedSnippets: [],
+        generatedSnippetIndex: 0,
       };
+    }
+    case SET_GENERATED_SNIPPETS: {
+      return {
+        ...state,
+        currentSnippetId: null,
+        generatedSnippets: action.generatedSnippets,
+        generatedSnippetIndex: 0,
+        snippetCode: action.generatedSnippets[0] || "",
+        snippetError: action.snippetError,
+      };
+    }
+    case SET_GENERATED_SNIPPET_INDEX: {
+      return {
+        ...state,
+        generatedSnippetIndex: action.generatedSnippetIndex,
+        snippetCode: action.generatedSnippets[action.generatedSnippetIndex],
+      }
     }
     case SET_GENERATED_SNIPPET: {
       return {
         ...state,
-        currentSnippetId: null,
-        snippetCode: action.snippetCode,
-        snippetError: action.snippetError,
-      };
+        generatedSnippets: state.generatedSnippets.map((snippet, index) => {
+          (index === state.generatedSnippetIndex) ? action.generatedSnippet : snippet
+        })
+      }
     }
     case SET_LOADING: {
       return {
