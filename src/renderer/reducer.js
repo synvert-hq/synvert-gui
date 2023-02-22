@@ -70,30 +70,30 @@ export default (state = {}, action) => {
         ...state,
         generatedSnippetIndex: action.generatedSnippetIndex,
         snippetCode: action.generatedSnippets[action.generatedSnippetIndex],
-      }
+      };
     }
     case SET_GENERATED_SNIPPET: {
       return {
         ...state,
-        generatedSnippets: state.generatedSnippets.map((snippet, index) => (
+        generatedSnippets: state.generatedSnippets.map((snippet, index) =>
           index === state.generatedSnippetIndex ? action.snippetCode : snippet
-        )),
-        snippetCode: action.snippetCode
-      }
+        ),
+        snippetCode: action.snippetCode,
+      };
     }
     case PREV_GENERATED_SNIPPET: {
       return {
         ...state,
         generatedSnippetIndex: state.generatedSnippetIndex - 1,
         snippetCode: state.generatedSnippets[state.generatedSnippetIndex - 1],
-      }
+      };
     }
     case NEXT_GENERATED_SNIPPET: {
       return {
         ...state,
         generatedSnippetIndex: state.generatedSnippetIndex + 1,
         snippetCode: state.generatedSnippets[state.generatedSnippetIndex + 1],
-      }
+      };
     }
     case SET_LOADING: {
       return {
