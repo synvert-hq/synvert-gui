@@ -15,6 +15,9 @@ contextBridge.exposeInMainWorld("electronAPI", {
   pathJoin: (path1, path2) => path.join(path1, path2),
   readFile: (filePath) => fs.readFileSync(filePath, "utf-8"),
   writeFile: (filePath, fileContent) => fs.writeFileSync(filePath, fileContent),
+  unlinkFile: (filePath) => fs.unlinkSync(filePath),
+  mkdir: (filePath) => fs.mkdirSync(filePath, { recursive: true }),
+  dirname: (filePath) => path.dirname(filePath),
 
   runShellCommand,
 });

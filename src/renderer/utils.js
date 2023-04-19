@@ -81,6 +81,13 @@ export const triggerEvent = (name, detail) => {
 };
 
 export const getNewSource = (oldSource, testResult) => {
+  if (isAddFileAction(testResult)) {
+    return testResult.actions[0].newCode;
+  }
+  if (isRemoveFileAction(testResult)) {
+    return "";
+  }
+
   let newSource = oldSource;
   JSON.parse(JSON.stringify(testResult.actions))
     .reverse()
@@ -89,6 +96,10 @@ export const getNewSource = (oldSource, testResult) => {
     });
   return newSource;
 };
+
+export const isAddFileAction = (result) => result.actions.length === 1 && result.actions[0].type === "add_file";
+
+export const isRemoveFileAction = (result) => result.actions.length === 1 && result.actions[0].type === "remove_file";
 
 const LOCAL_API_SERVERS = {
   ruby: "http://localhost:9292",

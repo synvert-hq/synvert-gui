@@ -10,7 +10,7 @@ const CodeDiff = () => {
   if (!currentTestResult) return null;
 
   const fileSource = currentTestResult.fileSource;
-  const lineNumber = fileSource.substring(0, currentActionStart).split("\n").length;
+  const lineNumber = fileSource ? fileSource.substring(0, currentActionStart).split("\n").length : 0;
   const newFileSource = getNewSource(fileSource, currentTestResult);
 
   useEffect(() => {

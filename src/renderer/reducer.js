@@ -23,7 +23,7 @@ import {
   PREV_GENERATED_SNIPPET,
   NEXT_GENERATED_SNIPPET,
 } from "./constants";
-import { getNewSource } from "./utils";
+import { getNewSource, isAddFileAction, isRemoveFileAction } from "./utils";
 
 export default (state = {}, action) => {
   switch (action.type) {
@@ -128,9 +128,17 @@ export default (state = {}, action) => {
       const testResults = [...state.testResults];
       const testResult = testResults[action.resultIndex];
       const absolutePath = window.electronAPI.pathJoin(action.rootPath, testResult.filePath);
-      let source = window.electronAPI.readFile(absolutePath, "utf-8");
-      const newSource = getNewSource(source, testResult);
-      window.electronAPI.writeFile(absolutePath, newSource);
+      if (isAddFileAction(testResult)) {
+        const dirPath = window.electronAPI.dirname(absolutePath);
+        window.electronAPI.mkdir(dirPath);
+        window.electronAPI.writeFile(absolutePath, testResult.actions[0].newCode);
+      } else if (isRemoveFileAction(testResult)) {
+        window.electronAPI.unlinkFile(absolutePath);
+      } else {
+        let source = window.electronAPI.readFile(absolutePath, "utf-8");
+        const newSource = getNewSource(source, testResult);
+        window.electronAPI.writeFile(absolutePath, newSource);
+      }
       testResults.splice(action.resultIndex, 1);
       return {
         ...state,
@@ -151,19 +159,31 @@ export default (state = {}, action) => {
       const actions = testResult.actions;
       const resultAction = actions[action.actionIndex];
       const absolutePath = window.electronAPI.pathJoin(action.rootPath, testResult.filePath);
-      let source = window.electronAPI.readFile(absolutePath, "utf-8");
-      source = source.slice(0, resultAction.start) + resultAction.newCode + source.slice(resultAction.end);
-      window.electronAPI.writeFile(absolutePath, source);
-      const offset = resultAction.newCode.length - (resultAction.end - resultAction.start);
-      actions.splice(action.actionIndex, 1);
-      if (actions.length > 0) {
-        actions.slice(action.actionIndex).forEach((action) => {
-          action.start = action.start + offset;
-          action.end = action.end + offset;
-        });
-        testResult.fileSource = source;
-      } else {
+      if (resultAction.type === "add_file") {
+        const dirPath = window.electronAPI.dirname(absolutePath);
+        window.electronAPI.mkdir(dirPath);
+        window.electronAPI.writeFile(absolutePath, resultAction.newCode);
+        // add_file action is the only action
         testResults.splice(action.resultIndex, 1);
+      } else if (resultAction.type === "remove_file") {
+        window.electronAPI.unlinkFile(absolutePath);
+        // remove_file action is the only action
+        testResults.splice(action.resultIndex, 1);
+      } else {
+        let source = window.electronAPI.readFile(absolutePath, "utf-8");
+        source = source.slice(0, resultAction.start) + resultAction.newCode + source.slice(resultAction.end);
+        window.electronAPI.writeFile(absolutePath, source);
+        const offset = resultAction.newCode.length - (resultAction.end - resultAction.start);
+        actions.splice(action.actionIndex, 1);
+        if (actions.length > 0) {
+          actions.slice(action.actionIndex).forEach((action) => {
+            action.start = action.start + offset;
+            action.end = action.end + offset;
+          });
+          testResult.fileSource = source;
+        } else {
+          testResults.splice(action.resultIndex, 1);
+        }
       }
       return {
         ...state,
@@ -182,9 +202,17 @@ export default (state = {}, action) => {
       const testResults = state.testResults;
       testResults.forEach((testResult) => {
         const absolutePath = window.electronAPI.pathJoin(action.rootPath, testResult.filePath);
-        let source = window.electronAPI.readFile(absolutePath, "utf-8");
-        const newSource = getNewSource(source, testResult);
-        window.electronAPI.writeFile(absolutePath, newSource);
+        if (isAddFileAction(testResult)) {
+          const dirPath = window.electronAPI.dirname(absolutePath);
+          window.electronAPI.mkdir(dirPath);
+          window.electronAPI.writeFile(absolutePath, testResult.actions[0].newCode);
+        } else if (isRemoveFileAction(testResult)) {
+          window.electronAPI.unlinkFile(absolutePath);
+        } else {
+          let source = window.electronAPI.readFile(absolutePath, "utf-8");
+          const newSource = getNewSource(source, testResult);
+          window.electronAPI.writeFile(absolutePath, newSource);
+        }
       });
       return {
         ...state,

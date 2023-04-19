@@ -60,6 +60,7 @@ import {
   typescriptSingleQuote,
   typescriptSemi,
   typescriptTabWidth,
+  isAddFileAction,
 } from "./utils";
 
 const runCommand = async (command, args, { input } = {}) => {
@@ -199,8 +200,10 @@ const checkDependencies = async () => {
 
 const addFileSourceToTestResults = (testResults, rootPath) => {
   testResults.forEach((testResult) => {
-    const fileSource = window.electronAPI.readFile(window.electronAPI.pathJoin(rootPath, testResult.filePath));
-    testResult.fileSource = fileSource;
+    if (!isAddFileAction(testResult)) {
+      const fileSource = window.electronAPI.readFile(window.electronAPI.pathJoin(rootPath, testResult.filePath));
+      testResult.fileSource = fileSource;
+    }
     testResult.rootPath = rootPath;
   });
 };

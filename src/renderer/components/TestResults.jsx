@@ -125,7 +125,19 @@ const TestResults = () => {
                           <CloseSvg />
                         </a>
                       </div>
-                      {result.fileSource && (
+                      {action.type == 'add_file' && (
+                        <>
+                          <span className="old-code"></span>
+                          <span className="new-code">{action.newCode}</span>
+                        </>
+                      )}
+                      {action.type == 'remove_file' && (
+                        <>
+                          <span className="old-code">{result.fileSource}</span>
+                          <span className="new-code"></span>
+                        </>
+                      )}
+                      {!['add_file', 'remove_file'].includes(action.type) && (
                         <>
                           <span className="old-code">{result.fileSource.substring(action.start, action.end)}</span>
                           <span className="new-code">{action.newCode}</span>
