@@ -59,7 +59,7 @@ export default () => {
     const { inputs_outputs, nql_or_rules } = data;
     const inputs = inputs_outputs.map((input_output) => input_output.input);
     const outputs = inputs_outputs.map((input_output) => input_output.output);
-    updateGeneratedSnippets({ generatedSnippets: [], snippetError: '' });
+    updateGeneratedSnippets({ generatedSnippets: [], snippetError: "" });
     try {
       const response = await fetch(`${baseUrlByLanguage(language)}/generate-snippet`, {
         method: "POST",
