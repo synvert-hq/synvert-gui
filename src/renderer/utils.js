@@ -121,30 +121,13 @@ export const baseUrlByLanguage = (language) => {
   }
 };
 
-const PLACEHODERS = {
-  ruby: {
-    input: "FactoryBot.create(:user)",
-    output: "create(:user)",
-  },
-  javascript: {
-    input: "foo.substring(indexStart, indexEnd)",
-    output: "foo.slice(indexStart, indexEnd)",
-  },
-  typescript: {
-    input: "const x: Array<string> = ['a', 'b']",
-    output: "const x: string[] = ['a', 'b']",
-  },
-};
-
-export const placeholderByLanguage = (language) => PLACEHODERS[language];
-
-const DEFAULT_VALUES = {
+const FILE_PATTERNS = {
   ruby: "**/*.rb",
   javascript: "**/*.js",
   typescript: "**/*.ts",
 };
 
-export const defaultValueByLanguage = (language) => DEFAULT_VALUES[language];
+export const filePatternByLanguage = (language) => FILE_PATTERNS[language];
 
 export const log = (...args) => {
   if (window.electronAPI.isDev()) {

@@ -1,9 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import useEventListener from "@use-it/event-listener";
+import { placeholderByLanguage } from "synvert-ui-common";
 
 import AppContext from "../context";
-import { baseUrlByLanguage, defaultValueByLanguage, log, placeholderByLanguage } from "../utils";
+import { baseUrlByLanguage, filePatternByLanguage, log } from "../utils";
 import { SET_LOADING, SET_GENERATED_SNIPPETS, EVENT_SNIPPET_RUN, EVENT_SNIPPET_TESTED } from "../constants";
 import SnippetCode from "./SnippetCode";
 import { composeGeneratedSnippets } from "synvert-ui-common";
