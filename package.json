@@ -62,6 +62,6 @@
     "react-syntax-highlighter": "^15.5.0",
     "rehype-raw": "^6.1.1",
     "synvert-server-common": "^1.1.1",
-    "synvert-ui-common": "^1.6.0"
+    "synvert-ui-common": "^1.7.1"
   }
 }
