@@ -121,13 +121,6 @@ export const baseUrlByLanguage = (language) => {
   }
 };
 
-const FILE_PATTERNS = {
-  ruby: "**/*.rb",
-  javascript: "**/*.js",
-  typescript: "**/*.ts",
-};
-
-export const filePatternByLanguage = (language) => FILE_PATTERNS[language];
 
 export const log = (...args) => {
   if (window.electronAPI.isDev()) {

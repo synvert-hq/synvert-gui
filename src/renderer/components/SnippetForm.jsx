@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import useEventListener from "@use-it/event-listener";
-import { placeholderByLanguage } from "synvert-ui-common";
+import { filePatternByLanguage, placeholderByLanguage } from "synvert-ui-common";
 
 import AppContext from "../context";
-import { baseUrlByLanguage, filePatternByLanguage, log } from "../utils";
+import { baseUrlByLanguage, log } from "../utils";
 import { SET_LOADING, SET_GENERATED_SNIPPETS, EVENT_SNIPPET_RUN, EVENT_SNIPPET_TESTED } from "../constants";
 import SnippetCode from "./SnippetCode";
 import { composeGeneratedSnippets } from "synvert-ui-common";
@@ -22,7 +22,7 @@ export default () => {
   const { fields, append, remove, replace } = useFieldArray({ control, name: "inputs_outputs" });
 
   useEffect(() => {
-    setValue("filePattern", defaultValueByLanguage(language));
+    setValue("filePattern", filePatternByLanguage(language));
     setValue("rubyVersion", "");
     setValue("nodeVersion", "");
     setValue("gemVersion", "");
@@ -116,7 +116,7 @@ export default () => {
             <label>File Pattern:</label>
             <input
               className={`form-control ${errors.filePattern && "is-invalid"}`}
-              defaultValue={defaultValueByLanguage(language)}
+              defaultValue={filePatternByLanguage(language)}
               {...register("filePattern", { required: true })}
             />
             {errors.filePattern && <div className="invalid-feedback">required</div>}
@@ -180,7 +180,7 @@ export default () => {
                 <textarea
                   className="form-control"
                   rows="3"
-                  placeholder={placeholderByLanguage(language).input}
+                  placeholder={placeholderByLanguage(language)["input"]}
                   {...register(`inputs_outputs.${index}.input`)}
                 ></textarea>
               </div>
@@ -188,7 +188,7 @@ export default () => {
                 <textarea
                   className="form-control"
                   rows="3"
-                  placeholder={placeholderByLanguage(language).output}
+                  placeholder={placeholderByLanguage(language)["output"]}
                   {...register(`inputs_outputs.${index}.output`)}
                 ></textarea>
               </div>
