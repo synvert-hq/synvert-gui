@@ -3,6 +3,7 @@ import path from "path";
 import ElectronPreferences from "electron-preferences";
 
 import { showDevTools } from "./utils";
+import { DEFAULT_VALUES } from "../renderer/utils";
 
 const preferences = new ElectronPreferences({
   dataStore: path.join(app.getPath("userData"), "preferences.json"),
@@ -13,26 +14,7 @@ const preferences = new ElectronPreferences({
     title: "Synvert GUI Preferences",
   },
   defaults: {
-    ruby: {
-      enabled: ["yes"],
-      number_of_workers: 4,
-      single_quote: ["yes"],
-      tab_width: 2,
-    },
-    javascript: {
-      enabled: ["yes"],
-      max_file_size: 100,
-      single_quote: ["no"],
-      semi: ["yes"],
-      tab_width: 2,
-    },
-    typescript: {
-      enabled: ["yes"],
-      max_file_size: 100,
-      single_quote: ["no"],
-      semi: ["yes"],
-      tab_width: 2,
-    },
+    ...DEFAULT_VALUES,
     custom: {},
   },
   sections: [
@@ -143,6 +125,98 @@ const preferences = new ElectronPreferences({
               {
                 label: "Prefer tab width",
                 key: "tab_width",
+                type: "number",
+              },
+            ],
+          },
+        ],
+      },
+    },
+    {
+      id: "css",
+      label: "Css",
+      form: {
+        groups: [
+          {
+            fields: [
+              {
+                label: "Enable synvert css",
+                key: "enabled",
+                type: "checkbox",
+                options: [{ label: "Enabled", value: "yes" }],
+              },
+              {
+                label: "Skip file if its size is more than the size. (KB)",
+                key: "max_file_size",
+                type: "number",
+              },
+            ],
+          },
+        ],
+      },
+    },
+    {
+      id: "less",
+      label: "Less",
+      form: {
+        groups: [
+          {
+            fields: [
+              {
+                label: "Enable synvert less",
+                key: "enabled",
+                type: "checkbox",
+                options: [{ label: "Enabled", value: "yes" }],
+              },
+              {
+                label: "Skip file if its size is more than the size. (KB)",
+                key: "max_file_size",
+                type: "number",
+              },
+            ],
+          },
+        ],
+      },
+    },
+    {
+      id: "sass",
+      label: "Sass",
+      form: {
+        groups: [
+          {
+            fields: [
+              {
+                label: "Enable synvert sass",
+                key: "enabled",
+                type: "checkbox",
+                options: [{ label: "Enabled", value: "yes" }],
+              },
+              {
+                label: "Skip file if its size is more than the size. (KB)",
+                key: "max_file_size",
+                type: "number",
+              },
+            ],
+          },
+        ],
+      },
+    },
+    {
+      id: "scss",
+      label: "Scss",
+      form: {
+        groups: [
+          {
+            fields: [
+              {
+                label: "Enable synvert scss",
+                key: "enabled",
+                type: "checkbox",
+                options: [{ label: "Enabled", value: "yes" }],
+              },
+              {
+                label: "Skip file if its size is more than the size. (KB)",
+                key: "max_file_size",
                 type: "number",
               },
             ],

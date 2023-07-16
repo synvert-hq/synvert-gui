@@ -61,6 +61,11 @@ import {
   typescriptSemi,
   typescriptTabWidth,
   isAddFileAction,
+  languageEnabled,
+  cssMaxFileSize,
+  lessMaxFileSize,
+  sassMaxFileSize,
+  scssMaxFileSize,
 } from "./utils";
 
 const runCommand = async (command, args, { input } = {}) => {
@@ -159,7 +164,7 @@ const checkRubyDependencies = async () => {
 };
 
 const checkJavascriptDependencies = async () => {
-  if (!javascriptEnabled() && !typescriptEnabled()) {
+  if (!javascriptEnabled() && !typescriptEnabled() && !cssEnabled() && !lessEnabled() && !sassEnabled() && !scssEnabled()) {
     return;
   }
   let { output, error } = await runCommand("node", ["--version"]);
@@ -208,247 +213,122 @@ const addFileSourceToTestResults = (testResults, rootPath) => {
   });
 };
 
-const testRubySnippet = async (event) => {
-  if (!rubyEnabled()) {
-    triggerEvent(EVENT_SNIPPET_TESTED, { error: "Synvert ruby is not enabled!" });
-    return;
-  }
-  const {
-    detail: { snippetCode, rootPath, onlyPaths, skipPaths },
-  } = event;
-  const commandArgs = buildRubyCommandArgs("test", rootPath, onlyPaths, skipPaths);
-  const { output, error } = await runCommand("synvert-ruby", commandArgs, { input: snippetCode });
-  if (error) {
-    triggerEvent(EVENT_SNIPPET_TESTED, { error });
-    return;
-  }
-  try {
-    const testResults = parseJSON(output);
-    addFileSourceToTestResults(testResults, rootPath);
-    triggerEvent(EVENT_SNIPPET_TESTED, { testResults });
-  } catch (e) {
-    triggerEvent(EVENT_SNIPPET_TESTED, { error: e.message });
-  }
-};
-
-const testJavascriptSnippet = async (event) => {
-  if (!javascriptEnabled()) {
-    triggerEvent(EVENT_SNIPPET_TESTED, { error: "Synvert javascript is not enabled!" });
-    return;
-  }
-  const {
-    detail: { snippetCode, rootPath, onlyPaths, skipPaths },
-  } = event;
-  const commandArgs = buildJavascriptCommandArgs("test", rootPath, onlyPaths, skipPaths);
-  const { output, error } = await runCommand("synvert-javascript", commandArgs, { input: snippetCode });
-  if (error) {
-    triggerEvent(EVENT_SNIPPET_TESTED, { error });
-    return;
-  }
-  try {
-    const testResults = parseJSON(output);
-    addFileSourceToTestResults(testResults, rootPath);
-    triggerEvent(EVENT_SNIPPET_TESTED, { testResults });
-  } catch (e) {
-    triggerEvent(EVENT_SNIPPET_TESTED, { error: e.message });
-  }
-};
-
-const testTypescriptSnippet = async (event) => {
-  if (!typescriptEnabled()) {
-    triggerEvent(EVENT_SNIPPET_TESTED, { error: "Synvert typescript is not enabled!" });
-    return;
-  }
-  const {
-    detail: { snippetCode, rootPath, onlyPaths, skipPaths },
-  } = event;
-  const commandArgs = buildTypescriptCommandArgs("test", rootPath, onlyPaths, skipPaths);
-  const { output, error } = await runCommand("synvert-javascript", commandArgs, { input: snippetCode });
-  if (error) {
-    triggerEvent(EVENT_SNIPPET_TESTED, { error });
-    return;
-  }
-  try {
-    const testResults = parseJSON(output);
-    addFileSourceToTestResults(testResults, rootPath);
-    triggerEvent(EVENT_SNIPPET_TESTED, { testResults });
-  } catch (e) {
-    triggerEvent(EVENT_SNIPPET_TESTED, { error: e.message });
-  }
-};
-
 const testSnippet = async (event) => {
-  const {
-    detail: { language },
-  } = event;
-  switch (language) {
-    case "ruby":
-      return await testRubySnippet(event);
-    case "javascript":
-      return await testJavascriptSnippet(event);
-    case "typescript":
-      return await testTypescriptSnippet(event);
-  }
-};
-
-const runRubySnippet = async (event) => {
-  if (!rubyEnabled()) {
-    triggerEvent(EVENT_SNIPPET_RUN, { error: "Synvert ruby is not enabled!" });
+  const { detail: { language, snippetCode, rootPath, onlyPaths, skipPaths } } = event;
+  if (!languageEnabled(language)) {
+    triggerEvent(EVENT_SNIPPET_TESTED, { error: `Synvert ${language} is not enabled!` });
     return;
   }
-  const {
-    detail: { snippetCode, rootPath, onlyPaths, skipPaths },
-  } = event;
-  const commandArgs = buildRubyCommandArgs("run", rootPath, onlyPaths, skipPaths);
-  const { output, error } = await runCommand("synvert-ruby", commandArgs, { input: snippetCode });
+  const command = language === "ruby" ? "synvert-ruby" : "synvert-javascript";
+  const commandArgs = buildCommandArgs("test", language, rootPath, onlyPaths, skipPaths);
+  const { output, error } = await runCommand(command, commandArgs, { input: snippetCode });
   if (error) {
-    triggerEvent(EVENT_SNIPPET_RUN, { error });
+    triggerEvent(EVENT_SNIPPET_TESTED, { error });
     return;
   }
   try {
-    triggerEvent(EVENT_SNIPPET_RUN, { affectedFiles: JSON.parse(output).affected_files });
+    const testResults = parseJSON(output);
+    addFileSourceToTestResults(testResults, rootPath);
+    triggerEvent(EVENT_SNIPPET_TESTED, { testResults });
   } catch (e) {
-    triggerEvent(EVENT_SNIPPET_RUN, { error: e.message });
+    triggerEvent(EVENT_SNIPPET_TESTED, { error: e.message });
   }
 };
 
-const runJavascriptSnippet = async (event) => {
-  if (!javascriptEnabled()) {
-    triggerEvent(EVENT_SNIPPET_RUN, { error: "Synvert javascript is not enabled!" });
-    return;
-  }
-  const {
-    detail: { snippetCode, rootPath, onlyPaths, skipPaths },
-  } = event;
-  const commandArgs = buildJavascriptCommandArgs("run", rootPath, onlyPaths, skipPaths);
-  const { output, error } = await runCommand("synvert-javascript", commandArgs, { input: snippetCode });
-  if (error) {
-    triggerEvent(EVENT_SNIPPET_RUN, { error });
-    return;
-  }
-  try {
-    triggerEvent(EVENT_SNIPPET_RUN, { affectedFiles: JSON.parse(output).affected_files });
-  } catch (e) {
-    triggerEvent(EVENT_SNIPPET_RUN, { error: e.message });
-  }
-};
-
-const runTypescriptSnippet = async (event) => {
-  if (!typescriptEnabled()) {
-    triggerEvent(EVENT_SNIPPET_RUN, { error: "Synvert typescript is not enabled!" });
-    return;
-  }
-  const {
-    detail: { snippetCode, rootPath, onlyPaths, skipPaths },
-  } = event;
-  const commandArgs = buildTypescriptCommandArgs("run", rootPath, onlyPaths, skipPaths);
-  const { output, error } = await runCommand("synvert-javascript", commandArgs, { input: snippetCode });
-  if (error) {
-    triggerEvent(EVENT_SNIPPET_RUN, { error });
-    return;
-  }
-  try {
-    triggerEvent(EVENT_SNIPPET_RUN, { affectedFiles: JSON.parse(output).affected_files });
-  } catch (e) {
-    triggerEvent(EVENT_SNIPPET_RUN, { error: e.message });
-  }
-};
 const runSnippet = async (event) => {
   const {
-    detail: { language },
-  } = event;
-  switch (language) {
+    detail: { language, snippetCode, rootPath, onlyPaths, skipPaths } } = event;
+  if (!languageEnabled(language)) {
+    triggerEvent(EVENT_SNIPPET_RUN, { error: `Synvert ${language} is not enabled!` });
+    return;
+  }
+  const command = language === "ruby" ? "synvert-ruby" : "synvert-javascript";
+  const commandArgs = buildCommandArgs("run", language, rootPath, onlyPaths, skipPaths);
+  const { output, error } = await runCommand(command, commandArgs, { input: snippetCode });
+  if (error) {
+    triggerEvent(EVENT_SNIPPET_RUN, { error });
+    return;
+  }
+  try {
+    triggerEvent(EVENT_SNIPPET_RUN, { affectedFiles: JSON.parse(output).affected_files });
+  } catch (e) {
+    triggerEvent(EVENT_SNIPPET_RUN, { error: e.message });
+  }
+};
+
+const buildCommandArgs = (executeCommand, language, rootPath, onlyPaths, skipPaths) => {
+  const commandArgs = ["--execute", executeCommand];
+  if (executeCommand === "run") {
+    commandArgs.push("--format");
+    commandArgs.push("json");
+  }
+  if (onlyPaths.length > 0) {
+    commandArgs.push("--only-paths");
+    commandArgs.push(onlyPaths);
+  }
+  if (skipPaths.length > 0) {
+    commandArgs.push("--skip-paths");
+    commandArgs.push(skipPaths);
+  }
+  switch(language) {
     case "ruby":
-      return await runRubySnippet(event);
+      if (executeCommand === "test") {
+        commandArgs.push("--number-of-workers");
+        commandArgs.push(rubyNumberOfWorkers());
+      }
+      if (!rubySingleQuote()) {
+        commandArgs.push("--double-quote");
+      }
+      commandArgs.push("--tab-width");
+      commandArgs.push(rubyTabWidth());
+      commandArgs.push(rootPath);
     case "javascript":
-      return await runJavascriptSnippet(event);
+      commandArgs.push("--max-file-size");
+      commandArgs.push(javascriptMaxFileSize() * 1024);
+      if (javascriptSingleQuote()) {
+        commandArgs.push("--single-quote");
+      }
+      if (!javascriptSemi()) {
+        commandArgs.push("--no-semi");
+      }
+      commandArgs.push("--tab-width");
+      commandArgs.push(javascriptTabWidth());
+      commandArgs.push("--root-path");
+      commandArgs.push(rootPath);
     case "typescript":
-      return await runTypescriptSnippet(event);
+      commandArgs.push("--max-file-size");
+      commandArgs.push(typescriptMaxFileSize() * 1024);
+      if (typescriptSingleQuote()) {
+        commandArgs.push("--single-quote");
+      }
+      if (!typescriptSemi()) {
+        commandArgs.push("--no-semi");
+      }
+      commandArgs.push("--tab-width");
+      commandArgs.push(typescriptTabWidth());
+      commandArgs.push("--root-path");
+      commandArgs.push(rootPath);
+    case "css":
+      commandArgs.push("--max-file-size");
+      commandArgs.push(cssMaxFileSize() * 1024);
+      commandArgs.push("--root-path");
+      commandArgs.push(rootPath);
+    case "less":
+      commandArgs.push("--max-file-size");
+      commandArgs.push(lessMaxFileSize() * 1024);
+      commandArgs.push("--root-path");
+      commandArgs.push(rootPath);
+    case "sass":
+      commandArgs.push("--max-file-size");
+      commandArgs.push(sassMaxFileSize() * 1024);
+      commandArgs.push("--root-path");
+      commandArgs.push(rootPath);
+    case "scss":
+      commandArgs.push("--max-file-size");
+      commandArgs.push(scssMaxFileSize() * 1024);
+      commandArgs.push("--root-path");
+      commandArgs.push(rootPath);
   }
-};
-
-const buildRubyCommandArgs = (executeCommand, rootPath, onlyPaths, skipPaths) => {
-  const commandArgs = ["--execute", executeCommand];
-  if (executeCommand === "run") {
-    commandArgs.push("--format");
-    commandArgs.push("json");
-  }
-  if (onlyPaths.length > 0) {
-    commandArgs.push("--only-paths");
-    commandArgs.push(onlyPaths);
-  }
-  if (skipPaths.length > 0) {
-    commandArgs.push("--skip-paths");
-    commandArgs.push(skipPaths);
-  }
-  if (executeCommand === "test") {
-    commandArgs.push("--number-of-workers");
-    commandArgs.push(rubyNumberOfWorkers());
-  }
-  if (!rubySingleQuote()) {
-    commandArgs.push("--double-quote");
-  }
-  commandArgs.push("--tab-width");
-  commandArgs.push(rubyTabWidth());
-  commandArgs.push(rootPath);
-  return commandArgs;
-};
-
-function buildJavascriptCommandArgs(executeCommand, rootPath, onlyPaths, skipPaths) {
-  const commandArgs = ["--execute", executeCommand];
-  if (executeCommand === "run") {
-    commandArgs.push("--format");
-    commandArgs.push("json");
-  }
-  if (onlyPaths.length > 0) {
-    commandArgs.push("--only-paths");
-    commandArgs.push(onlyPaths);
-  }
-  if (skipPaths.length > 0) {
-    commandArgs.push("--skip-paths");
-    commandArgs.push(skipPaths);
-  }
-  commandArgs.push("--max-file-size");
-  commandArgs.push(javascriptMaxFileSize() * 1024);
-  if (javascriptSingleQuote()) {
-    commandArgs.push("--single-quote");
-  }
-  if (!javascriptSemi()) {
-    commandArgs.push("--no-semi");
-  }
-  commandArgs.push("--tab-width");
-  commandArgs.push(javascriptTabWidth());
-  commandArgs.push("--root-path");
-  commandArgs.push(rootPath);
-  return commandArgs;
-}
-
-function buildTypescriptCommandArgs(executeCommand, rootPath, onlyPaths, skipPaths) {
-  const commandArgs = ["--execute", executeCommand];
-  if (executeCommand === "run") {
-    commandArgs.push("--format");
-    commandArgs.push("json");
-  }
-  if (onlyPaths.length > 0) {
-    commandArgs.push("--only-paths");
-    commandArgs.push(onlyPaths);
-  }
-  if (skipPaths.length > 0) {
-    commandArgs.push("--skip-paths");
-    commandArgs.push(skipPaths);
-  }
-  commandArgs.push("--max-file-size");
-  commandArgs.push(typescriptMaxFileSize() * 1024);
-  if (typescriptSingleQuote()) {
-    commandArgs.push("--single-quote");
-  }
-  if (!typescriptSemi()) {
-    commandArgs.push("--no-semi");
-  }
-  commandArgs.push("--tab-width");
-  commandArgs.push(typescriptTabWidth());
-  commandArgs.push("--root-path");
-  commandArgs.push(rootPath);
   return commandArgs;
 }
 

@@ -10,15 +10,27 @@ const FirstTimeConfig = () => {
   const [rubyChecked, setRubyChecked] = useState(true);
   const [typescriptChecked, setTypescriptChecked] = useState(true);
   const [javascriptChecked, setJavascriptChecked] = useState(true);
+  const [cssChecked, setCssChecked] = useState(true);
+  const [lessChecked, setLessChecked] = useState(true);
+  const [sassChecked, setSassChecked] = useState(true);
+  const [scssChecked, setScssChecked] = useState(true);
 
   const handleRubyChange = () => setRubyChecked(!rubyChecked);
   const handleTypescriptChange = () => setTypescriptChecked(!typescriptChecked);
   const handleJavascriptChange = () => setJavascriptChecked(!javascriptChecked);
+  const handleCssChange = () => setCssChecked(!cssChecked);
+  const handleLessChange = () => setLessChecked(!lessChecked);
+  const handleSassChange = () => setSassChecked(!sassChecked);
+  const handleScssChange = () => setScssChecked(!scssChecked);
 
   const handleSubmit = () => {
     saveLanguageEnabled("ruby", rubyChecked);
     saveLanguageEnabled("typescript", typescriptChecked);
     saveLanguageEnabled("javascript", javascriptChecked);
+    saveLanguageEnabled("css", cssChecked);
+    saveLanguageEnabled("less", lessChecked);
+    saveLanguageEnabled("sass", sassChecked);
+    saveLanguageEnabled("scss", scssChecked);
     saveInited(true);
     triggerEvent(EVENT_CHECK_DEPENDENCIES);
     dispatch({ type: SET_INITED, inited: true });
@@ -53,6 +65,42 @@ const FirstTimeConfig = () => {
             onChange={handleJavascriptChange}
           />
           <label className="form-check-label">Javascript</label>
+        </div>
+        <div className="form-group form-check">
+          <input
+            type="checkbox"
+            className="form-check-input"
+            checked={cssChecked}
+            onChange={handleCssChange}
+          />
+          <label className="form-check-label">Css</label>
+        </div>
+        <div className="form-group form-check">
+          <input
+            type="checkbox"
+            className="form-check-input"
+            checked={lessChecked}
+            onChange={handleLessChange}
+          />
+          <label className="form-check-label">Less</label>
+        </div>
+        <div className="form-group form-check">
+          <input
+            type="checkbox"
+            className="form-check-input"
+            checked={sassChecked}
+            onChange={handleSassChange}
+          />
+          <label className="form-check-label">Sass</label>
+        </div>
+        <div className="form-group form-check">
+          <input
+            type="checkbox"
+            className="form-check-input"
+            checked={scssChecked}
+            onChange={handleScssChange}
+          />
+          <label className="form-check-label">Scss</label>
         </div>
         <button type="submit" className="btn btn-primary">
           Continue

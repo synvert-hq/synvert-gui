@@ -1,13 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import useEventListener from "@use-it/event-listener";
-import { filePatternByLanguage, placeholderByLanguage } from "synvert-ui-common";
+import { composeGeneratedSnippets, filePatternByLanguage, parsersByLanguage, placeholderByLanguage } from "synvert-ui-common";
 
 import AppContext from "../context";
-import { baseUrlByLanguage, log } from "../utils";
 import { SET_LOADING, SET_GENERATED_SNIPPETS, EVENT_SNIPPET_RUN, EVENT_SNIPPET_TESTED } from "../constants";
 import SnippetCode from "./SnippetCode";
-import { composeGeneratedSnippets } from "synvert-ui-common";
+import { baseUrlByLanguage } from "../utils";
 
 export default () => {
   const [errorMessage, setErrorMessage] = useState("");
@@ -55,50 +54,67 @@ export default () => {
     });
   };
 
+  const genereateSnippetRequestBody = (language, inputs, outputs, parser, nql_or_rules) => {
+    return JSON.stringify({
+      language,
+      inputs,
+      outputs,
+      parser,
+      nql_or_rules,
+    })
+  }
+
   const onSubmit = async (data) => {
     dispatch({ type: SET_LOADING, loading: true, loadingText: "Submitting..." });
     const { inputs_outputs, nql_or_rules } = data;
     const inputs = inputs_outputs.map((input_output) => input_output.input);
     const outputs = inputs_outputs.map((input_output) => input_output.output);
+    const url = `${baseUrlByLanguage(language)}/generate-snippet`;
+    const method = "POST";
+    const headers = {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "X-SYNVERT-TOKEN": window.electronAPI.getToken(),
+      "X-SYNVERT-PLATFORM": "gui",
+    };
     updateGeneratedSnippets({ generatedSnippets: [], snippetError: "" });
     try {
-      const response = await fetch(`${baseUrlByLanguage(language)}/generate-snippet`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          "X-SYNVERT-TOKEN": window.electronAPI.getToken(),
-          "X-SYNVERT-PLATFORM": "gui",
-        },
-        body: JSON.stringify({ language, inputs, outputs, nql_or_rules }),
-      });
-      const result = await response.json();
-      if (result.error) {
-        updateGeneratedSnippets({ generatedSnippets: [], snippetError: result.error });
-        log(result.error);
-      } else if (result.snippets.length === 0) {
+      const responses = await Promise.all(parsersByLanguage(language).map(parser => fetch(url, { method, headers, body: genereateSnippetRequestBody(language, inputs, outputs, parser, nql_or_rules) })));
+      const data = await Promise.all(responses.map(response => response.json()));
+      if (data.find(response => response.error)) {
+        updateGeneratedSnippets({ generatedSnippets: [], snippetError: data.find(response => response.error).error });
+      } else if (data.every(response => response.snippets.length === 0)) {
         updateGeneratedSnippets({ generatedSnippets: [], snippetError: "Failed to generate snippet" });
       } else {
-        const generatedSnippets = composeGeneratedSnippets(
-          language === "ruby"
-            ? {
-                language,
-                filePattern: data.filePattern,
-                rubyVersion: data.rubyVersion,
-                gemVersion: data.gemVersion,
-                snippets: result.snippets,
-              }
-            : {
-                language,
-                filePattern: data.filePattern,
-                nodeVersion: data.nodeVersion,
-                npmVersion: data.npmVersion,
-                snippets: result.snippets,
-              }
-        );
+        const generatedSnippets = parsersByLanguage(language).flatMap((parser, index) => {
+          const snippets = data[index].snippets;
+          if (snippets.length === 0) {
+            return [];
+          }
+          return composeGeneratedSnippets(
+            language === "ruby"
+              ? {
+                  language,
+                  filePattern: data.filePattern,
+                  rubyVersion: data.rubyVersion,
+                  gemVersion: data.gemVersion,
+                  snippets,
+                  parser,
+                }
+              : {
+                  language,
+                  filePattern: data.filePattern,
+                  nodeVersion: data.nodeVersion,
+                  npmVersion: data.npmVersion,
+                  snippets,
+                  parser,
+                }
+          );
+        });
         updateGeneratedSnippets({ generatedSnippets, snippetError: "" });
       }
-    } catch {
+    } catch (e) {
+      console.log(e);
       updateGeneratedSnippets({
         generatedSnippets: [],
         snippetError: "Failed to send request, please check your network setting.",

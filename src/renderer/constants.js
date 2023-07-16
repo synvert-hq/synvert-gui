@@ -4,7 +4,7 @@ export const EVENT_SNIPPET_TESTED = "event.snippet_tested";
 export const EVENT_RUN_SNIPPET = "event.run_snippet";
 export const EVENT_SNIPPET_RUN = "event.snippet_run";
 
-export const LANGUAGES = ["ruby", "typescript", "javascript"];
+export const LANGUAGES = ["ruby", "typescript", "javascript", "css", "less", "sass", "scss"];
 
 export const SET_INITED = "SET_INITED";
 export const SET_LANGUAGE = "SET_LANGUAGE";

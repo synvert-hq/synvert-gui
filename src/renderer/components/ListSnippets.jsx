@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { sortSnippets, filterSnippets } from "synvert-ui-common";
 
 import AppContext from "../context";
-import { convertSnippetsToStore, baseUrlByLanguage } from "../utils";
+import { filterSnippetsByLanguage, convertSnippetsToStore, baseUrlByLanguage } from "../utils";
 import { SET_SNIPPETS_STORE, SET_CURRENT_SNIPPET_ID, SET_SHOW_FORM } from "../constants";
 import LanguageSelect from "./LanguageSelect";
 
@@ -19,7 +19,8 @@ export default () => {
   const loadSnippets = async (language) => {
     try {
       setLoaded(false);
-      const response = await fetch(`${baseUrlByLanguage(language)}/snippets`, {
+      const url = `${baseUrlByLanguage(language)}/snippets`;
+      const response = await fetch(url, {
         headers: {
           "Content-Type": "application/json",
           "X-SYNVERT-TOKEN": window.electronAPI.getToken(),
@@ -27,7 +28,7 @@ export default () => {
         },
       });
       const result = await response.json();
-      const snippetsStore = convertSnippetsToStore(result.snippets);
+      const snippetsStore = convertSnippetsToStore(filterSnippetsByLanguage(language, result.snippets));
       dispatch({ type: SET_SNIPPETS_STORE, snippetsStore });
       setLoaded(true);
       setError(null);
