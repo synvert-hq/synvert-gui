@@ -1,7 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import useEventListener from "@use-it/event-listener";
-import { composeGeneratedSnippets, filePatternByLanguage, parsersByLanguage, placeholderByLanguage } from "synvert-ui-common";
+import {
+  composeGeneratedSnippets,
+  filePatternByLanguage,
+  parsersByLanguage,
+  placeholderByLanguage,
+} from "synvert-ui-common";
 
 import AppContext from "../context";
 import { SET_LOADING, SET_GENERATED_SNIPPETS, EVENT_SNIPPET_RUN, EVENT_SNIPPET_TESTED } from "../constants";
@@ -61,8 +66,8 @@ export default () => {
       outputs,
       parser,
       nql_or_rules,
-    })
-  }
+    });
+  };
 
   const onSubmit = async (data) => {
     dispatch({ type: SET_LOADING, loading: true, loadingText: "Submitting..." });
@@ -79,11 +84,19 @@ export default () => {
     };
     updateGeneratedSnippets({ generatedSnippets: [], snippetError: "" });
     try {
-      const responses = await Promise.all(parsersByLanguage(language).map(parser => fetch(url, { method, headers, body: genereateSnippetRequestBody(language, inputs, outputs, parser, nql_or_rules) })));
-      const data = await Promise.all(responses.map(response => response.json()));
-      if (data.find(response => response.error)) {
-        updateGeneratedSnippets({ generatedSnippets: [], snippetError: data.find(response => response.error).error });
-      } else if (data.every(response => response.snippets.length === 0)) {
+      const responses = await Promise.all(
+        parsersByLanguage(language).map((parser) =>
+          fetch(url, {
+            method,
+            headers,
+            body: genereateSnippetRequestBody(language, inputs, outputs, parser, nql_or_rules),
+          })
+        )
+      );
+      const data = await Promise.all(responses.map((response) => response.json()));
+      if (data.find((response) => response.error)) {
+        updateGeneratedSnippets({ generatedSnippets: [], snippetError: data.find((response) => response.error).error });
+      } else if (data.every((response) => response.snippets.length === 0)) {
         updateGeneratedSnippets({ generatedSnippets: [], snippetError: "Failed to generate snippet" });
       } else {
         const generatedSnippets = parsersByLanguage(language).flatMap((parser, index) => {
