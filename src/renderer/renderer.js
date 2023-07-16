@@ -164,7 +164,14 @@ const checkRubyDependencies = async () => {
 };
 
 const checkJavascriptDependencies = async () => {
-  if (!javascriptEnabled() && !typescriptEnabled() && !cssEnabled() && !lessEnabled() && !sassEnabled() && !scssEnabled()) {
+  if (
+    !javascriptEnabled() &&
+    !typescriptEnabled() &&
+    !cssEnabled() &&
+    !lessEnabled() &&
+    !sassEnabled() &&
+    !scssEnabled()
+  ) {
     return;
   }
   let { output, error } = await runCommand("node", ["--version"]);
@@ -214,7 +221,9 @@ const addFileSourceToTestResults = (testResults, rootPath) => {
 };
 
 const testSnippet = async (event) => {
-  const { detail: { language, snippetCode, rootPath, onlyPaths, skipPaths } } = event;
+  const {
+    detail: { language, snippetCode, rootPath, onlyPaths, skipPaths },
+  } = event;
   if (!languageEnabled(language)) {
     triggerEvent(EVENT_SNIPPET_TESTED, { error: `Synvert ${language} is not enabled!` });
     return;
@@ -237,7 +246,8 @@ const testSnippet = async (event) => {
 
 const runSnippet = async (event) => {
   const {
-    detail: { language, snippetCode, rootPath, onlyPaths, skipPaths } } = event;
+    detail: { language, snippetCode, rootPath, onlyPaths, skipPaths },
+  } = event;
   if (!languageEnabled(language)) {
     triggerEvent(EVENT_SNIPPET_RUN, { error: `Synvert ${language} is not enabled!` });
     return;
@@ -270,7 +280,7 @@ const buildCommandArgs = (executeCommand, language, rootPath, onlyPaths, skipPat
     commandArgs.push("--skip-paths");
     commandArgs.push(skipPaths);
   }
-  switch(language) {
+  switch (language) {
     case "ruby":
       if (executeCommand === "test") {
         commandArgs.push("--number-of-workers");
@@ -330,7 +340,7 @@ const buildCommandArgs = (executeCommand, language, rootPath, onlyPaths, skipPat
       commandArgs.push(rootPath);
   }
   return commandArgs;
-}
+};
 
 window.addEventListener(EVENT_TEST_SNIPPET, testSnippet);
 window.addEventListener(EVENT_RUN_SNIPPET, runSnippet);

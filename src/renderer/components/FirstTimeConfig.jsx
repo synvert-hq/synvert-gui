@@ -67,39 +67,19 @@ const FirstTimeConfig = () => {
           <label className="form-check-label">Javascript</label>
         </div>
         <div className="form-group form-check">
-          <input
-            type="checkbox"
-            className="form-check-input"
-            checked={cssChecked}
-            onChange={handleCssChange}
-          />
+          <input type="checkbox" className="form-check-input" checked={cssChecked} onChange={handleCssChange} />
           <label className="form-check-label">Css</label>
         </div>
         <div className="form-group form-check">
-          <input
-            type="checkbox"
-            className="form-check-input"
-            checked={lessChecked}
-            onChange={handleLessChange}
-          />
+          <input type="checkbox" className="form-check-input" checked={lessChecked} onChange={handleLessChange} />
           <label className="form-check-label">Less</label>
         </div>
         <div className="form-group form-check">
-          <input
-            type="checkbox"
-            className="form-check-input"
-            checked={sassChecked}
-            onChange={handleSassChange}
-          />
+          <input type="checkbox" className="form-check-input" checked={sassChecked} onChange={handleSassChange} />
           <label className="form-check-label">Sass</label>
         </div>
         <div className="form-group form-check">
-          <input
-            type="checkbox"
-            className="form-check-input"
-            checked={scssChecked}
-            onChange={handleScssChange}
-          />
+          <input type="checkbox" className="form-check-input" checked={scssChecked} onChange={handleScssChange} />
           <label className="form-check-label">Scss</label>
         </div>
         <button type="submit" className="btn btn-primary">

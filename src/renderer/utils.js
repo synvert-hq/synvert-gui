@@ -41,7 +41,7 @@ export const DEFAULT_VALUES = {
   [CUSTOM]: {
     [ROOT_PATH]: "",
   },
-}
+};
 
 const savePreference = (section, key, value) => {
   const preferences = window.electronAPI.getPreferences();
@@ -133,7 +133,7 @@ export const filterSnippetsByLanguage = (language, snippets) => {
     case "scss":
       return snippets.filter((snippet) => snippet.group === "scss");
   }
-}
+};
 
 export const convertSnippetsToStore = (snippets) =>
   snippets.reduce(
@@ -202,7 +202,6 @@ export const baseUrlByLanguage = (language) => {
     return REMOTE_API_SERVERS[language];
   }
 };
-
 
 export const log = (...args) => {
   if (window.electronAPI.isDev()) {
