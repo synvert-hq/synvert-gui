@@ -21,6 +21,43 @@ import FilesToExclude from "./FilesToExclude";
 import SearchButton from "./SearchButton";
 import ReplaceAllButton from "./ReplaceAllButton";
 
+const showDiff = (result, action) => {
+  switch (action.type) {
+    case "add_file":
+      return (
+        <>
+          <span className="old-code"></span>
+          <span className="new-code">{action.newCode}</span>
+        </>
+      );
+    case "remove_file":
+      return (
+        <>
+          <span className="old-code">{result.fileSource}</span>
+          <span className="new-code"></span>
+        </>
+      );
+    case "group":
+      return (
+        <>
+          {action.actions.map(childAction => (
+            <>
+              <span className="old-code">{result.fileSource.substring(childAction.start, childAction.end)}</span>
+              <span className="new-code">{childAction.newCode}</span>
+            </>
+          ))}
+        </>
+      );
+    defaut:
+      return (
+        <>
+          <span className="old-code">{result.fileSource.substring(action.start, action.end)}</span>
+          <span className="new-code">{action.newCode}</span>
+        </>
+      );
+  }
+}
+
 const TestResults = () => {
   const { rootPath, testResults, currentResultIndex, currentActionIndex, dispatch } = useContext(AppContext);
 
@@ -125,24 +162,7 @@ const TestResults = () => {
                           <CloseSvg />
                         </a>
                       </div>
-                      {action.type == 'add_file' && (
-                        <>
-                          <span className="old-code"></span>
-                          <span className="new-code">{action.newCode}</span>
-                        </>
-                      )}
-                      {action.type == 'remove_file' && (
-                        <>
-                          <span className="old-code">{result.fileSource}</span>
-                          <span className="new-code"></span>
-                        </>
-                      )}
-                      {!['add_file', 'remove_file'].includes(action.type) && (
-                        <>
-                          <span className="old-code">{result.fileSource.substring(action.start, action.end)}</span>
-                          <span className="new-code">{action.newCode}</span>
-                        </>
-                      )}
+                      {showDiff(result, action)}
                     </div>
                   </li>
                 ))}

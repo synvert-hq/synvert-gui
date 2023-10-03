@@ -92,7 +92,13 @@ export const getNewSource = (oldSource, testResult) => {
   JSON.parse(JSON.stringify(testResult.actions))
     .reverse()
     .forEach((action) => {
-      newSource = newSource.slice(0, action.start) + action.newCode + newSource.slice(action.end);
+      if (action.type === "group") {
+        action.actions.reverse().forEach((childAction) => {
+          newSource = newSource.slice(0, childAction.start) + childAction.newCode + newSource.slice(childAction.end);
+        });
+      } else {
+        newSource = newSource.slice(0, action.start) + action.newCode + newSource.slice(action.end);
+      }
     });
   return newSource;
 };

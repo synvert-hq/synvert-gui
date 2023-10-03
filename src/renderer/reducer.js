@@ -171,12 +171,26 @@ export default (state = {}, action) => {
         testResults.splice(action.resultIndex, 1);
       } else {
         let source = window.electronAPI.readFile(absolutePath, "utf-8");
-        source = source.slice(0, resultAction.start) + resultAction.newCode + source.slice(resultAction.end);
+        let offset = 0;
+        if (resultAction.type === "group") {
+          resultAction.actions.reverse().forEach((childAction) => {
+            source = source.slice(0, childAction.start) + childAction.newCode + source.slice(childAction.end);
+            offset += (childAction.newCode.length - (childAction.end - childAction.start));
+          });
+        } else {
+          source = source.slice(0, resultAction.start) + resultAction.newCode + source.slice(resultAction.end);
+          offset += resultAction.newCode.length - (resultAction.end - resultAction.start);
+        }
         window.electronAPI.writeFile(absolutePath, source);
-        const offset = resultAction.newCode.length - (resultAction.end - resultAction.start);
         actions.splice(action.actionIndex, 1);
         if (actions.length > 0) {
           actions.slice(action.actionIndex).forEach((action) => {
+            if (action.type === "group") {
+              action.actions.forEach((childAction) => {
+                childAction.start = childAction.start + offset;
+                childAction.end = childAction.end + offset;
+              });
+            }
             action.start = action.start + offset;
             action.end = action.end + offset;
           });
