@@ -141,6 +141,7 @@ const checkRubyDependencies = async () => {
     const json = await response.json();
     const remoteSynvertVersion = json["synvert_version"];
     const remoteSynvertCoreVersion = json["synvert_core_version"];
+    log({ ruby: { remoteSynvertVersion, remoteSynvertCoreVersion } });
     if (compareVersions(remoteSynvertVersion, localSynvertVersion) === 1) {
       showErrorMesage(
         `synvert gem version ${remoteSynvertVersion} is available. (Current version: ${localSynvertVersion})`,
@@ -179,6 +180,7 @@ const checkJavascriptDependencies = async () => {
     const response = await fetch(baseUrlByLanguage("javascript") + "/check-versions");
     const json = await response.json();
     const remoteSynvertVersion = json["synvert_version"];
+    log({ javascript: { remoteSynvertVersion } });
     // const remoteSynvertCoreVersion = json['synvert_core_version'];
     if (compareVersions(remoteSynvertVersion, localSynvertVersion) === 1) {
       showErrorMesage(
