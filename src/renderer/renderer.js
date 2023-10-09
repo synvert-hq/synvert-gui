@@ -40,6 +40,8 @@ import {
   EVENT_RUN_SNIPPET,
   EVENT_SNIPPET_RUN,
   EVENT_CHECK_DEPENDENCIES,
+  EVENT_UPDATE_DEPENDENCIES,
+  EVENT_DEPENDENCIES_UPDATED,
 } from "./constants";
 import {
   rubyNumberOfWorkers,
@@ -78,7 +80,7 @@ const runCommand = async (command, args, { input } = {}) => {
 const installGem = async (name) => {
   const { output, error } = await runCommand("gem", ["install", name]);
   if (error) {
-    toast.error(`Failed to install the ${name} gem. `) + error;
+    toast.error(`Failed to install the ${name} gem. ` + error);
   } else {
     toast.success(`Successfully installed the ${name} gem.`);
   }
@@ -87,7 +89,7 @@ const installGem = async (name) => {
 const installNpm = async (name) => {
   const { output, error } = await runCommand("npm", ["install", "-g", name]);
   if (error) {
-    toast.error(`Failed to install the ${name} npm. `) + error;
+    toast.error(`Failed to install the ${name} npm. ` + error);
   } else {
     toast.success(`Successfully installed the ${name} npm.`);
   }
@@ -355,6 +357,7 @@ const runTypescriptSnippet = async (event) => {
     triggerEvent(EVENT_SNIPPET_RUN, { error: e.message });
   }
 };
+
 const runSnippet = async (event) => {
   const {
     detail: { language },
@@ -368,6 +371,42 @@ const runSnippet = async (event) => {
       return await runTypescriptSnippet(event);
   }
 };
+
+const updateRubyDependencies = async () => {
+  const { error } = await runCommand("gem", ["install", "synvert", "synvert-core", "node_query", "node_mutation", "parser_node_ext", "syntax_tree_ext"]);
+  if (error) {
+    return { error };
+  }
+  const result = await runCommand("synvert-ruby", ["--sync"]);
+  return { error: result.error };
+};
+
+const updateJavascriptDependencies = async () => {
+  const { error } = await runCommand("npm", ["install", "-g", "synvert"]);
+  if (error) {
+    return { error };
+  }
+  const result = await runCommand("synvert-javascript", ["--sync"]);
+  return { error: result.error };
+}
+
+const updateDependencies = async (event) => {
+  const {
+    detail: { language },
+  } = event;
+  let result;
+  if (language === "ruby") {
+    result = await updateRubyDependencies();
+  } else {
+    result = await updateJavascriptDependencies();
+  }
+  if (result.error) {
+    toast.error(`Failed to update ${language} dependencies: ${result.error}`);
+  } else {
+    toast.success(`Successfully updated ${language} dependencies.`);
+  }
+  triggerEvent(EVENT_DEPENDENCIES_UPDATED, { error: result.error });
+}
 
 const buildRubyCommandArgs = (executeCommand, rootPath, onlyPaths, skipPaths) => {
   const commandArgs = ["--execute", executeCommand];
@@ -456,6 +495,7 @@ function buildTypescriptCommandArgs(executeCommand, rootPath, onlyPaths, skipPat
 
 window.addEventListener(EVENT_TEST_SNIPPET, testSnippet);
 window.addEventListener(EVENT_RUN_SNIPPET, runSnippet);
+window.addEventListener(EVENT_UPDATE_DEPENDENCIES, updateDependencies);
 // check dependencies after first inited.
 window.addEventListener(EVENT_CHECK_DEPENDENCIES, checkDependencies);
 

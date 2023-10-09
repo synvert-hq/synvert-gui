@@ -46,7 +46,7 @@ const LanguageSelect = () => {
   };
 
   return (
-    <div className="language-select d-flex align-items-center ml-3 mr-3 mb-2">
+    <div className="d-flex align-items-center">
       <label>Language:</label>
       <select className="form-control ml-3" value={language} onChange={handleLanguageChanged}>
         {LANGUAGES.map((language) =>

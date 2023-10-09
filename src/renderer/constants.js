@@ -3,6 +3,8 @@ export const EVENT_TEST_SNIPPET = "event.test_snippet";
 export const EVENT_SNIPPET_TESTED = "event.snippet_tested";
 export const EVENT_RUN_SNIPPET = "event.run_snippet";
 export const EVENT_SNIPPET_RUN = "event.snippet_run";
+export const EVENT_UPDATE_DEPENDENCIES = "event.update_dependencies";
+export const EVENT_DEPENDENCIES_UPDATED = "event.dependencies_updated";
 
 export const LANGUAGES = ["ruby", "typescript", "javascript"];
 export const SET_INITED = "SET_INITED";

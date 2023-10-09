@@ -5,6 +5,7 @@ import AppContext from "../context";
 import { convertSnippetsToStore, baseUrlByLanguage } from "../utils";
 import { SET_SNIPPETS_STORE, SET_CURRENT_SNIPPET_ID, SET_SHOW_FORM } from "../constants";
 import LanguageSelect from "./LanguageSelect";
+import UpdateDependenciesButton from "./UpdateDependenciesButton";
 
 const snippetClassname = (snippet, currentSnippetId) =>
   currentSnippetId && snippet.id == currentSnippetId ? "list-group-item active" : "list-group-item";
@@ -64,7 +65,10 @@ export default () => {
 
   return (
     <div className="snippets-list">
-      <LanguageSelect />
+      <div className="d-flex justify-content-between ml-3 mr-3 mb-2">
+        <LanguageSelect />
+        <UpdateDependenciesButton />
+      </div>
       <div className="search-box d-flex">
         <input
           className="flex-grow-1 form-control"
