@@ -1,4 +1,4 @@
-import { ROOT_PATH, ONLY_PATHS, SKIP_PATHS, LANGUAGE, LANGUAGES } from "./constants";
+import { ROOT_PATH, ONLY_PATHS, SKIP_PATHS, LANGUAGE, LANGUAGES, PARSER } from "./constants";
 
 const CUSTOM = "custom";
 
@@ -51,6 +51,9 @@ export const getLanguage = () => {
   return language;
 };
 export const saveLanguage = (language) => savePreference(CUSTOM, LANGUAGE, language);
+
+export const getParser = () => getPreference(CUSTOM, PARSER) || PARSERS[getLanguage()][0];
+export const saveParser = (parser) => savePreference(CUSTOM, PARSER, parser);
 
 export const getRootPath = () => getPreference(CUSTOM, ROOT_PATH) || "";
 export const saveRootPath = (path) => savePreference(CUSTOM, ROOT_PATH, path);
@@ -144,13 +147,29 @@ const PLACEHODERS = {
 
 export const placeholderByLanguage = (language) => PLACEHODERS[language];
 
-const DEFAULT_VALUES = {
+const PARSERS = {
+  ruby: ["parser", "syntax_tree"],
+  typescript: ["typescript"],
+  javascript: ["typescript", "espree"],
+}
+
+export const parsersByLanguage = (language) => PARSERS[language];
+
+const DEFAULT_PARSERS = {
+  ruby: "parser",
+  javascript: "typescript",
+  typescript: "typescript",
+}
+
+export const defaultParserByLanguage = (language) => DEFAULT_PARSERS[language];
+
+const DEFAULT_FILE_PATTERNS = {
   ruby: "**/*.rb",
   javascript: "**/*.js",
   typescript: "**/*.ts",
 };
 
-export const defaultValueByLanguage = (language) => DEFAULT_VALUES[language];
+export const defaultFilePatternByLanguage = (language) => DEFAULT_FILE_PATTERNS[language];
 
 export const log = (...args) => {
   if (window.electronAPI.isDev()) {

@@ -5,9 +5,9 @@ export const EVENT_RUN_SNIPPET = "event.run_snippet";
 export const EVENT_SNIPPET_RUN = "event.snippet_run";
 
 export const LANGUAGES = ["ruby", "typescript", "javascript"];
-
 export const SET_INITED = "SET_INITED";
 export const SET_LANGUAGE = "SET_LANGUAGE";
+export const SET_PARSER = "SET_PARSER";
 export const SET_SNIPPETS_STORE = "SET_SNIPPETS_STORE";
 export const SET_CURRENT_SNIPPET_ID = "SET_CURRENT_SNIPPET_ID";
 export const SET_LOADING = "SET_LOADING";
@@ -31,6 +31,7 @@ export const SET_ONLY_PATHS = "SET_ONLY_PATHS";
 export const SET_SKIP_PATHS = "SET_SKIP_PATHS";
 
 export const LANGUAGE = "language";
+export const PARSER = "parser";
 export const ROOT_PATH = "root_path";
 export const ONLY_PATHS = "only_paths";
 export const SKIP_PATHS = "skip_paths";

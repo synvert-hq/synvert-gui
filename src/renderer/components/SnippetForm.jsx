@@ -3,7 +3,7 @@ import { useForm, useFieldArray } from "react-hook-form";
 import useEventListener from "@use-it/event-listener";
 
 import AppContext from "../context";
-import { baseUrlByLanguage, defaultValueByLanguage, log, placeholderByLanguage } from "../utils";
+import { baseUrlByLanguage, defaultParserByLanguage, parsersByLanguage, defaultFilePatternByLanguage, log, placeholderByLanguage } from "../utils";
 import { SET_LOADING, SET_GENERATED_SNIPPETS, EVENT_SNIPPET_RUN, EVENT_SNIPPET_TESTED } from "../constants";
 import SnippetCode from "./SnippetCode";
 import { composeGeneratedSnippets } from "synvert-ui-common";
@@ -21,7 +21,8 @@ export default () => {
   const { fields, append, remove, replace } = useFieldArray({ control, name: "inputs_outputs" });
 
   useEffect(() => {
-    setValue("filePattern", defaultValueByLanguage(language));
+    setValue("parser", defaultParserByLanguage(language));
+    setValue("filePattern", defaultFilePatternByLanguage(language));
     setValue("rubyVersion", "");
     setValue("nodeVersion", "");
     setValue("gemVersion", "");
@@ -56,7 +57,7 @@ export default () => {
 
   const onSubmit = async (data) => {
     dispatch({ type: SET_LOADING, loading: true, loadingText: "Submitting..." });
-    const { inputs_outputs, nql_or_rules } = data;
+    const { parser, inputs_outputs, nql_or_rules } = data;
     const inputs = inputs_outputs.map((input_output) => input_output.input);
     const outputs = inputs_outputs.map((input_output) => input_output.output);
     updateGeneratedSnippets({ generatedSnippets: [], snippetError: '' });
@@ -69,7 +70,7 @@ export default () => {
           "X-SYNVERT-TOKEN": window.electronAPI.getToken(),
           "X-SYNVERT-PLATFORM": "gui",
         },
-        body: JSON.stringify({ language, inputs, outputs, nql_or_rules }),
+        body: JSON.stringify({ language, parser, inputs, outputs, nql_or_rules }),
       });
       const result = await response.json();
       if (result.error) {
@@ -82,6 +83,7 @@ export default () => {
           language === "ruby"
             ? {
                 language,
+                parser,
                 filePattern: data.filePattern,
                 rubyVersion: data.rubyVersion,
                 gemVersion: data.gemVersion,
@@ -89,6 +91,7 @@ export default () => {
               }
             : {
                 language,
+                parser,
                 filePattern: data.filePattern,
                 nodeVersion: data.nodeVersion,
                 npmVersion: data.npmVersion,
@@ -112,10 +115,24 @@ export default () => {
         <h4 className="text-center">Generate Snippet</h4>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="form-group">
+            <label>Parser:</label>
+            <select
+              className={`form-control ${errors.parser && "is-invalid"}`}
+              defaultValue={defaultParserByLanguage(language)}
+              {...register("parser", { required: true })}
+            >
+              {parsersByLanguage(language).map((parser) => (
+                <option key={parser} value={parser}>
+                  {parser}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="form-group">
             <label>File Pattern:</label>
             <input
               className={`form-control ${errors.filePattern && "is-invalid"}`}
-              defaultValue={defaultValueByLanguage(language)}
+              defaultValue={defaultFilePatternByLanguage(language)}
               {...register("filePattern", { required: true })}
             />
             {errors.filePattern && <div className="invalid-feedback">required</div>}

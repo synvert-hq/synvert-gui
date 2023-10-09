@@ -19,6 +19,7 @@ import {
   SET_SKIP_PATHS,
   REPLACE_ALL_TEST_RESULTS,
   SET_LANGUAGE,
+  SET_PARSER,
   SET_INITED,
   PREV_GENERATED_SNIPPET,
   NEXT_GENERATED_SNIPPET,
@@ -38,6 +39,12 @@ export default (state = {}, action) => {
         ...state,
         language: action.language,
       };
+    }
+    case SET_PARSER: {
+      return {
+        ...state,
+        parser: action.parser,
+      }
     }
     case SET_SNIPPETS_STORE: {
       return {
