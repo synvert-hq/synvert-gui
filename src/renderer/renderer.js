@@ -78,7 +78,7 @@ const runCommand = async (command, args, { input } = {}) => {
 };
 
 const installGem = async (name) => {
-  const { output, error } = await runCommand("gem", ["install", name]);
+  const { error } = await runCommand("gem", ["install", name]);
   if (error) {
     toast.error(`Failed to install the ${name} gem. ` + error);
   } else {
@@ -87,7 +87,7 @@ const installGem = async (name) => {
 };
 
 const installNpm = async (name) => {
-  const { output, error } = await runCommand("npm", ["install", "-g", name]);
+  const { error } = await runCommand("npm", ["install", "-g", name]);
   if (error) {
     toast.error(`Failed to install the ${name} npm. ` + error);
   } else {
