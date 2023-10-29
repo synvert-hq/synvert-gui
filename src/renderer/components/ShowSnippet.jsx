@@ -48,9 +48,7 @@ export default () => {
         <button className="btn btn-primary float-right mr-2" onClick={edit}>
           Edit
         </button>
-        <h2>
-          {snippet.group}/{snippet.name}
-        </h2>
+        <h2>{snippet.id}</h2>
         <div className="float-right">
           {snippet.ruby_version && <span className="badge badge-info">ruby {snippet.ruby_version}</span>}
           {snippet.gem_spec && (
@@ -65,16 +63,14 @@ export default () => {
           </ReactMarkdown>
         </div>
         <ul>
-          {snippet.sub_snippet_ids.map((subSnippetId) => {
-            const subSnippet = snippetsStore[subSnippetId];
+          {snippet.sub_snippets.map((subSnippet) => {
+            const snippet = snippetsStore[`${subSnippet.group}/${subSnippet.name}`];
             return (
-              <li key={subSnippetId}>
-                <h4>
-                  {subSnippet.group}/{subSnippet.name}
-                </h4>
+              <li key={snippet.id}>
+                <h4>{snippet.id}</h4>
                 <div>
                   <ReactMarkdown rehypePlugins={[rehypeRaw]} components={CodeBlock}>
-                    {subSnippet.description}
+                    {snippet.description}
                   </ReactMarkdown>
                 </div>
               </li>

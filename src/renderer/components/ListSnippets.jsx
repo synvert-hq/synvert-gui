@@ -28,7 +28,7 @@ export default () => {
         },
       });
       const result = await response.json();
-      const snippetsStore = convertSnippetsToStore(result.snippets);
+      const snippetsStore = convertSnippetsToStore(result.snippets.map((snippet) => ({ ...snippet, id: `${snippet.group}/${snippet.name}` })));
       dispatch({ type: SET_SNIPPETS_STORE, snippetsStore });
       setLoaded(true);
       setError(null);
