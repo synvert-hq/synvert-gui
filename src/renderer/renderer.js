@@ -198,8 +198,12 @@ const checkJavascriptDependencies = async () => {
 };
 
 const checkDependencies = async () => {
-  await checkRubyDependencies();
-  await checkJavascriptDependencies();
+  try {
+    await checkRubyDependencies();
+    await checkJavascriptDependencies();
+  } catch (error) {
+    log({ error })
+  }
 };
 
 const addFileSourceToTestResults = (testResults, rootPath) => {
