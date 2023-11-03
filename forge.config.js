@@ -54,6 +54,18 @@ const config = {
       },
     },
   ],
+  publishers: [
+    {
+      name: '@electron-forge/publisher-github',
+      config: {
+        repository: {
+          owner: 'xinminlabs',
+          name: 'synvert-gui'
+        },
+        prerelease: true
+      }
+    }
+  ],
 };
 
 function notarizeMaybe() {
