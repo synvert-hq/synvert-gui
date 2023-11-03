@@ -46,6 +46,7 @@
     "style-loader": "^3.2.1"
   },
   "dependencies": {
+    "@electron-forge/publisher-github": "^6.4.2",
     "@forevolve/bootstrap-dark": "^3.0.0",
     "@murasoftware/react-loading-overlay": "^1.0.3",
     "@use-it/event-listener": "^0.1.7",
