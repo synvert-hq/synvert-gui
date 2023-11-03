@@ -44,7 +44,7 @@ export default (state = {}, action) => {
       return {
         ...state,
         parser: action.parser,
-      }
+      };
     }
     case SET_SNIPPETS_STORE: {
       return {
@@ -83,7 +83,7 @@ export default (state = {}, action) => {
       return {
         ...state,
         generatedSnippets: state.generatedSnippets.map((snippet, index) =>
-          index === state.generatedSnippetIndex ? action.snippetCode : snippet
+          index === state.generatedSnippetIndex ? action.snippetCode : snippet,
         ),
         snippetCode: action.snippetCode,
       };
@@ -182,7 +182,7 @@ export default (state = {}, action) => {
         if (resultAction.type === "group") {
           resultAction.actions.reverse().forEach((childAction) => {
             source = source.slice(0, childAction.start) + childAction.newCode + source.slice(childAction.end);
-            offset += (childAction.newCode.length - (childAction.end - childAction.start));
+            offset += childAction.newCode.length - (childAction.end - childAction.start);
           });
         } else {
           source = source.slice(0, resultAction.start) + resultAction.newCode + source.slice(resultAction.end);

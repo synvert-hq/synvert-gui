@@ -40,7 +40,7 @@ const showDiff = (result, action) => {
     case "group":
       return (
         <>
-          {action.actions.map(childAction => (
+          {action.actions.map((childAction) => (
             <>
               <span className="old-code">{result.fileSource.substring(childAction.start, childAction.end)}</span>
               <span className="new-code">{childAction.newCode}</span>
@@ -48,15 +48,14 @@ const showDiff = (result, action) => {
           ))}
         </>
       );
-    defaut:
-      return (
+      defaut: return (
         <>
           <span className="old-code">{result.fileSource.substring(action.start, action.end)}</span>
           <span className="new-code">{action.newCode}</span>
         </>
       );
   }
-}
+};
 
 const TestResults = () => {
   const { rootPath, testResults, currentResultIndex, currentActionIndex, dispatch } = useContext(AppContext);

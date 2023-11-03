@@ -116,7 +116,7 @@ const showErrorMesage = (message, buttonTitle, buttonAction) => {
         </div>
       </div>
     ),
-    { duration: Infinity }
+    { duration: Infinity },
   );
 };
 
@@ -148,14 +148,14 @@ const checkRubyDependencies = async () => {
       showErrorMesage(
         `synvert gem version ${remoteSynvertVersion} is available. (Current version: ${localSynvertVersion})`,
         "Update Now",
-        () => installGem("synvert")
+        () => installGem("synvert"),
       );
     }
     if (compareVersions(remoteSynvertCoreVersion, localSynvertCoreVersion) === 1) {
       showErrorMesage(
         `synvert-core gem version ${remoteSynvertCoreVersion} is available. (Current Version: ${localSynvertCoreVersion})`,
         "Update Now",
-        () => installGem("synvert-core")
+        () => installGem("synvert-core"),
       );
     }
   }
@@ -188,7 +188,7 @@ const checkJavascriptDependencies = async () => {
       showErrorMesage(
         `synvert npm version ${remoteSynvertVersion} is available. (Current version: ${localSynvertVersion})`,
         "Update Now",
-        () => installNpm("synvert")
+        () => installNpm("synvert"),
       );
     }
     // if (compareVersions(remoteSynvertCoreVersion, localSynvertCoreVersion) === 1) {
@@ -202,7 +202,7 @@ const checkDependencies = async () => {
     await checkRubyDependencies();
     await checkJavascriptDependencies();
   } catch (error) {
-    log({ error })
+    log({ error });
   }
 };
 
@@ -377,7 +377,15 @@ const runSnippet = async (event) => {
 };
 
 const updateRubyDependencies = async () => {
-  const { error } = await runCommand("gem", ["install", "synvert", "synvert-core", "node_query", "node_mutation", "parser_node_ext", "syntax_tree_ext"]);
+  const { error } = await runCommand("gem", [
+    "install",
+    "synvert",
+    "synvert-core",
+    "node_query",
+    "node_mutation",
+    "parser_node_ext",
+    "syntax_tree_ext",
+  ]);
   if (error) {
     return { error };
   }
@@ -392,7 +400,7 @@ const updateJavascriptDependencies = async () => {
   }
   const result = await runCommand("synvert-javascript", ["--sync"]);
   return { error: result.error };
-}
+};
 
 const updateDependencies = async (event) => {
   const {
@@ -410,7 +418,7 @@ const updateDependencies = async (event) => {
     toast.success(`Successfully updated ${language} dependencies.`);
   }
   triggerEvent(EVENT_DEPENDENCIES_UPDATED, { error: result.error });
-}
+};
 
 const buildRubyCommandArgs = (executeCommand, rootPath, onlyPaths, skipPaths) => {
   const commandArgs = ["--execute", executeCommand];

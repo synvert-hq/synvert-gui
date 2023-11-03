@@ -8,7 +8,7 @@ const updaterFeedURL = "https://download.synvert.net/update/" + platform + "/" +
 
 export const setupUpdates = () => {
   // We are migrating to use update-electron-app
-  const { updateElectronApp } = require('update-electron-app')
+  const { updateElectronApp } = require("update-electron-app");
   updateElectronApp();
 
   // This is legacy auto updater code

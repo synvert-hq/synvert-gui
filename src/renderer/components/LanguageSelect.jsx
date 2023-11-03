@@ -54,7 +54,7 @@ const LanguageSelect = () => {
             <option key={language} value={language}>
               {language}
             </option>
-          ) : null
+          ) : null,
         )}
       </select>
     </div>
