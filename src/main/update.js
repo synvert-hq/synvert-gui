@@ -7,6 +7,11 @@ const platform = os.platform() + "_" + os.arch(); // usually returns darwin_64
 const updaterFeedURL = "https://download.synvert.net/update/" + platform + "/" + version;
 
 export const setupUpdates = () => {
+  // We are migrating to use update-electron-app
+  const { updateElectronApp } = require('update-electron-app')
+  updateElectronApp();
+
+  // This is legacy auto updater code
   const checkOS = process.platform === "darwin" || process.platform === "win32";
   if (!checkOS || process.env.DEBUG === "true") {
     return;

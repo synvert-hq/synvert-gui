@@ -3,7 +3,10 @@
   "productName": "Synvert",
   "version": "1.8.1",
   "description": "Synvert GUI",
-  "repository": "github:xinminlabs/synvert-gui",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xinminlabs/synvert-gui"
+  },
   "main": ".webpack/main",
   "private": true,
   "scripts": {
@@ -62,6 +65,7 @@
     "react-syntax-highlighter": "^15.5.0",
     "rehype-raw": "^6.1.1",
     "synvert-server-common": "^1.1.1",
-    "synvert-ui-common": "^1.8.1"
+    "synvert-ui-common": "^1.8.1",
+    "update-electron-app": "^3.0.0"
   }
 }
