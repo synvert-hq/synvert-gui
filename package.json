@@ -8,7 +8,7 @@
     "url": "https://github.com/xinminlabs/synvert-gui"
   },
   "main": ".webpack/main",
-  "private": true,
+  "license": "MIT",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
