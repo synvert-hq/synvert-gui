@@ -70,7 +70,7 @@ export const convertSnippetsToStore = (snippets) =>
       ...obj,
       [snippet.id]: snippet,
     }),
-    {}
+    {},
   );
 
 export const triggerEvent = (name, detail) => {
@@ -151,7 +151,7 @@ const PARSERS = {
   ruby: ["parser", "syntax_tree"],
   typescript: ["typescript"],
   javascript: ["typescript", "espree"],
-}
+};
 
 export const parsersByLanguage = (language) => PARSERS[language];
 
@@ -159,7 +159,7 @@ const DEFAULT_PARSERS = {
   ruby: "parser",
   javascript: "typescript",
   typescript: "typescript",
-}
+};
 
 export const defaultParserByLanguage = (language) => DEFAULT_PARSERS[language];
 

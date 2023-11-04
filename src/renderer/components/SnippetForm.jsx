@@ -3,7 +3,14 @@ import { useForm, useFieldArray } from "react-hook-form";
 import useEventListener from "@use-it/event-listener";
 
 import AppContext from "../context";
-import { baseUrlByLanguage, defaultParserByLanguage, parsersByLanguage, defaultFilePatternByLanguage, log, placeholderByLanguage } from "../utils";
+import {
+  baseUrlByLanguage,
+  defaultParserByLanguage,
+  parsersByLanguage,
+  defaultFilePatternByLanguage,
+  log,
+  placeholderByLanguage,
+} from "../utils";
 import { SET_LOADING, SET_GENERATED_SNIPPETS, EVENT_SNIPPET_RUN, EVENT_SNIPPET_TESTED } from "../constants";
 import SnippetCode from "./SnippetCode";
 import { composeGeneratedSnippets } from "synvert-ui-common";
@@ -60,7 +67,7 @@ export default () => {
     const { parser, inputs_outputs, nql_or_rules } = data;
     const inputs = inputs_outputs.map((input_output) => input_output.input);
     const outputs = inputs_outputs.map((input_output) => input_output.output);
-    updateGeneratedSnippets({ generatedSnippets: [], snippetError: '' });
+    updateGeneratedSnippets({ generatedSnippets: [], snippetError: "" });
     try {
       const response = await fetch(`${baseUrlByLanguage(language)}/generate-snippet`, {
         method: "POST",
@@ -96,7 +103,7 @@ export default () => {
                 nodeVersion: data.nodeVersion,
                 npmVersion: data.npmVersion,
                 snippets: result.snippets,
-              }
+              },
         );
         updateGeneratedSnippets({ generatedSnippets, snippetError: "" });
       }

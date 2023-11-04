@@ -56,15 +56,15 @@ const config = {
   ],
   publishers: [
     {
-      name: '@electron-forge/publisher-github',
+      name: "@electron-forge/publisher-github",
       config: {
         repository: {
-          owner: 'xinminlabs',
-          name: 'synvert-gui'
+          owner: "xinminlabs",
+          name: "synvert-gui",
         },
-        prerelease: true
-      }
-    }
+        prerelease: true,
+      },
+    },
   ],
 };
 

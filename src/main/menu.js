@@ -26,7 +26,7 @@ const getHelpItems = () => {
       click() {
         shell.openExternal("https://synvert.net/contact_us/");
       },
-    }
+    },
   );
 
   // on macOS, there's already the About Synvert menu item
@@ -41,7 +41,7 @@ const getHelpItems = () => {
         click() {
           app.showAboutPanel();
         },
-      }
+      },
     );
   }
 
