@@ -130,7 +130,7 @@ export const baseUrlByLanguage = (language) => {
   }
 };
 
-const PLACEHODERS = {
+const PLACEHOLDERS = {
   ruby: {
     input: "FactoryBot.create(:user)",
     output: "create(:user)",
@@ -145,7 +145,7 @@ const PLACEHODERS = {
   },
 };
 
-export const placeholderByLanguage = (language) => PLACEHODERS[language];
+export const placeholderByLanguage = (language) => PLACEHOLDERS[language];
 
 const PARSERS = {
   ruby: ["parser", "syntax_tree"],

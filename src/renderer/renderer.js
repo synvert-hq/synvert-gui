@@ -95,7 +95,7 @@ const installNpm = async (name) => {
   }
 };
 
-const showErrorMesage = (message, buttonTitle, buttonAction) => {
+const showErrorMessage = (message, buttonTitle, buttonAction) => {
   toast(
     (t) => (
       <div>
@@ -133,7 +133,7 @@ const checkRubyDependencies = async () => {
   }
   ({ output, error } = await runCommand("synvert-ruby", ["--version"]));
   if (error) {
-    showErrorMesage("Synvert gem not found. Run `gem install synvert`.", "Install Now", () => installGem("synvert"));
+    showErrorMessage("Synvert gem not found. Run `gem install synvert`.", "Install Now", () => installGem("synvert"));
     return;
   } else {
     const result = output.match(VERSION_REGEXP);
@@ -145,14 +145,14 @@ const checkRubyDependencies = async () => {
     const remoteSynvertCoreVersion = json["synvert_core_version"];
     log({ ruby: { remoteSynvertVersion, remoteSynvertCoreVersion } });
     if (compareVersions(remoteSynvertVersion, localSynvertVersion) === 1) {
-      showErrorMesage(
+      showErrorMessage(
         `synvert gem version ${remoteSynvertVersion} is available. (Current version: ${localSynvertVersion})`,
         "Update Now",
         () => installGem("synvert"),
       );
     }
     if (compareVersions(remoteSynvertCoreVersion, localSynvertCoreVersion) === 1) {
-      showErrorMesage(
+      showErrorMessage(
         `synvert-core gem version ${remoteSynvertCoreVersion} is available. (Current Version: ${localSynvertCoreVersion})`,
         "Update Now",
         () => installGem("synvert-core"),
@@ -172,7 +172,7 @@ const checkJavascriptDependencies = async () => {
   }
   ({ output, error } = await runCommand("synvert-javascript", ["--version"]));
   if (error) {
-    showErrorMesage("Synvert npm not found. Run `npm install -g synvert`.", "Install Now", () => installNpm("synvert"));
+    showErrorMessage("Synvert npm not found. Run `npm install -g synvert`.", "Install Now", () => installNpm("synvert"));
     return;
   } else {
     // Install synvert-core globally doesn't make any sense
@@ -185,14 +185,14 @@ const checkJavascriptDependencies = async () => {
     log({ javascript: { remoteSynvertVersion } });
     // const remoteSynvertCoreVersion = json['synvert_core_version'];
     if (compareVersions(remoteSynvertVersion, localSynvertVersion) === 1) {
-      showErrorMesage(
+      showErrorMessage(
         `synvert npm version ${remoteSynvertVersion} is available. (Current version: ${localSynvertVersion})`,
         "Update Now",
         () => installNpm("synvert"),
       );
     }
     // if (compareVersions(remoteSynvertCoreVersion, localSynvertCoreVersion) === 1) {
-    //   showErrorMesage(`synvert-core npm version ${remoteSynvertCoreVersion} is available. (Current Version: ${localSynvertCoreVersion})`, "Update Now", () => installNpm("synvert-core"));
+    //   showErrorMessage(`synvert-core npm version ${remoteSynvertCoreVersion} is available. (Current Version: ${localSynvertCoreVersion})`, "Update Now", () => installNpm("synvert-core"));
     // }
   }
 };
