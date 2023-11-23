@@ -89,3 +89,5 @@ typings/
 out/
 
 build/config.gypi
+
+.vscode
