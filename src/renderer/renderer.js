@@ -31,7 +31,15 @@ import "./index.css";
 
 import React from "react";
 import toast from "react-hot-toast";
-import { parseJSON, formatCommandResult, runSynvertRuby, runSynvertJavascript, DependencyResponse, checkRubyDependencies, checkJavascriptDependencies } from "synvert-ui-common";
+import {
+  parseJSON,
+  formatCommandResult,
+  runSynvertRuby,
+  runSynvertJavascript,
+  DependencyResponse,
+  checkRubyDependencies,
+  checkJavascriptDependencies,
+} from "synvert-ui-common";
 
 import {
   EVENT_TEST_SNIPPET,
@@ -118,7 +126,7 @@ const showErrorMessage = (message, buttonTitle, buttonAction) => {
   );
 };
 
-const checkRuby= async () => {
+const checkRuby = async () => {
   if (!rubyEnabled()) {
     return;
   }
@@ -180,7 +188,7 @@ const checkDependencies = async () => {
     Promise.all(
       [checkRuby, checkJavascript].map(async (fn) => {
         await fn();
-      })
+      }),
     );
   } catch (error) {
     log({ error });
@@ -202,9 +210,19 @@ const testRubySnippet = async (event) => {
     triggerEvent(EVENT_SNIPPET_TESTED, { error: "Synvert ruby is not enabled!" });
     return;
   }
-  const { detail: { snippetCode, rootPath, onlyPaths, skipPaths } } = event;
+  const {
+    detail: { snippetCode, rootPath, onlyPaths, skipPaths },
+  } = event;
   const additionalCommandArgs = buildRubyAdditionalCommandArgs();
-  const { output, error } = await runSynvertRuby(runCommand, "test", rootPath, onlyPaths, skipPaths, additionalCommandArgs, snippetCode);
+  const { output, error } = await runSynvertRuby(
+    runCommand,
+    "test",
+    rootPath,
+    onlyPaths,
+    skipPaths,
+    additionalCommandArgs,
+    snippetCode,
+  );
   if (error) {
     triggerEvent(EVENT_SNIPPET_TESTED, { error });
     return;
@@ -223,9 +241,19 @@ const testJavascriptSnippet = async (event) => {
     triggerEvent(EVENT_SNIPPET_TESTED, { error: "Synvert javascript is not enabled!" });
     return;
   }
-  const { detail: { snippetCode, rootPath, onlyPaths, skipPaths } } = event;
+  const {
+    detail: { snippetCode, rootPath, onlyPaths, skipPaths },
+  } = event;
   const additionalCommandArgs = buildJavascriptAdditionalCommandArgs();
-  const { output, error } = await runSynvertJavascript(runCommand, "test", rootPath, onlyPaths, skipPaths, additionalCommandArgs, snippetCode);
+  const { output, error } = await runSynvertJavascript(
+    runCommand,
+    "test",
+    rootPath,
+    onlyPaths,
+    skipPaths,
+    additionalCommandArgs,
+    snippetCode,
+  );
   if (error) {
     triggerEvent(EVENT_SNIPPET_TESTED, { error });
     return;
@@ -244,9 +272,19 @@ const testTypescriptSnippet = async (event) => {
     triggerEvent(EVENT_SNIPPET_TESTED, { error: "Synvert typescript is not enabled!" });
     return;
   }
-  const { detail: { snippetCode, rootPath, onlyPaths, skipPaths } } = event;
+  const {
+    detail: { snippetCode, rootPath, onlyPaths, skipPaths },
+  } = event;
   const additionalCommandArgs = buildTypescriptAdditionalCommandArgs();
-  const { output, error } = await runSynvertJavascript(runCommand, "test", rootPath, onlyPaths, skipPaths, additionalCommandArgs, snippetCode);
+  const { output, error } = await runSynvertJavascript(
+    runCommand,
+    "test",
+    rootPath,
+    onlyPaths,
+    skipPaths,
+    additionalCommandArgs,
+    snippetCode,
+  );
   if (error) {
     triggerEvent(EVENT_SNIPPET_TESTED, { error });
     return;
@@ -279,9 +317,19 @@ const runRubySnippet = async (event) => {
     triggerEvent(EVENT_SNIPPET_RUN, { error: "Synvert ruby is not enabled!" });
     return;
   }
-  const { detail: { snippetCode, rootPath, onlyPaths, skipPaths } } = event;
+  const {
+    detail: { snippetCode, rootPath, onlyPaths, skipPaths },
+  } = event;
   const additionalCommandArgs = buildRubyAdditionalCommandArgs();
-  const { output, error } = await runSynvertRuby(runCommand, "run", rootPath, onlyPaths, skipPaths, additionalCommandArgs, snippetCode);
+  const { output, error } = await runSynvertRuby(
+    runCommand,
+    "run",
+    rootPath,
+    onlyPaths,
+    skipPaths,
+    additionalCommandArgs,
+    snippetCode,
+  );
   if (error) {
     triggerEvent(EVENT_SNIPPET_RUN, { error });
     return;
@@ -298,9 +346,19 @@ const runJavascriptSnippet = async (event) => {
     triggerEvent(EVENT_SNIPPET_RUN, { error: "Synvert javascript is not enabled!" });
     return;
   }
-  const { detail: { snippetCode, rootPath, onlyPaths, skipPaths } } = event;
+  const {
+    detail: { snippetCode, rootPath, onlyPaths, skipPaths },
+  } = event;
   const additionalCommandArgs = buildJavascriptAdditionalCommandArgs();
-  const { output, error } = await runSynvertJavascript(runCommand, "run", rootPath, onlyPaths, skipPaths, additionalCommandArgs, snippetCode);
+  const { output, error } = await runSynvertJavascript(
+    runCommand,
+    "run",
+    rootPath,
+    onlyPaths,
+    skipPaths,
+    additionalCommandArgs,
+    snippetCode,
+  );
   if (error) {
     triggerEvent(EVENT_SNIPPET_RUN, { error });
     return;
@@ -317,9 +375,19 @@ const runTypescriptSnippet = async (event) => {
     triggerEvent(EVENT_SNIPPET_RUN, { error: "Synvert typescript is not enabled!" });
     return;
   }
-  const { detail: { snippetCode, rootPath, onlyPaths, skipPaths } } = event;
+  const {
+    detail: { snippetCode, rootPath, onlyPaths, skipPaths },
+  } = event;
   const additionalCommandArgs = buildTypescriptAdditionalCommandArgs();
-  const { output, error } = await runSynvertJavascript(runCommand, "run", rootPath, onlyPaths, skipPaths, additionalCommandArgs, snippetCode);
+  const { output, error } = await runSynvertJavascript(
+    runCommand,
+    "run",
+    rootPath,
+    onlyPaths,
+    skipPaths,
+    additionalCommandArgs,
+    snippetCode,
+  );
   if (error) {
     triggerEvent(EVENT_SNIPPET_RUN, { error });
     return;
@@ -398,7 +466,12 @@ function buildRubyAdditionalCommandArgs() {
 }
 
 function buildJavascriptAdditionalCommandArgs() {
-  const additionalCommandArgs = ["--max-file-size", javascriptMaxFileSize() * 1024, "--tab-width", javascriptTabWidth()];
+  const additionalCommandArgs = [
+    "--max-file-size",
+    javascriptMaxFileSize() * 1024,
+    "--tab-width",
+    javascriptTabWidth(),
+  ];
   if (javascriptSingleQuote()) {
     additionalCommandArgs.push("--single-quote");
   }
@@ -409,7 +482,12 @@ function buildJavascriptAdditionalCommandArgs() {
 }
 
 function buildTypescriptAdditionalCommandArgs() {
-  const additionalCommandArgs = ["--max-file-size", typescriptMaxFileSize() * 1024, "--tab-width", typescriptTabWidth()];
+  const additionalCommandArgs = [
+    "--max-file-size",
+    typescriptMaxFileSize() * 1024,
+    "--tab-width",
+    typescriptTabWidth(),
+  ];
   if (typescriptSingleQuote()) {
     additionalCommandArgs.push("--single-quote");
   }
