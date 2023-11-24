@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.9.1] - 2023-11-24
+
+### Changed
+
+- Use `runSynvertRuby` and `runSynvertJavascript` from synvert-ui-common
+- Use `checkRubyDependencies` and `checkJavascriptDependencies` from synvert-ui-common
+
 ## [1.9.0] - 2023-11-03
 
 ### Added
@@ -14,4 +21,3 @@
 ### Fixed
 
 - Catch check dependency error
-
