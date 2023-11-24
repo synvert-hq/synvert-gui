@@ -31,8 +31,7 @@ import "./index.css";
 
 import React from "react";
 import toast from "react-hot-toast";
-import { compareVersions } from "compare-versions";
-import { parseJSON, formatCommandResult, runSynvertRuby, runSynvertJavascript } from "synvert-ui-common";
+import { parseJSON, formatCommandResult, runSynvertRuby, runSynvertJavascript, DependencyResponse, checkRubyDependencies, checkJavascriptDependencies } from "synvert-ui-common";
 
 import {
   EVENT_TEST_SNIPPET,
@@ -49,7 +48,6 @@ import {
   triggerEvent,
   rubyEnabled,
   javascriptEnabled,
-  baseUrlByLanguage,
   typescriptEnabled,
   getInited,
   javascriptMaxFileSize,
@@ -120,87 +118,70 @@ const showErrorMessage = (message, buttonTitle, buttonAction) => {
   );
 };
 
-const VERSION_REGEXP = /(\d+\.\d+\.\d+) \(with synvert-core (\d+\.\d+\.\d+)/;
-
-const checkRubyDependencies = async () => {
+const checkRuby= async () => {
   if (!rubyEnabled()) {
     return;
   }
-  let { output, error } = await runCommand("ruby", ["--version"]);
-  if (error) {
-    toast.error("ruby is not available!");
-    return;
-  }
-  ({ output, error } = await runCommand("synvert-ruby", ["--version"]));
-  if (error) {
-    showErrorMessage("Synvert gem not found. Run `gem install synvert`.", "Install Now", () => installGem("synvert"));
-    return;
-  } else {
-    const result = output.match(VERSION_REGEXP);
-    const localSynvertVersion = result[1];
-    const localSynvertCoreVersion = result[2];
-    const response = await fetch(baseUrlByLanguage("ruby") + "/check-versions");
-    const json = await response.json();
-    const remoteSynvertVersion = json["synvert_version"];
-    const remoteSynvertCoreVersion = json["synvert_core_version"];
-    log({ ruby: { remoteSynvertVersion, remoteSynvertCoreVersion } });
-    if (compareVersions(remoteSynvertVersion, localSynvertVersion) === 1) {
+  const response = checkRubyDependencies(runCommand);
+  switch (response.code) {
+    case DependencyResponse.ERROR:
+      showErrorMessage(`Error when checking synvert-ruby environment: ${response.error}`);
+      break;
+    case DependencyResponse.RUBY_NOT_AVAILABLE:
+      showErrorMessage("ruby is not available");
+      break;
+    case DependencyResponse.SYNVERT_NOT_AVAILABLE:
+      showErrorMessage("Synvert gem not found. Run `gem install synvert`.", "Install Now", () => installGem("synvert"));
+      break;
+    case DependencyResponse.SYNVERT_OUTDATED:
       showErrorMessage(
-        `synvert gem version ${remoteSynvertVersion} is available. (Current version: ${localSynvertVersion})`,
+        `synvert gem version ${response.remoteSynvertVersion} is available. (Current version: ${response.localSynvertVersion})`,
         "Update Now",
         () => installGem("synvert"),
       );
-    }
-    if (compareVersions(remoteSynvertCoreVersion, localSynvertCoreVersion) === 1) {
+      break;
+    case DependencyResponse.SYNVERT_CORE_OUTDATED:
       showErrorMessage(
-        `synvert-core gem version ${remoteSynvertCoreVersion} is available. (Current Version: ${localSynvertCoreVersion})`,
+        `synvert-core gem version ${response.remoteSynvertCoreVersion} is available. (Current Version: ${response.localSynvertCoreVersion})`,
         "Update Now",
         () => installGem("synvert-core"),
       );
-    }
+      break;
   }
 };
 
-const checkJavascriptDependencies = async () => {
+const checkJavascript = async () => {
   if (!javascriptEnabled() && !typescriptEnabled()) {
     return;
   }
-  let { output, error } = await runCommand("node", ["--version"]);
-  if (error) {
-    toast.error("nodejs is not available!");
-    return;
-  }
-  ({ output, error } = await runCommand("synvert-javascript", ["--version"]));
-  if (error) {
-    showErrorMessage("Synvert npm not found. Run `npm install -g synvert`.", "Install Now", () => installNpm("synvert"));
-    return;
-  } else {
-    // Install synvert-core globally doesn't make any sense
-    const result = output.match(VERSION_REGEXP);
-    const localSynvertVersion = result[1];
-    // const localSynvertCoreVersion = result[2];
-    const response = await fetch(baseUrlByLanguage("javascript") + "/check-versions");
-    const json = await response.json();
-    const remoteSynvertVersion = json["synvert_version"];
-    log({ javascript: { remoteSynvertVersion } });
-    // const remoteSynvertCoreVersion = json['synvert_core_version'];
-    if (compareVersions(remoteSynvertVersion, localSynvertVersion) === 1) {
+  const response = await checkJavascriptDependencies(runCommand);
+  switch (response.code) {
+    case DependencyResponse.ERROR:
+      showErrorMessage(`Error when checking synvert-javascript environment: ${response.error}`);
+      break;
+    case DependencyResponse.JAVASCRIPT_NOT_AVAILABLE:
+      showErrorMessage("javascript (node) is not available");
+      break;
+    case DependencyResponse.SYNVERT_NOT_AVAILABLE:
+      showErrorMessage("Synvert gem not found. Run `gem install synvert`.", "Install Now", () => installGem("synvert"));
+      break;
+    case DependencyResponse.SYNVERT_OUTDATED:
       showErrorMessage(
         `synvert npm version ${remoteSynvertVersion} is available. (Current version: ${localSynvertVersion})`,
         "Update Now",
         () => installNpm("synvert"),
       );
-    }
-    // if (compareVersions(remoteSynvertCoreVersion, localSynvertCoreVersion) === 1) {
-    //   showErrorMessage(`synvert-core npm version ${remoteSynvertCoreVersion} is available. (Current Version: ${localSynvertCoreVersion})`, "Update Now", () => installNpm("synvert-core"));
-    // }
+      break;
   }
 };
 
 const checkDependencies = async () => {
   try {
-    await checkRubyDependencies();
-    await checkJavascriptDependencies();
+    Promise.all(
+      [checkRuby, checkJavascript].map(async (fn) => {
+        await fn();
+      })
+    );
   } catch (error) {
     log({ error });
   }
