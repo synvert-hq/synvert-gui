@@ -93,7 +93,7 @@ function updateIcon() {
   }
 }
 
-notarizeMaybe();
+//notarizeMaybe();
 updateIcon();
 
 // Finally, export it
