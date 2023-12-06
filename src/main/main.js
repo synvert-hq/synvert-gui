@@ -2,7 +2,7 @@ import { app, BrowserWindow, dialog, ipcMain } from "electron";
 import { createMainWindow } from "./window";
 import { setupAboutPanel } from "./about-panel";
 import { setupMenu } from "./menu";
-import { setupUpdates } from "./update";
+import { updateElectronApp } from "update-electron-app";
 
 async function handleFileOpen() {
   const { canceled, filePaths } = await dialog.showOpenDialog({
@@ -29,7 +29,7 @@ app.whenReady().then(() => {
   createMainWindow();
   setupAboutPanel();
   setupMenu();
-  setupUpdates();
+  updateElectronApp();
   app.on("activate", () => {
     // On OS X it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
