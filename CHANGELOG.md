@@ -1,5 +1,15 @@
 # Change Log
 
+## [1.9.2] - 2023-12-06
+
+### Changed
+
+- Do not notarize
+
+### Removed
+
+- Drop our own autoUpdater server
+
 ## [1.9.1] - 2023-11-24
 
 ### Changed
