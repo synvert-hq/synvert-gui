@@ -1,3 +1,4 @@
+import { replaceTestAction, replaceTestResult } from "synvert-ui-common";
 import {
   SET_SNIPPETS_STORE,
   SET_CURRENT_SNIPPET_ID,
@@ -24,7 +25,7 @@ import {
   PREV_GENERATED_SNIPPET,
   NEXT_GENERATED_SNIPPET,
 } from "./constants";
-import { getNewSource, isAddFileAction, isRemoveFileAction } from "./utils";
+import { isAddFileAction, isRemoveFileAction } from "./utils";
 
 export default (state = {}, action) => {
   switch (action.type) {
@@ -143,7 +144,7 @@ export default (state = {}, action) => {
         window.electronAPI.unlinkFile(absolutePath);
       } else {
         let source = window.electronAPI.readFile(absolutePath, "utf-8");
-        const newSource = getNewSource(source, testResult);
+        const newSource = replaceTestResult(testResult, source);
         window.electronAPI.writeFile(absolutePath, newSource);
       }
       testResults.splice(action.resultIndex, 1);
@@ -163,8 +164,7 @@ export default (state = {}, action) => {
     case REPLACE_TEST_ACTION: {
       const testResults = [...state.testResults];
       const testResult = testResults[action.resultIndex];
-      const actions = testResult.actions;
-      const resultAction = actions[action.actionIndex];
+      const resultAction = testResult.actions[action.actionIndex];
       const absolutePath = window.electronAPI.pathJoin(action.rootPath, testResult.filePath);
       if (resultAction.type === "add_file") {
         const dirPath = window.electronAPI.dirname(absolutePath);
@@ -178,31 +178,10 @@ export default (state = {}, action) => {
         testResults.splice(action.resultIndex, 1);
       } else {
         let source = window.electronAPI.readFile(absolutePath, "utf-8");
-        let offset = 0;
-        if (resultAction.type === "group") {
-          resultAction.actions.reverse().forEach((childAction) => {
-            source = source.slice(0, childAction.start) + childAction.newCode + source.slice(childAction.end);
-            offset += childAction.newCode.length - (childAction.end - childAction.start);
-          });
-        } else {
-          source = source.slice(0, resultAction.start) + resultAction.newCode + source.slice(resultAction.end);
-          offset += resultAction.newCode.length - (resultAction.end - resultAction.start);
-        }
-        window.electronAPI.writeFile(absolutePath, source);
-        actions.splice(action.actionIndex, 1);
-        if (actions.length > 0) {
-          actions.slice(action.actionIndex).forEach((action) => {
-            if (action.type === "group") {
-              action.actions.forEach((childAction) => {
-                childAction.start = childAction.start + offset;
-                childAction.end = childAction.end + offset;
-              });
-            }
-            action.start = action.start + offset;
-            action.end = action.end + offset;
-          });
-          testResult.fileSource = source;
-        } else {
+        const newSource = replaceTestAction(testResult, resultAction, source);
+        window.electronAPI.writeFile(absolutePath, newSource);
+        testResult.actions.splice(action.actionIndex, 1);
+        if (testResult.actions.length === 0) {
           testResults.splice(action.resultIndex, 1);
         }
       }
@@ -231,7 +210,7 @@ export default (state = {}, action) => {
           window.electronAPI.unlinkFile(absolutePath);
         } else {
           let source = window.electronAPI.readFile(absolutePath, "utf-8");
-          const newSource = getNewSource(source, testResult);
+          const newSource = replaceTestResult(testResult, source);
           window.electronAPI.writeFile(absolutePath, newSource);
         }
       });
