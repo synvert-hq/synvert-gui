@@ -87,26 +87,6 @@ export const isAddFileAction = (result) => result.actions.length === 1 && result
 
 export const isRemoveFileAction = (result) => result.actions.length === 1 && result.actions[0].type === "remove_file";
 
-const LOCAL_API_SERVERS = {
-  ruby: "http://localhost:9292",
-  javascript: "http://localhost:4000",
-  typescript: "http://localhost:4000",
-};
-
-const REMOTE_API_SERVERS = {
-  ruby: "https://api-ruby.synvert.net",
-  javascript: "https://api-javascript.synvert.net",
-  typescript: "https://api-javascript.synvert.net",
-};
-
-export const baseUrlByLanguage = (language) => {
-  if (window.electronAPI.isDev()) {
-    return LOCAL_API_SERVERS[language];
-  } else {
-    return REMOTE_API_SERVERS[language];
-  }
-};
-
 const PLACEHOLDERS = {
   ruby: {
     input: "FactoryBot.create(:user)",

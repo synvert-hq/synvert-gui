@@ -4,7 +4,6 @@ import useEventListener from "@use-it/event-listener";
 
 import AppContext from "../context";
 import {
-  baseUrlByLanguage,
   defaultParserByLanguage,
   parsersByLanguage,
   defaultFilePatternByLanguage,
@@ -13,7 +12,7 @@ import {
 } from "../utils";
 import { SET_LOADING, SET_GENERATED_SNIPPETS, EVENT_SNIPPET_RUN, EVENT_SNIPPET_TESTED } from "../constants";
 import SnippetCode from "./SnippetCode";
-import { composeGeneratedSnippets } from "synvert-ui-common";
+import { generateSnippets } from "synvert-ui-common";
 
 export default () => {
   const [errorMessage, setErrorMessage] = useState("");
@@ -64,54 +63,24 @@ export default () => {
 
   const onSubmit = async (data) => {
     dispatch({ type: SET_LOADING, loading: true, loadingText: "Submitting..." });
-    const { parser, inputs_outputs, nql_or_rules } = data;
+    const { parser, inputs_outputs, nql_or_rules, filePattern } = data;
     const inputs = inputs_outputs.map((input_output) => input_output.input);
     const outputs = inputs_outputs.map((input_output) => input_output.output);
     updateGeneratedSnippets({ generatedSnippets: [], snippetError: "" });
-    try {
-      const response = await fetch(`${baseUrlByLanguage(language)}/generate-snippet`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
-          "X-SYNVERT-TOKEN": window.electronAPI.getToken(),
-          "X-SYNVERT-PLATFORM": "gui",
-        },
-        body: JSON.stringify({ language, parser, inputs, outputs, nql_or_rules }),
-      });
-      const result = await response.json();
-      if (result.error) {
-        updateGeneratedSnippets({ generatedSnippets: [], snippetError: result.error });
-        log(result.error);
-      } else if (result.snippets.length === 0) {
-        updateGeneratedSnippets({ generatedSnippets: [], snippetError: "Failed to generate snippet" });
-      } else {
-        const generatedSnippets = composeGeneratedSnippets(
-          language === "ruby"
-            ? {
-                language,
-                parser,
-                filePattern: data.filePattern,
-                rubyVersion: data.rubyVersion,
-                gemVersion: data.gemVersion,
-                snippets: result.snippets,
-              }
-            : {
-                language,
-                parser,
-                filePattern: data.filePattern,
-                nodeVersion: data.nodeVersion,
-                npmVersion: data.npmVersion,
-                snippets: result.snippets,
-              },
-        );
-        updateGeneratedSnippets({ generatedSnippets, snippetError: "" });
-      }
-    } catch {
-      updateGeneratedSnippets({
-        generatedSnippets: [],
-        snippetError: "Failed to send request, please check your network setting.",
-      });
+    const params = { language, parser, inputs, outputs, nqlOrRules: nql_or_rules, filePattern };
+    if (language === "ruby") {
+      params.rubyVersion = data.rubyVersion;
+      params.gemVersion = data.gemVersion;
+    } else {
+      params.nodeVersion = data.nodeVersion;
+      params.npmVersion = data.npmVersion;
+    }
+    const result = await generateSnippets(window.electronAPI.getToken(), "GUI", params);
+    if (result.errorMessage) {
+      log(result.errorMessage);
+      updateGeneratedSnippets({ generatedSnippets: [], snippetError: result.errorMessage });
+    } else {
+      updateGeneratedSnippets({ generatedSnippets: result.generatedSnippets, snippetError: "" });
     }
     dispatch({ type: SET_LOADING, loading: false });
   };
@@ -192,7 +161,7 @@ export default () => {
             </div>
             <div className="col-md-6">
               <a href="https://synvert.net/how_to_write_inputs_outputs" className="float-right" target="_blank">
-                How to write inputs/outpus?
+                How to write inputs/outputs?
               </a>
               <label>Outputs</label>
             </div>

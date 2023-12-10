@@ -1,13 +1,13 @@
 import React, { useContext, useEffect, useState } from "react";
-import { sortSnippets, filterSnippets } from "synvert-ui-common";
+import { sortSnippets, filterSnippets, fetchSnippets } from "synvert-ui-common";
 
 import AppContext from "../context";
-import { convertSnippetsToStore, baseUrlByLanguage } from "../utils";
+import { convertSnippetsToStore } from "../utils";
 import { SET_SNIPPETS_STORE, SET_CURRENT_SNIPPET_ID, SET_SHOW_FORM } from "../constants";
 import LanguageSelect from "./LanguageSelect";
 import UpdateDependenciesButton from "./UpdateDependenciesButton";
 
-const snippetClassname = (snippet, currentSnippetId) =>
+const snippetClassName = (snippet, currentSnippetId) =>
   currentSnippetId && snippet.id == currentSnippetId ? "list-group-item active" : "list-group-item";
 
 export default () => {
@@ -18,25 +18,18 @@ export default () => {
   const [error, setError] = useState(null);
 
   const loadSnippets = async (language) => {
-    try {
-      setLoaded(false);
-      const response = await fetch(`${baseUrlByLanguage(language)}/snippets`, {
-        headers: {
-          "Content-Type": "application/json",
-          "X-SYNVERT-TOKEN": window.electronAPI.getToken(),
-          "X-SYNVERT-PLATFORM": "gui",
-        },
-      });
-      const result = await response.json();
+    setLoaded(false);
+    const result = await fetchSnippets(language, window.electronAPI.getToken(), "GUI")
+    if (result.errorMessage) {
+      setError(e.message);
+    } else {
       const snippetsStore = convertSnippetsToStore(
         result.snippets.map((snippet) => ({ ...snippet, id: `${snippet.group}/${snippet.name}` })),
       );
       dispatch({ type: SET_SNIPPETS_STORE, snippetsStore });
-      setLoaded(true);
       setError(null);
-    } catch (e) {
-      setError(e.message);
     }
+    setLoaded(true);
   };
 
   useEffect(() => {
@@ -89,7 +82,7 @@ export default () => {
           {sortSnippets(filterSnippets(Object.values(snippetsStore), searchTerm), searchTerm).map((snippet) => (
             <li
               role="button"
-              className={snippetClassname(snippet, currentSnippetId)}
+              className={snippetClassName(snippet, currentSnippetId)}
               key={`${snippet.group}/${snippet.name}`}
               onClick={() => snippetClicked(snippet)}
             >
