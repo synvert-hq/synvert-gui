@@ -48,7 +48,8 @@ const showDiff = (result, action) => {
           ))}
         </>
       );
-      defaut: return (
+    default:
+      return (
         <>
           <span className="old-code">{result.fileSource.substring(action.start, action.end)}</span>
           <span className="new-code">{action.newCode}</span>
