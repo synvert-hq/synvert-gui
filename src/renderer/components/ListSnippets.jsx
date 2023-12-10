@@ -19,7 +19,7 @@ export default () => {
 
   const loadSnippets = async (language) => {
     setLoaded(false);
-    const result = await fetchSnippets(language, window.electronAPI.getToken(), "GUI")
+    const result = await fetchSnippets(language, window.electronAPI.getToken(), "GUI");
     if (result.errorMessage) {
       setError(e.message);
     } else {
