@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.9.3] - 2023-12-10
+
+### Changed
+
+- Use `replaceTestResult` and `replaceTestAction` from synvert-ui-common
+- Use `fetchSnippets` and `generateSnippets` from synvert-ui-common
+
 ## [1.9.2] - 2023-12-06
 
 ### Changed
