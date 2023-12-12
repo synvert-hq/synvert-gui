@@ -1,16 +1,63 @@
 import { ROOT_PATH, ONLY_PATHS, SKIP_PATHS, LANGUAGE, LANGUAGES, PARSER } from "./constants";
 
 const CUSTOM = "custom";
+export const DEFAULT_VALUES = {
+  ruby: {
+    enabled: ["yes"],
+    number_of_workers: 4,
+    single_quote: ["yes"],
+    tab_width: 2,
+  },
+  javascript: {
+    enabled: ["yes"],
+    max_file_size: 100,
+    single_quote: ["no"],
+    semi: ["yes"],
+    tab_width: 2,
+  },
+  typescript: {
+    enabled: ["yes"],
+    max_file_size: 100,
+    single_quote: ["no"],
+    semi: ["yes"],
+    tab_width: 2,
+  },
+  css: {
+    enabled: ["yes"],
+    max_file_size: 100,
+  },
+  less: {
+    enabled: ["yes"],
+    max_file_size: 100,
+  },
+  sass: {
+    enabled: ["yes"],
+    max_file_size: 100,
+  },
+  scss: {
+    enabled: ["yes"],
+    max_file_size: 100,
+  },
+  [CUSTOM]: {
+    [ROOT_PATH]: "",
+  },
+}
 
 const savePreference = (section, key, value) => {
   const preferences = window.electronAPI.getPreferences();
+  if (!preferences[section]) {
+    preferences[section] = {};
+  }
   preferences[section][key] = value;
   window.electronAPI.setPreferences(preferences);
 };
 
 const getPreference = (section, key) => {
   const preferences = window.electronAPI.getPreferences();
-  return preferences[section][key];
+  if (!preferences[section]) {
+    preferences[section] = {};
+  }
+  return preferences[section][key] || DEFAULT_VALUES[section][key];
 };
 
 export const saveInited = (inited) => savePreference(CUSTOM, "inited", inited);
@@ -30,6 +77,14 @@ export const typescriptMaxFileSize = () => getPreference("typescript", "max_file
 export const typescriptSingleQuote = () => getPreference("typescript", "single_quote").includes("yes");
 export const typescriptSemi = () => getPreference("typescript", "semi").includes("yes");
 export const typescriptTabWidth = () => getPreference("typescript", "tab_width");
+export const cssEnabled = () => getPreference("css", "enabled").includes("yes");
+export const cssMaxFileSize = () => getPreference("css", "max_file_size");
+export const lessEnabled = () => getPreference("less", "enabled").includes("yes");
+export const lessMaxFileSize = () => getPreference("less", "max_file_size");
+export const sassEnabled = () => getPreference("sass", "enabled").includes("yes");
+export const sassMaxFileSize = () => getPreference("sass", "max_file_size");
+export const scssEnabled = () => getPreference("scss", "enabled").includes("yes");
+export const scssMaxFileSize = () => getPreference("scss", "max_file_size");
 export const languageEnabled = (language) => getPreference(language, "enabled").includes("yes");
 export const saveLanguageEnabled = (language, enabled) => {
   if (enabled) {

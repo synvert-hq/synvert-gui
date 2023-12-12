@@ -40,11 +40,11 @@ const showDiff = (result, action) => {
     case "group":
       return (
         <>
-          {action.actions.map((childAction) => (
-            <>
+          {action.actions.map((childAction, actionIndex) => (
+            <span key={actionIndex}>
               <span className="old-code">{result.fileSource.substring(childAction.start, childAction.end)}</span>
               <span className="new-code">{childAction.newCode}</span>
-            </>
+            </span>
           ))}
         </>
       );

@@ -69,6 +69,11 @@ import {
   typescriptSemi,
   typescriptTabWidth,
   isAddFileAction,
+  languageEnabled,
+  cssMaxFileSize,
+  lessMaxFileSize,
+  sassMaxFileSize,
+  scssMaxFileSize,
 } from "./utils";
 
 const runCommand = async (command, args, { input } = {}) => {
@@ -159,7 +164,7 @@ const checkRuby = async () => {
 };
 
 const checkJavascript = async () => {
-  if (!javascriptEnabled() && !typescriptEnabled()) {
+  if (!javascriptEnabled() && !typescriptEnabled() && !cssEnabled() && !lessEnabled() && !sassEnabled() && !scssEnabled()) {
     return;
   }
   const response = await checkJavascriptDependencies(runCommand);
@@ -205,125 +210,18 @@ const addFileSourceToTestResults = (testResults, rootPath) => {
   });
 };
 
-const testRubySnippet = async (event) => {
-  if (!rubyEnabled()) {
-    triggerEvent(EVENT_SNIPPET_TESTED, { error: "Synvert ruby is not enabled!" });
-    return;
-  }
-  const {
-    detail: { snippetCode, rootPath, onlyPaths, skipPaths },
-  } = event;
-  const additionalCommandArgs = buildRubyAdditionalCommandArgs();
-  const { output, error } = await runSynvertRuby(
-    runCommand,
-    "test",
-    rootPath,
-    onlyPaths,
-    skipPaths,
-    additionalCommandArgs,
-    snippetCode,
-  );
-  if (error) {
-    triggerEvent(EVENT_SNIPPET_TESTED, { error });
-    return;
-  }
-  try {
-    const testResults = parseJSON(output);
-    addFileSourceToTestResults(testResults, rootPath);
-    triggerEvent(EVENT_SNIPPET_TESTED, { testResults });
-  } catch (e) {
-    triggerEvent(EVENT_SNIPPET_TESTED, { error: e.message });
-  }
-};
-
-const testJavascriptSnippet = async (event) => {
-  if (!javascriptEnabled()) {
-    triggerEvent(EVENT_SNIPPET_TESTED, { error: "Synvert javascript is not enabled!" });
-    return;
-  }
-  const {
-    detail: { snippetCode, rootPath, onlyPaths, skipPaths },
-  } = event;
-  const additionalCommandArgs = buildJavascriptAdditionalCommandArgs();
-  const { output, error } = await runSynvertJavascript(
-    runCommand,
-    "test",
-    rootPath,
-    onlyPaths,
-    skipPaths,
-    additionalCommandArgs,
-    snippetCode,
-  );
-  if (error) {
-    triggerEvent(EVENT_SNIPPET_TESTED, { error });
-    return;
-  }
-  try {
-    const testResults = parseJSON(output);
-    addFileSourceToTestResults(testResults, rootPath);
-    triggerEvent(EVENT_SNIPPET_TESTED, { testResults });
-  } catch (e) {
-    triggerEvent(EVENT_SNIPPET_TESTED, { error: e.message });
-  }
-};
-
-const testTypescriptSnippet = async (event) => {
-  if (!typescriptEnabled()) {
-    triggerEvent(EVENT_SNIPPET_TESTED, { error: "Synvert typescript is not enabled!" });
-    return;
-  }
-  const {
-    detail: { snippetCode, rootPath, onlyPaths, skipPaths },
-  } = event;
-  const additionalCommandArgs = buildTypescriptAdditionalCommandArgs();
-  const { output, error } = await runSynvertJavascript(
-    runCommand,
-    "test",
-    rootPath,
-    onlyPaths,
-    skipPaths,
-    additionalCommandArgs,
-    snippetCode,
-  );
-  if (error) {
-    triggerEvent(EVENT_SNIPPET_TESTED, { error });
-    return;
-  }
-  try {
-    const testResults = parseJSON(output);
-    addFileSourceToTestResults(testResults, rootPath);
-    triggerEvent(EVENT_SNIPPET_TESTED, { testResults });
-  } catch (e) {
-    triggerEvent(EVENT_SNIPPET_TESTED, { error: e.message });
-  }
-};
-
 const testSnippet = async (event) => {
-  const {
-    detail: { language },
-  } = event;
-  switch (language) {
-    case "ruby":
-      return await testRubySnippet(event);
-    case "javascript":
-      return await testJavascriptSnippet(event);
-    case "typescript":
-      return await testTypescriptSnippet(event);
-  }
-};
-
-const runRubySnippet = async (event) => {
-  if (!rubyEnabled()) {
-    triggerEvent(EVENT_SNIPPET_RUN, { error: "Synvert ruby is not enabled!" });
+  const { detail: { language } } = event;
+  if (!languageEnabled(language)) {
+    triggerEvent(EVENT_SNIPPET_TESTED, { error: `Synvert ${language} is not enabled!` });
     return;
   }
-  const {
-    detail: { snippetCode, rootPath, onlyPaths, skipPaths },
-  } = event;
-  const additionalCommandArgs = buildRubyAdditionalCommandArgs();
-  const { output, error } = await runSynvertRuby(
+  const { detail: { snippetCode, rootPath, onlyPaths, skipPaths } } = event;
+  const additionalCommandArgs = buildAdditionalCommandArgs(language);
+  const synvertCommand = language === "ruby" ? runSynvertRuby : runSynvertJavascript;
+  const { output, error } = await synvertCommand(
     runCommand,
-    "run",
+    "test",
     rootPath,
     onlyPaths,
     skipPaths,
@@ -331,85 +229,44 @@ const runRubySnippet = async (event) => {
     snippetCode,
   );
   if (error) {
-    triggerEvent(EVENT_SNIPPET_RUN, { error });
+    triggerEvent(EVENT_SNIPPET_TESTED, { error });
     return;
   }
   try {
-    triggerEvent(EVENT_SNIPPET_RUN, { affectedFiles: JSON.parse(output).affected_files });
+    const testResults = parseJSON(output);
+    addFileSourceToTestResults(testResults, rootPath);
+    triggerEvent(EVENT_SNIPPET_TESTED, { testResults });
   } catch (e) {
-    triggerEvent(EVENT_SNIPPET_RUN, { error: e.message });
-  }
-};
-
-const runJavascriptSnippet = async (event) => {
-  if (!javascriptEnabled()) {
-    triggerEvent(EVENT_SNIPPET_RUN, { error: "Synvert javascript is not enabled!" });
-    return;
-  }
-  const {
-    detail: { snippetCode, rootPath, onlyPaths, skipPaths },
-  } = event;
-  const additionalCommandArgs = buildJavascriptAdditionalCommandArgs();
-  const { output, error } = await runSynvertJavascript(
-    runCommand,
-    "run",
-    rootPath,
-    onlyPaths,
-    skipPaths,
-    additionalCommandArgs,
-    snippetCode,
-  );
-  if (error) {
-    triggerEvent(EVENT_SNIPPET_RUN, { error });
-    return;
-  }
-  try {
-    triggerEvent(EVENT_SNIPPET_RUN, { affectedFiles: JSON.parse(output).affected_files });
-  } catch (e) {
-    triggerEvent(EVENT_SNIPPET_RUN, { error: e.message });
-  }
-};
-
-const runTypescriptSnippet = async (event) => {
-  if (!typescriptEnabled()) {
-    triggerEvent(EVENT_SNIPPET_RUN, { error: "Synvert typescript is not enabled!" });
-    return;
-  }
-  const {
-    detail: { snippetCode, rootPath, onlyPaths, skipPaths },
-  } = event;
-  const additionalCommandArgs = buildTypescriptAdditionalCommandArgs();
-  const { output, error } = await runSynvertJavascript(
-    runCommand,
-    "run",
-    rootPath,
-    onlyPaths,
-    skipPaths,
-    additionalCommandArgs,
-    snippetCode,
-  );
-  if (error) {
-    triggerEvent(EVENT_SNIPPET_RUN, { error });
-    return;
-  }
-  try {
-    triggerEvent(EVENT_SNIPPET_RUN, { affectedFiles: JSON.parse(output).affected_files });
-  } catch (e) {
-    triggerEvent(EVENT_SNIPPET_RUN, { error: e.message });
+    triggerEvent(EVENT_SNIPPET_TESTED, { error: e.message });
   }
 };
 
 const runSnippet = async (event) => {
-  const {
-    detail: { language },
-  } = event;
-  switch (language) {
-    case "ruby":
-      return await runRubySnippet(event);
-    case "javascript":
-      return await runJavascriptSnippet(event);
-    case "typescript":
-      return await runTypescriptSnippet(event);
+  const { detail: { language } } = event;
+  if (!languageEnabled(language)) {
+    triggerEvent(EVENT_SNIPPET_RUN, { error: `Synvert ${language} is not enabled!` });
+    return;
+  }
+  const { detail: { snippetCode, rootPath, onlyPaths, skipPaths } } = event;
+  const additionalCommandArgs = buildAdditionalCommandArgs(language);
+  const synvertCommand = language === "ruby" ? runSynvertRuby : runSynvertJavascript;
+  const { output, error } = await synvertCommand(
+    runCommand,
+    "run",
+    rootPath,
+    onlyPaths,
+    skipPaths,
+    additionalCommandArgs,
+    snippetCode,
+  );
+  if (error) {
+    triggerEvent(EVENT_SNIPPET_RUN, { error });
+    return;
+  }
+  try {
+    triggerEvent(EVENT_SNIPPET_RUN, { affectedFiles: JSON.parse(output).affected_files });
+  } catch (e) {
+    triggerEvent(EVENT_SNIPPET_RUN, { error: e.message });
   }
 };
 
@@ -444,55 +301,61 @@ const updateDependencies = async (event) => {
     detail: { language },
   } = event;
   let result;
+  let dependencyName;
   if (language === "ruby") {
     result = await updateRubyDependencies();
+    dependencyName = "synvert-ruby";
   } else {
     result = await updateJavascriptDependencies();
+    dependencyName = "synvert-javascript";
   }
   if (result.error) {
-    toast.error(`Failed to update ${language} dependencies: ${result.error}`);
+    toast.error(`Failed to update ${dependencyName} dependencies: ${result.error}`);
   } else {
-    toast.success(`Successfully updated ${language} dependencies.`);
+    toast.success(`Successfully updated ${dependencyName} dependencies.`);
   }
   triggerEvent(EVENT_DEPENDENCIES_UPDATED, { error: result.error });
 };
 
-function buildRubyAdditionalCommandArgs() {
-  const additionalCommandArgs = ["--number-of-workers", rubyNumberOfWorkers(), "--tab-width", rubyTabWidth()];
-  if (!rubySingleQuote()) {
-    additionalCommandArgs.push("--double-quote");
-  }
-  return additionalCommandArgs;
-}
-
-function buildJavascriptAdditionalCommandArgs() {
-  const additionalCommandArgs = [
-    "--max-file-size",
-    javascriptMaxFileSize() * 1024,
-    "--tab-width",
-    javascriptTabWidth(),
-  ];
-  if (javascriptSingleQuote()) {
-    additionalCommandArgs.push("--single-quote");
-  }
-  if (!javascriptSemi()) {
-    additionalCommandArgs.push("--no-semi");
-  }
-  return additionalCommandArgs;
-}
-
-function buildTypescriptAdditionalCommandArgs() {
-  const additionalCommandArgs = [
-    "--max-file-size",
-    typescriptMaxFileSize() * 1024,
-    "--tab-width",
-    typescriptTabWidth(),
-  ];
-  if (typescriptSingleQuote()) {
-    additionalCommandArgs.push("--single-quote");
-  }
-  if (!typescriptSemi()) {
-    additionalCommandArgs.push("--no-semi");
+function buildAdditionalCommandArgs(language) {
+  const additionalCommandArgs = [];
+  switch (language) {
+    case "ruby":
+      additionalCommandArgs.push("--number-of-workers", rubyNumberOfWorkers(), "--tab-width", rubyTabWidth());
+      if (!rubySingleQuote()) {
+        additionalCommandArgs.push("--double-quote");
+      }
+      break;
+    case "javascript":
+      additionalCommandArgs.push("--max-file-size", javascriptMaxFileSize() * 1024, "--tab-width", javascriptTabWidth());
+      if (javascriptSingleQuote()) {
+        additionalCommandArgs.push("--single-quote");
+      }
+      if (!javascriptSemi()) {
+        additionalCommandArgs.push("--no-semi");
+      }
+      break;
+    case "typescript":
+      additionalCommandArgs.push("--max-file-size", typescriptMaxFileSize() * 1024, "--tab-width", typescriptTabWidth());
+      if (typescriptSingleQuote()) {
+        additionalCommandArgs.push("--single-quote");
+      }
+      if (!typescriptSemi()) {
+        additionalCommandArgs.push("--no-semi");
+      }
+      break;
+    case "css":
+      additionalCommandArgs.push("--max-file-size", cssMaxFileSize() * 1024);
+      break;
+    case "less":
+      additionalCommandArgs.push("--max-file-size", lessMaxFileSize() * 1024);
+      break;
+    case "sass":
+      additionalCommandArgs.push("--max-file-size", sassMaxFileSize() * 1024);
+      break;
+    case "scss":
+      additionalCommandArgs.push("--max-file-size", scssMaxFileSize() * 1024);
+      break;
   }
   return additionalCommandArgs;
 }

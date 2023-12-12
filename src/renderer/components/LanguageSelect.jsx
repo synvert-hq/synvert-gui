@@ -8,6 +8,10 @@ import {
   rubyEnabled,
   javascriptEnabled,
   typescriptEnabled,
+  cssEnabled,
+  lessEnabled,
+  sassEnabled,
+  scssEnabled,
   firstEnabledLanguage,
 } from "../utils";
 
@@ -19,6 +23,10 @@ const LanguageSelect = () => {
   let currentRubyEnabled = rubyEnabled();
   let currentJavascriptEnabled = javascriptEnabled();
   let currentTypescriptEnabled = typescriptEnabled();
+  let currentCssEnabled = cssEnabled();
+  let currentLessEnabled = lessEnabled();
+  let currentSassEnabled = sassEnabled();
+  let currentScssEnabled = scssEnabled();
   window.electronAPI.onPreferenceUpdated((e, preferences) => {
     if (!languageEnabled(language) && firstEnabledLanguage()) {
       dispatch({ type: SET_LANGUAGE, language: firstEnabledLanguage() });
@@ -28,11 +36,19 @@ const LanguageSelect = () => {
     } else if (
       currentRubyEnabled !== rubyEnabled() ||
       currentJavascriptEnabled !== javascriptEnabled() ||
-      currentTypescriptEnabled !== typescriptEnabled()
+      currentTypescriptEnabled !== typescriptEnabled() ||
+      currentCssEnabled !== cssEnabled() ||
+      currentLessEnabled !== lessEnabled() ||
+      currentSassEnabled !== sassEnabled() ||
+      currentScssEnabled !== scssEnabled()
     ) {
       currentRubyEnabled = rubyEnabled();
       currentJavascriptEnabled = javascriptEnabled();
       currentTypescriptEnabled = typescriptEnabled();
+      currentCssEnabled = cssEnabled();
+      currentLessEnabled = lessEnabled();
+      currentSassEnabled = sassEnabled();
+      currentScssEnabled = scssEnabled();
       // force rerender if one language is enabled or disabled.
       setUpdate(!update);
     }
