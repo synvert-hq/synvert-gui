@@ -3,16 +3,10 @@ import { useForm, useFieldArray } from "react-hook-form";
 import useEventListener from "@use-it/event-listener";
 
 import AppContext from "../context";
-import {
-  defaultParserByLanguage,
-  parsersByLanguage,
-  defaultFilePatternByLanguage,
-  log,
-  placeholderByLanguage,
-} from "../utils";
+import { log } from "../utils";
 import { SET_LOADING, SET_GENERATED_SNIPPETS, EVENT_SNIPPET_RUN, EVENT_SNIPPET_TESTED } from "../constants";
 import SnippetCode from "./SnippetCode";
-import { generateSnippets } from "synvert-ui-common";
+import { placeholderByLanguage, parsersByLanguage, generateSnippets, filePatternByLanguage } from "synvert-ui-common";
 
 export default () => {
   const [errorMessage, setErrorMessage] = useState("");
@@ -27,8 +21,8 @@ export default () => {
   const { fields, append, remove, replace } = useFieldArray({ control, name: "inputs_outputs" });
 
   useEffect(() => {
-    setValue("parser", defaultParserByLanguage(language));
-    setValue("filePattern", defaultFilePatternByLanguage(language));
+    setValue("parser", parsersByLanguage(language)[0]);
+    setValue("filePattern", filePatternByLanguage(language));
     setValue("rubyVersion", "");
     setValue("nodeVersion", "");
     setValue("gemVersion", "");
@@ -94,7 +88,6 @@ export default () => {
             <label>Parser:</label>
             <select
               className={`form-control ${errors.parser && "is-invalid"}`}
-              defaultValue={defaultParserByLanguage(language)}
               {...register("parser", { required: true })}
             >
               {parsersByLanguage(language).map((parser) => (
@@ -108,7 +101,6 @@ export default () => {
             <label>File Pattern:</label>
             <input
               className={`form-control ${errors.filePattern && "is-invalid"}`}
-              defaultValue={defaultFilePatternByLanguage(language)}
               {...register("filePattern", { required: true })}
             />
             {errors.filePattern && <div className="invalid-feedback">required</div>}

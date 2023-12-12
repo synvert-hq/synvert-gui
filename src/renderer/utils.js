@@ -87,47 +87,6 @@ export const isAddFileAction = (result) => result.actions.length === 1 && result
 
 export const isRemoveFileAction = (result) => result.actions.length === 1 && result.actions[0].type === "remove_file";
 
-const PLACEHOLDERS = {
-  ruby: {
-    input: "FactoryBot.create(:user)",
-    output: "create(:user)",
-  },
-  javascript: {
-    input: "foo.substring(indexStart, indexEnd)",
-    output: "foo.slice(indexStart, indexEnd)",
-  },
-  typescript: {
-    input: "const x: Array<string> = ['a', 'b']",
-    output: "const x: string[] = ['a', 'b']",
-  },
-};
-
-export const placeholderByLanguage = (language) => PLACEHOLDERS[language];
-
-const PARSERS = {
-  ruby: ["parser", "syntax_tree"],
-  typescript: ["typescript"],
-  javascript: ["typescript", "espree"],
-};
-
-export const parsersByLanguage = (language) => PARSERS[language];
-
-const DEFAULT_PARSERS = {
-  ruby: "parser",
-  javascript: "typescript",
-  typescript: "typescript",
-};
-
-export const defaultParserByLanguage = (language) => DEFAULT_PARSERS[language];
-
-const DEFAULT_FILE_PATTERNS = {
-  ruby: "**/*.rb",
-  javascript: "**/*.js",
-  typescript: "**/*.ts",
-};
-
-export const defaultFilePatternByLanguage = (language) => DEFAULT_FILE_PATTERNS[language];
-
 export const log = (...args) => {
   if (window.electronAPI.isDev()) {
     console.log(...args);
