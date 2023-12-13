@@ -164,7 +164,14 @@ const checkRuby = async () => {
 };
 
 const checkJavascript = async () => {
-  if (!javascriptEnabled() && !typescriptEnabled() && !cssEnabled() && !lessEnabled() && !sassEnabled() && !scssEnabled()) {
+  if (
+    !javascriptEnabled() &&
+    !typescriptEnabled() &&
+    !cssEnabled() &&
+    !lessEnabled() &&
+    !sassEnabled() &&
+    !scssEnabled()
+  ) {
     return;
   }
   const response = await checkJavascriptDependencies(runCommand);
@@ -211,12 +218,16 @@ const addFileSourceToTestResults = (testResults, rootPath) => {
 };
 
 const testSnippet = async (event) => {
-  const { detail: { language } } = event;
+  const {
+    detail: { language },
+  } = event;
   if (!languageEnabled(language)) {
     triggerEvent(EVENT_SNIPPET_TESTED, { error: `Synvert ${language} is not enabled!` });
     return;
   }
-  const { detail: { snippetCode, rootPath, onlyPaths, skipPaths } } = event;
+  const {
+    detail: { snippetCode, rootPath, onlyPaths, skipPaths },
+  } = event;
   const additionalCommandArgs = buildAdditionalCommandArgs(language);
   const synvertCommand = language === "ruby" ? runSynvertRuby : runSynvertJavascript;
   const { output, error } = await synvertCommand(
@@ -242,12 +253,16 @@ const testSnippet = async (event) => {
 };
 
 const runSnippet = async (event) => {
-  const { detail: { language } } = event;
+  const {
+    detail: { language },
+  } = event;
   if (!languageEnabled(language)) {
     triggerEvent(EVENT_SNIPPET_RUN, { error: `Synvert ${language} is not enabled!` });
     return;
   }
-  const { detail: { snippetCode, rootPath, onlyPaths, skipPaths } } = event;
+  const {
+    detail: { snippetCode, rootPath, onlyPaths, skipPaths },
+  } = event;
   const additionalCommandArgs = buildAdditionalCommandArgs(language);
   const synvertCommand = language === "ruby" ? runSynvertRuby : runSynvertJavascript;
   const { output, error } = await synvertCommand(
@@ -327,7 +342,12 @@ function buildAdditionalCommandArgs(language) {
       }
       break;
     case "javascript":
-      additionalCommandArgs.push("--max-file-size", javascriptMaxFileSize() * 1024, "--tab-width", javascriptTabWidth());
+      additionalCommandArgs.push(
+        "--max-file-size",
+        javascriptMaxFileSize() * 1024,
+        "--tab-width",
+        javascriptTabWidth(),
+      );
       if (javascriptSingleQuote()) {
         additionalCommandArgs.push("--single-quote");
       }
@@ -336,7 +356,12 @@ function buildAdditionalCommandArgs(language) {
       }
       break;
     case "typescript":
-      additionalCommandArgs.push("--max-file-size", typescriptMaxFileSize() * 1024, "--tab-width", typescriptTabWidth());
+      additionalCommandArgs.push(
+        "--max-file-size",
+        typescriptMaxFileSize() * 1024,
+        "--tab-width",
+        typescriptTabWidth(),
+      );
       if (typescriptSingleQuote()) {
         additionalCommandArgs.push("--single-quote");
       }

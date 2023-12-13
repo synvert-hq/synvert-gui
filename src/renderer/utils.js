@@ -41,7 +41,7 @@ export const DEFAULT_VALUES = {
   [CUSTOM]: {
     [ROOT_PATH]: "",
   },
-}
+};
 
 const savePreference = (section, key, value) => {
   const preferences = window.electronAPI.getPreferences();
