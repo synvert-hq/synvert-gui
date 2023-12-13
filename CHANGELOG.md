@@ -1,5 +1,15 @@
 # Change Log
 
+## [1.10.0] - 2023-12-13
+
+### Added
+
+- Support css/less/sass/scss
+
+### Changed
+
+- Use `filePatternByLanguage`, `placeholderByLanguage`, `parsersByLanguage` from synvert-ui-common
+
 ## [1.9.3] - 2023-12-10
 
 ### Changed
