@@ -21,7 +21,7 @@ export default () => {
     setLoaded(false);
     const result = await fetchSnippets(language, window.electronAPI.getToken(), "GUI");
     if (result.errorMessage) {
-      setError(e.message);
+      setError(result.errorMessage);
     } else {
       const snippetsStore = convertSnippetsToStore(
         result.snippets.map((snippet) => ({ ...snippet, id: `${snippet.group}/${snippet.name}` })),
