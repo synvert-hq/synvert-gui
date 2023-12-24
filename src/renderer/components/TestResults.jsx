@@ -41,10 +41,10 @@ const showDiff = (result, action) => {
       return (
         <>
           {action.actions.map((childAction, actionIndex) => (
-            <span key={actionIndex}>
+            <div key={actionIndex}>
               <span className="old-code">{result.fileSource.substring(childAction.start, childAction.end)}</span>
               <span className="new-code">{childAction.newCode}</span>
-            </span>
+            </div>
           ))}
         </>
       );
@@ -128,13 +128,26 @@ const TestResults = () => {
               <a href="#" className="toggle-icon" onClick={() => toggleResult(result.filePath)}>
                 {filesCollapse[result.filePath] ? <ChevronRightSvg /> : <ChevronDownSvg />}
               </a>
-              <span title={result.filePath}>{result.filePath}</span>
+              {result.actions[0].type === "add_file" && (
+                <span className="new-file" title={`Add ${result.filePath}`}>+ {result.filePath}</span>
+              )}
+              {result.actions[0].type === "remove_file" && (
+                <span className="old-file" title={`Remove ${result.filePath}`}>- {result.filePath}</span>
+              )}
+              {result.actions[0].type === "rename_file" && (
+                <>
+                  <span className="old-file" title={`Rename ${result.filePath} to ${result.newFilePath}`}>- {result.filePath}</span>
+                  <br />
+                  <span className="new-file" title={`Rename ${result.filePath} to ${result.newFilePath}`}>+ {result.filePath}</span>
+                </>
+              )}
+              {!["add_file", "remove_file", "rename_file"].includes(result.actions[0].type) && (
+                <span title={result.filePath}>{result.filePath}</span>
+              )}
               <div className="toolkit">
-                {result.actions.every((action) => typeof action.newCode !== "undefined") && (
-                  <a href="#" onClick={() => replaceResult(resultIndex)}>
-                    <ReplaceAllSvg />
-                  </a>
-                )}
+                <a href="#" onClick={() => replaceResult(resultIndex)}>
+                  <ReplaceAllSvg />
+                </a>
                 <a href="#" onClick={() => removeResult(resultIndex)}>
                   <CloseSvg />
                 </a>
@@ -142,7 +155,7 @@ const TestResults = () => {
             </div>
             {!filesCollapse[result.filePath] && (
               <ul className="search-actions">
-                {result.actions.map((action, actionIndex) => (
+                {!["add_file", "remove_file", "rename_file"].includes(result.actions[0].type) && result.actions.map((action, actionIndex) => (
                   <li key={actionIndex}>
                     <div
                       className={

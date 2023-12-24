@@ -135,6 +135,14 @@ body {
 .search-results .toolkit a {
   line-height: 16px;
 }
+.search-results .result .old-file {
+  text-decoration: line-through;
+  background-color: #691719;
+}
+.search-results .result .new-file {
+  margin-left: 25px;
+  background-color: #2f381f;
+}
 .search-results .action .old-code {
   text-decoration: line-through;
   background-color: #691719;
