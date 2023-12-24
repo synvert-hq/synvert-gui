@@ -155,7 +155,7 @@ const TestResults = () => {
             </div>
             {!filesCollapse[result.filePath] && (
               <ul className="search-actions">
-                {!["add_file", "remove_file", "rename_file"].includes(result.actions[0].type) && result.actions.map((action, actionIndex) => (
+                {!["add_file", "remove_file"].includes(result.actions[0].type) && result.actions.map((action, actionIndex) => (
                   <li key={actionIndex}>
                     <div
                       className={
@@ -165,16 +165,18 @@ const TestResults = () => {
                       }
                       onClick={() => actionClicked(resultIndex, actionIndex, action.start, action.end)}
                     >
-                      <div className="toolkit">
-                        {typeof action.newCode !== "undefined" && (
-                          <a href="#" onClick={() => replaceAction(resultIndex, actionIndex)}>
-                            <ReplaceSvg />
+                      {result.actions[0].type !== "rename_file" && (
+                        <div className="toolkit">
+                          {typeof action.newCode !== "undefined" && (
+                            <a href="#" onClick={() => replaceAction(resultIndex, actionIndex)}>
+                              <ReplaceSvg />
+                            </a>
+                          )}
+                          <a href="#" onClick={() => removeAction(resultIndex, actionIndex)}>
+                            <CloseSvg />
                           </a>
-                        )}
-                        <a href="#" onClick={() => removeAction(resultIndex, actionIndex)}>
-                          <CloseSvg />
-                        </a>
-                      </div>
+                        </div>
+                      )}
                       {showDiff(result, action)}
                     </div>
                   </li>

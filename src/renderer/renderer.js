@@ -32,8 +32,8 @@ import "./index.css";
 import React from "react";
 import toast from "react-hot-toast";
 import {
-  parseJSON,
   formatCommandResult,
+  handleTestResults,
   runSynvertRuby,
   runSynvertJavascript,
   DependencyResponse,
@@ -245,13 +245,8 @@ const testSnippet = async (event) => {
     triggerEvent(EVENT_SNIPPET_TESTED, { error });
     return;
   }
-  try {
-    const testResults = parseJSON(output);
-    addFileSourceToTestResults(testResults, rootPath);
-    triggerEvent(EVENT_SNIPPET_TESTED, { testResults });
-  } catch (e) {
-    triggerEvent(EVENT_SNIPPET_TESTED, { error: e.message });
-  }
+  const { results, errorMessage } = await handleTestResults(output, error, rootPath, window.electronAPI.pathAPI, window.electronAPI.promiseFsAPI);
+  triggerEvent(EVENT_SNIPPET_TESTED, { testResults: results, error: errorMessage });
 };
 
 const runSnippet = async (event) => {
