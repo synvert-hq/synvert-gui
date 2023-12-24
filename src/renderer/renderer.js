@@ -112,15 +112,17 @@ const showErrorMessage = (message, buttonTitle, buttonAction) => {
       <div>
         <p>{message}</p>
         <div className="d-flex justify-content-between">
-          <button
-            className="btn btn-primary btn-sm"
-            onClick={() => {
-              buttonAction();
-              toast.dismiss(t.id);
-            }}
-          >
-            {buttonTitle}
-          </button>
+          {buttonTitle && buttonAction && (
+            <button
+              className="btn btn-primary btn-sm"
+              onClick={() => {
+                buttonAction();
+                toast.dismiss(t.id);
+              }}
+            >
+              {buttonTitle}
+            </button>
+          )}
           <button className="btn btn-info btn-sm" onClick={() => toast.dismiss(t.id)}>
             Dismiss
           </button>
