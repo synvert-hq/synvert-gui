@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from "react";
 import ReactDiffViewer, { DiffMethod } from "@xinminlabs/react-diff-viewer";
 
 import AppContext from "../context";
-import { replaceTestResult } from "synvert-ui-common";
+import { getNewSourceByTestResult } from "synvert-ui-common";
 
 const CodeDiff = () => {
   const { testResults, currentResultIndex, currentActionStart } = useContext(AppContext);
@@ -11,7 +11,7 @@ const CodeDiff = () => {
 
   const fileSource = currentTestResult.fileSource;
   const lineNumber = fileSource ? fileSource.substring(0, currentActionStart).split("\n").length : 0;
-  const newFileSource = replaceTestResult(currentTestResult, fileSource);
+  const newFileSource = getNewSourceByTestResult(currentTestResult, fileSource);
 
   useEffect(() => {
     if (lineNumber && document.getElementById(String(lineNumber))) {
