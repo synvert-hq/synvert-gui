@@ -81,19 +81,19 @@ const TestResults = () => {
   };
 
   const replaceResult = (resultIndex) => {
-    dispatch({ type: REPLACE_TEST_RESULT, rootPath, resultIndex });
+    dispatch({ type: REPLACE_TEST_RESULT, testResults, resultIndex, rootPath });
   };
 
   const removeResult = (resultIndex) => {
-    dispatch({ type: REMOVE_TEST_RESULT, resultIndex });
+    dispatch({ type: REMOVE_TEST_RESULT, testResults, resultIndex });
   };
 
   const replaceAction = (resultIndex, actionIndex) => {
-    dispatch({ type: REPLACE_TEST_ACTION, rootPath, resultIndex, actionIndex });
+    dispatch({ type: REPLACE_TEST_ACTION, testResults, resultIndex, actionIndex, rootPath });
   };
 
   const removeAction = (resultIndex, actionIndex) => {
-    dispatch({ type: REMOVE_TEST_ACTION, resultIndex, actionIndex });
+    dispatch({ type: REMOVE_TEST_ACTION, testResults, resultIndex, actionIndex });
   };
 
   const resultClicked = (resultIndex) => {

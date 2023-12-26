@@ -1,6 +1,8 @@
-import React, { useReducer } from "react";
+import React from "react";
+import { useReducerAsync } from "use-reducer-async";
 
 import appReducer from "./reducer";
+import appAction from "./action";
 import AppContext from "./context";
 import { getInited, getLanguage, getOnlyPaths, getRootPath, getSkipPaths } from "./utils";
 
@@ -28,7 +30,7 @@ const initialState = {
 };
 
 export default ({ children }) => {
-  const [state, dispatch] = useReducer(appReducer, initialState);
+  const [state, dispatch] = useReducerAsync(appReducer, initialState, appAction);
 
   return <AppContext.Provider value={{ ...state, dispatch }}>{children}</AppContext.Provider>;
 };

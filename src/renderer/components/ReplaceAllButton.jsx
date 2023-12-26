@@ -9,7 +9,7 @@ const ReplaceAllButton = () => {
 
   const replace = () => {
     if (testResults.length > 0) {
-      dispatch({ type: REPLACE_ALL_TEST_RESULTS, rootPath, testResults });
+      dispatch({ type: REPLACE_ALL_TEST_RESULTS, testResults, rootPath });
     } else {
       dispatch({ type: SET_LOADING, loading: true, loadingText: "Running... it may take a while" });
       triggerEvent(EVENT_RUN_SNIPPET, { language, rootPath, snippetCode, onlyPaths, skipPaths });

@@ -209,16 +209,6 @@ const checkDependencies = async () => {
   }
 };
 
-const addFileSourceToTestResults = (testResults, rootPath) => {
-  testResults.forEach((testResult) => {
-    if (!isAddFileAction(testResult)) {
-      const fileSource = window.electronAPI.readFile(window.electronAPI.pathJoin(rootPath, testResult.filePath));
-      testResult.fileSource = fileSource;
-    }
-    testResult.rootPath = rootPath;
-  });
-};
-
 const testSnippet = async (event) => {
   const {
     detail: { language },

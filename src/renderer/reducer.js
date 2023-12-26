@@ -1,4 +1,3 @@
-import { replaceTestAction, replaceTestResult } from "synvert-ui-common";
 import {
   SET_SNIPPETS_STORE,
   SET_CURRENT_SNIPPET_ID,
@@ -9,23 +8,18 @@ import {
   SET_SHOW_FORM,
   SET_SHOW_TEST_RESULTS,
   SET_TEST_RESULTS,
-  REPLACE_TEST_RESULT,
-  REMOVE_TEST_RESULT,
-  REPLACE_TEST_ACTION,
-  REMOVE_TEST_ACTION,
   SET_CURRENT_ACTION_INDEX,
   SET_CURRENT_RESULT_INDEX,
   SET_ROOT_PATH,
   SET_ONLY_PATHS,
   SET_SKIP_PATHS,
-  REPLACE_ALL_TEST_RESULTS,
   SET_LANGUAGE,
   SET_PARSER,
   SET_INITED,
   PREV_GENERATED_SNIPPET,
   NEXT_GENERATED_SNIPPET,
+  UPDATE_TEST_RESULTS,
 } from "./constants";
-import { isAddFileAction, isRemoveFileAction } from "./utils";
 
 export default (state = {}, action) => {
   switch (action.type) {
@@ -132,96 +126,11 @@ export default (state = {}, action) => {
         currentActionEnd: 0,
       };
     }
-    case REPLACE_TEST_RESULT: {
-      const testResults = [...state.testResults];
-      const testResult = testResults[action.resultIndex];
-      const absolutePath = window.electronAPI.pathJoin(action.rootPath, testResult.filePath);
-      if (isAddFileAction(testResult)) {
-        const dirPath = window.electronAPI.dirname(absolutePath);
-        window.electronAPI.mkdir(dirPath);
-        window.electronAPI.writeFile(absolutePath, testResult.actions[0].newCode);
-      } else if (isRemoveFileAction(testResult)) {
-        window.electronAPI.unlinkFile(absolutePath);
-      } else {
-        let source = window.electronAPI.readFile(absolutePath, "utf-8");
-        const newSource = replaceTestResult(testResult, source);
-        window.electronAPI.writeFile(absolutePath, newSource);
+    case UPDATE_TEST_RESULTS: {
+      return {
+        ...state,
+        testResults: action.testResults,
       }
-      testResults.splice(action.resultIndex, 1);
-      return {
-        ...state,
-        testResults,
-      };
-    }
-    case REMOVE_TEST_RESULT: {
-      const testResults = [...state.testResults];
-      testResults.splice(action.resultIndex, 1);
-      return {
-        ...state,
-        testResults,
-      };
-    }
-    case REPLACE_TEST_ACTION: {
-      const testResults = [...state.testResults];
-      const testResult = testResults[action.resultIndex];
-      const resultAction = testResult.actions[action.actionIndex];
-      const absolutePath = window.electronAPI.pathJoin(action.rootPath, testResult.filePath);
-      if (resultAction.type === "add_file") {
-        const dirPath = window.electronAPI.dirname(absolutePath);
-        window.electronAPI.mkdir(dirPath);
-        window.electronAPI.writeFile(absolutePath, resultAction.newCode);
-        // add_file action is the only action
-        testResults.splice(action.resultIndex, 1);
-      } else if (resultAction.type === "remove_file") {
-        window.electronAPI.unlinkFile(absolutePath);
-        // remove_file action is the only action
-        testResults.splice(action.resultIndex, 1);
-      } else {
-        let source = window.electronAPI.readFile(absolutePath, "utf-8");
-        const newSource = replaceTestAction(testResult, resultAction, source);
-        window.electronAPI.writeFile(absolutePath, newSource);
-        testResult.actions.splice(action.actionIndex, 1);
-        if (testResult.actions.length === 0) {
-          testResults.splice(action.resultIndex, 1);
-        }
-      }
-      return {
-        ...state,
-        testResults,
-      };
-    }
-    case REMOVE_TEST_ACTION: {
-      const testResults = [...state.testResults];
-      testResults[action.resultIndex].actions.splice(action.actionIndex, 1);
-      return {
-        ...state,
-        testResults,
-      };
-    }
-    case REPLACE_ALL_TEST_RESULTS: {
-      const testResults = state.testResults;
-      testResults.forEach((testResult) => {
-        const absolutePath = window.electronAPI.pathJoin(action.rootPath, testResult.filePath);
-        if (isAddFileAction(testResult)) {
-          const dirPath = window.electronAPI.dirname(absolutePath);
-          window.electronAPI.mkdir(dirPath);
-          window.electronAPI.writeFile(absolutePath, testResult.actions[0].newCode);
-        } else if (isRemoveFileAction(testResult)) {
-          window.electronAPI.unlinkFile(absolutePath);
-        } else {
-          let source = window.electronAPI.readFile(absolutePath, "utf-8");
-          const newSource = replaceTestResult(testResult, source);
-          window.electronAPI.writeFile(absolutePath, newSource);
-        }
-      });
-      return {
-        ...state,
-        testResults: [],
-        currentResultIndex: 0,
-        currentActionIndex: 0,
-        currentActionStart: 0,
-        currentActionEnd: 0,
-      };
     }
     case SET_CURRENT_RESULT_INDEX: {
       return {

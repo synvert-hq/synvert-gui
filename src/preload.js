@@ -1,4 +1,3 @@
-import fs from "fs";
 import promiseFs from "fs/promises";
 import path from "path";
 import { machineIdSync } from "node-machine-id";
@@ -15,12 +14,6 @@ contextBridge.exposeInMainWorld("electronAPI", {
 
   pathAPI: path,
   promiseFsAPI: promiseFs,
-  pathJoin: (path1, path2) => path.join(path1, path2),
-  readFile: (filePath) => fs.readFileSync(filePath, "utf-8"),
-  writeFile: (filePath, fileContent) => fs.writeFileSync(filePath, fileContent),
-  unlinkFile: (filePath) => fs.unlinkSync(filePath),
-  mkdir: (filePath) => fs.mkdirSync(filePath, { recursive: true }),
-  dirname: (filePath) => path.dirname(filePath),
 
   runShellCommand,
 });

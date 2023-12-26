@@ -66,6 +66,7 @@
     "rehype-raw": "^6.1.1",
     "synvert-server-common": "^1.1.1",
     "synvert-ui-common": "^1.14.1",
-    "update-electron-app": "^3.0.0"
+    "update-electron-app": "^3.0.0",
+    "use-reducer-async": "^2.1.1"
   }
 }

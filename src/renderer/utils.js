@@ -138,10 +138,6 @@ export const triggerEvent = (name, detail) => {
   }
 };
 
-export const isAddFileAction = (result) => result.actions.length === 1 && result.actions[0].type === "add_file";
-
-export const isRemoveFileAction = (result) => result.actions.length === 1 && result.actions[0].type === "remove_file";
-
 export const log = (...args) => {
   if (window.electronAPI.isDev()) {
     console.log(...args);
