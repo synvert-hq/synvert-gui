@@ -129,16 +129,24 @@ const TestResults = () => {
                 {filesCollapse[result.filePath] ? <ChevronRightSvg /> : <ChevronDownSvg />}
               </a>
               {result.actions[0].type === "add_file" && (
-                <span className="new-file" title={`Add ${result.filePath}`}>+ {result.filePath}</span>
+                <span className="new-file" title={`Add ${result.filePath}`}>
+                  + {result.filePath}
+                </span>
               )}
               {result.actions[0].type === "remove_file" && (
-                <span className="old-file" title={`Remove ${result.filePath}`}>- {result.filePath}</span>
+                <span className="old-file" title={`Remove ${result.filePath}`}>
+                  - {result.filePath}
+                </span>
               )}
               {result.actions[0].type === "rename_file" && (
                 <>
-                  <span className="old-file" title={`Rename ${result.filePath} to ${result.newFilePath}`}>- {result.filePath}</span>
+                  <span className="old-file" title={`Rename ${result.filePath} to ${result.newFilePath}`}>
+                    - {result.filePath}
+                  </span>
                   <br />
-                  <span className="new-file" title={`Rename ${result.filePath} to ${result.newFilePath}`}>+ {result.newFilePath}</span>
+                  <span className="new-file" title={`Rename ${result.filePath} to ${result.newFilePath}`}>
+                    + {result.newFilePath}
+                  </span>
                 </>
               )}
               {!["add_file", "remove_file", "rename_file"].includes(result.actions[0].type) && (
@@ -155,32 +163,33 @@ const TestResults = () => {
             </div>
             {!filesCollapse[result.filePath] && (
               <ul className="search-actions">
-                {!["add_file", "remove_file"].includes(result.actions[0].type) && result.actions.map((action, actionIndex) => (
-                  <li key={actionIndex}>
-                    <div
-                      className={
-                        resultIndex === currentResultIndex && actionIndex === currentActionIndex
-                          ? "action active"
-                          : "action"
-                      }
-                      onClick={() => actionClicked(resultIndex, actionIndex, action.start, action.end)}
-                    >
-                      {result.actions[0].type !== "rename_file" && (
-                        <div className="toolkit">
-                          {typeof action.newCode !== "undefined" && (
-                            <a href="#" onClick={() => replaceAction(resultIndex, actionIndex)}>
-                              <ReplaceSvg />
+                {!["add_file", "remove_file"].includes(result.actions[0].type) &&
+                  result.actions.map((action, actionIndex) => (
+                    <li key={actionIndex}>
+                      <div
+                        className={
+                          resultIndex === currentResultIndex && actionIndex === currentActionIndex
+                            ? "action active"
+                            : "action"
+                        }
+                        onClick={() => actionClicked(resultIndex, actionIndex, action.start, action.end)}
+                      >
+                        {result.actions[0].type !== "rename_file" && (
+                          <div className="toolkit">
+                            {typeof action.newCode !== "undefined" && (
+                              <a href="#" onClick={() => replaceAction(resultIndex, actionIndex)}>
+                                <ReplaceSvg />
+                              </a>
+                            )}
+                            <a href="#" onClick={() => removeAction(resultIndex, actionIndex)}>
+                              <CloseSvg />
                             </a>
-                          )}
-                          <a href="#" onClick={() => removeAction(resultIndex, actionIndex)}>
-                            <CloseSvg />
-                          </a>
-                        </div>
-                      )}
-                      {showDiff(result, action)}
-                    </div>
-                  </li>
-                ))}
+                          </div>
+                        )}
+                        {showDiff(result, action)}
+                      </div>
+                    </li>
+                  ))}
               </ul>
             )}
           </li>

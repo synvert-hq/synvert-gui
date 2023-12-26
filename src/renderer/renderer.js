@@ -235,7 +235,13 @@ const testSnippet = async (event) => {
     triggerEvent(EVENT_SNIPPET_TESTED, { error });
     return;
   }
-  const { results, errorMessage } = await handleTestResults(output, error, rootPath, window.electronAPI.pathAPI, window.electronAPI.promiseFsAPI);
+  const { results, errorMessage } = await handleTestResults(
+    output,
+    error,
+    rootPath,
+    window.electronAPI.pathAPI,
+    window.electronAPI.promiseFsAPI,
+  );
   triggerEvent(EVENT_SNIPPET_TESTED, { testResults: results, error: errorMessage });
 };
 
