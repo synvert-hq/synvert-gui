@@ -138,7 +138,7 @@ const TestResults = () => {
                 <>
                   <span className="old-file" title={`Rename ${result.filePath} to ${result.newFilePath}`}>- {result.filePath}</span>
                   <br />
-                  <span className="new-file" title={`Rename ${result.filePath} to ${result.newFilePath}`}>+ {result.filePath}</span>
+                  <span className="new-file" title={`Rename ${result.filePath} to ${result.newFilePath}`}>+ {result.newFilePath}</span>
                 </>
               )}
               {!["add_file", "remove_file", "rename_file"].includes(result.actions[0].type) && (
