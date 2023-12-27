@@ -130,7 +130,7 @@ export default (state = {}, action) => {
       return {
         ...state,
         testResults: action.testResults,
-      }
+      };
     }
     case SET_CURRENT_RESULT_INDEX: {
       return {
