@@ -1,5 +1,13 @@
 # Change Log
 
+## [1.10.1] - 2023-12-27
+
+### Changed
+
+- Update `synvert-ui-common` to 1.14.1
+- Polish `add_file`, `remove_file` and `rename_file` UI
+- Handle async reducers in action
+
 ## [1.10.0] - 2023-12-13
 
 ### Added
