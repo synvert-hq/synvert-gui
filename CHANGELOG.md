@@ -1,5 +1,11 @@
 # Change Log
 
+## [1.10.2] - 2024-01-12
+
+### Changed
+
+- Better error message
+
 ## [1.10.1] - 2023-12-27
 
 ### Changed
