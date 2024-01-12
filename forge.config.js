@@ -10,6 +10,7 @@ const config = {
       "entitlements-inherit": "entitlements.plist",
       "signature-flags": "library",
     },
+    executableName: "Synvert",
   },
   makers: [
     {
