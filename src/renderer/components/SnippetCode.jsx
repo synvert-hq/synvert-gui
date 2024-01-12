@@ -55,8 +55,8 @@ const SnippetCode = ({ rows }) => {
       {error !== "" && (
         <span className="text-danger">
           {error}
-          <br/>
-          <br/>
+          <br />
+          <br />
           If it is our fault, we will see the error and try to fix it ASAP.
         </span>
       )}
