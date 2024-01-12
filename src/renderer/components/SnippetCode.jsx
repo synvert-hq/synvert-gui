@@ -52,7 +52,14 @@ const SnippetCode = ({ rows }) => {
           </button>
         )}
       </div>
-      {error !== "" && <span className="text-danger">{error}</span>}
+      {error !== "" && (
+        <span className="text-danger">
+          {error}
+          <br/>
+          <br/>
+          If it is our fault, we will see the error and try to fix it ASAP.
+        </span>
+      )}
       <textarea
         className="form-control"
         rows={rows}
