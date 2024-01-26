@@ -25,10 +25,12 @@ const config = {
     },
     {
       name: "@electron-forge/maker-deb",
+      executableName: "Synvert",
       config: {},
     },
     {
       name: "@electron-forge/maker-rpm",
+      executableName: "Synvert",
       config: {},
     },
   ],
