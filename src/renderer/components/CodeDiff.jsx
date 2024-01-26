@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from "react";
-import ReactDiffViewer, { DiffMethod } from "@xinminlabs/react-diff-viewer";
+import ReactDiffViewer, { DiffMethod } from "react-diff-viewer-continued";
 
 import AppContext from "../context";
 import { getNewSourceByTestResult } from "synvert-ui-common";
