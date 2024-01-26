@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.10.3] - 2024-01-26
+
+### Changed
+
+- Update `synvert-ui-common` to 1.14.3
+- Use `react-diff-viewer-continued` instead of `@xinminlabs/react-diff-viewer`
+
 ## [1.10.2] - 2024-01-12
 
 ### Changed
