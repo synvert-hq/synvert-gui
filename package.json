@@ -5,7 +5,7 @@
   "description": "Synvert GUI",
   "repository": {
     "type": "git",
-    "url": "https://github.com/xinminlabs/synvert-gui"
+    "url": "https://github.com/synvert-hq/synvert-gui"
   },
   "main": ".webpack/main",
   "license": "MIT",

@@ -62,7 +62,7 @@ const config = {
       name: "@electron-forge/publisher-github",
       config: {
         repository: {
-          owner: "xinminlabs",
+          owner: "synvert-hq",
           name: "synvert-gui",
         },
         prerelease: true,
