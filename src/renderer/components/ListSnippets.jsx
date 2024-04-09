@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { sortSnippets, filterSnippets, fetchSnippets } from "synvert-ui-common";
+import { sortSnippets, filterSnippets, fetchSnippets } from "@synvert-hq/synvert-ui-common";
 
 import AppContext from "../context";
 import { convertSnippetsToStore } from "../utils";

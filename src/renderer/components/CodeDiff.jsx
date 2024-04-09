@@ -2,7 +2,7 @@ import React, { useContext, useEffect } from "react";
 import ReactDiffViewer, { DiffMethod } from "react-diff-viewer-continued";
 
 import AppContext from "../context";
-import { getNewSourceByTestResult } from "synvert-ui-common";
+import { getNewSourceByTestResult } from "@synvert-hq/synvert-ui-common";
 
 const CodeDiff = () => {
   const { testResults, currentResultIndex, currentActionStart } = useContext(AppContext);

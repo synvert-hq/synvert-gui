@@ -49,6 +49,8 @@
     "@electron-forge/publisher-github": "^6.4.2",
     "@forevolve/bootstrap-dark": "^3.0.0",
     "@murasoftware/react-loading-overlay": "^1.0.3",
+    "@synvert-hq/synvert-server-common": "^1.1.3",
+    "@synvert-hq/synvert-ui-common": "^1.15.4",
     "@use-it/event-listener": "^0.1.7",
     "allotment": "^1.17.0",
     "bootstrap": "^4.6.2",
@@ -64,8 +66,6 @@
     "react-markdown": "^8.0.0",
     "react-syntax-highlighter": "^15.5.0",
     "rehype-raw": "^6.1.1",
-    "synvert-server-common": "^1.1.1",
-    "synvert-ui-common": "^1.15.2",
     "update-electron-app": "^3.0.0",
     "use-reducer-async": "^2.1.1"
   }

@@ -39,7 +39,7 @@ import {
   DependencyResponse,
   checkRubyDependencies,
   checkJavascriptDependencies,
-} from "synvert-ui-common";
+} from "@synvert-hq/synvert-ui-common";
 
 import {
   EVENT_TEST_SNIPPET,

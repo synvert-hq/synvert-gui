@@ -4,7 +4,7 @@ import {
   replaceAllTestResults,
   replaceTestAction,
   replaceTestResult,
-} from "synvert-ui-common";
+} from "@synvert-hq/synvert-ui-common";
 import {
   REMOVE_TEST_ACTION,
   REMOVE_TEST_RESULT,

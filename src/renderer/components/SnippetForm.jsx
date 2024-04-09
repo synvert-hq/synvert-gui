@@ -6,7 +6,7 @@ import AppContext from "../context";
 import { log } from "../utils";
 import { SET_LOADING, SET_GENERATED_SNIPPETS, EVENT_SNIPPET_RUN, EVENT_SNIPPET_TESTED } from "../constants";
 import SnippetCode from "./SnippetCode";
-import { placeholderByLanguage, parsersByLanguage, generateSnippets, filePatternByLanguage } from "synvert-ui-common";
+import { placeholderByLanguage, parsersByLanguage, generateSnippets, filePatternByLanguage } from "@synvert-hq/synvert-ui-common";
 
 export default () => {
   const [errorMessage, setErrorMessage] = useState("");
