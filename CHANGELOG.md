@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.11.1] - 2024-04-11
+
+### Changed
+
+- Moving from `@xinminlabs` to `@synvert-hq`
+- Use `@synvert-hq/synvert-ui-common` and `@synvert-hq/synvert-server-common packages`
+
 ## [1.11.0] - 2024-02-17
 
 ## Added
