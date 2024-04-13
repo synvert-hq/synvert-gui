@@ -137,7 +137,7 @@ const checkRuby = async () => {
   if (!rubyEnabled()) {
     return;
   }
-  const response = checkRubyDependencies(runCommand);
+  const response = await checkRubyDependencies(runCommand);
   switch (response.code) {
     case DependencyResponse.ERROR:
       showErrorMessage(`Error when checking synvert-ruby environment: ${response.error}`);
