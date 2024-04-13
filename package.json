@@ -33,6 +33,7 @@
     "@electron-forge/maker-squirrel": "^6.0.0",
     "@electron-forge/maker-zip": "^6.0.0",
     "@electron-forge/plugin-webpack": "6.0.0",
+    "@electron-forge/publisher-github": "^6.4.2",
     "@svgr/webpack": "^6.5.1",
     "@vercel/webpack-asset-relocator-loader": "^1.7.3",
     "babel-loader": "^8.2.2",
@@ -46,7 +47,6 @@
     "style-loader": "^3.2.1"
   },
   "dependencies": {
-    "@electron-forge/publisher-github": "^6.4.2",
     "@forevolve/bootstrap-dark": "^3.0.0",
     "@murasoftware/react-loading-overlay": "^1.0.3",
     "@synvert-hq/synvert-server-common": "^1.1.3",
