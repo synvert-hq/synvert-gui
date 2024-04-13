@@ -29,8 +29,6 @@
 import "./app.jsx";
 import "./index.css";
 
-import React from "react";
-import toast from "react-hot-toast";
 import {
   formatCommandResult,
   handleTestResults,
@@ -68,12 +66,14 @@ import {
   typescriptSingleQuote,
   typescriptSemi,
   typescriptTabWidth,
-  isAddFileAction,
   languageEnabled,
   cssMaxFileSize,
   lessMaxFileSize,
   sassMaxFileSize,
   scssMaxFileSize,
+  showErrorMessage,
+  showInfoMessage,
+  showErrorMessageWithAction,
 } from "./utils";
 
 const runCommand = async (command, args, { input } = {}) => {
@@ -91,46 +91,19 @@ const runCommand = async (command, args, { input } = {}) => {
 const installGem = async (name) => {
   const { error } = await runCommand("gem", ["install", name]);
   if (error) {
-    toast.error(`Failed to install the ${name} gem. ` + error);
+    showErrorMessage(`Failed to install the ${name} gem. ` + error);
   } else {
-    toast.success(`Successfully installed the ${name} gem.`);
+    showInfoMessage(`Successfully installed the ${name} gem.`);
   }
 };
 
 const installNpm = async (name) => {
   const { error } = await runCommand("npm", ["install", "-g", name]);
   if (error) {
-    toast.error(`Failed to install the ${name} npm. ` + error);
+    showErrorMessage(`Failed to install the ${name} npm. ` + error);
   } else {
-    toast.success(`Successfully installed the ${name} npm.`);
+    showInfoMessage(`Successfully installed the ${name} npm.`);
   }
-};
-
-const showErrorMessage = (message, buttonTitle, buttonAction) => {
-  toast(
-    (t) => (
-      <div>
-        <p>{message}</p>
-        <div className="d-flex justify-content-between">
-          {buttonTitle && buttonAction && (
-            <button
-              className="btn btn-primary btn-sm"
-              onClick={() => {
-                buttonAction();
-                toast.dismiss(t.id);
-              }}
-            >
-              {buttonTitle}
-            </button>
-          )}
-          <button className="btn btn-info btn-sm" onClick={() => toast.dismiss(t.id)}>
-            Dismiss
-          </button>
-        </div>
-      </div>
-    ),
-    { duration: Infinity },
-  );
 };
 
 const checkRuby = async () => {
@@ -146,17 +119,17 @@ const checkRuby = async () => {
       showErrorMessage("ruby is not available");
       break;
     case DependencyResponse.SYNVERT_NOT_AVAILABLE:
-      showErrorMessage("Synvert gem not found. Run `gem install synvert`.", "Install Now", () => installGem("synvert"));
+      showErrorMessageWithAction("Synvert gem not found. Run `gem install synvert`.", "Install Now", () => installGem("synvert"));
       break;
     case DependencyResponse.SYNVERT_OUTDATED:
-      showErrorMessage(
+      showErrorMessageWithAction(
         `synvert gem version ${response.remoteSynvertVersion} is available. (Current version: ${response.localSynvertVersion})`,
         "Update Now",
         () => installGem("synvert"),
       );
       break;
     case DependencyResponse.SYNVERT_CORE_OUTDATED:
-      showErrorMessage(
+      showErrorMessageWithAction(
         `synvert-core gem version ${response.remoteSynvertCoreVersion} is available. (Current Version: ${response.localSynvertCoreVersion})`,
         "Update Now",
         () => installGem("synvert-core"),
@@ -188,7 +161,7 @@ const checkJavascript = async () => {
       showErrorMessage("Synvert gem not found. Run `gem install synvert`.", "Install Now", () => installGem("synvert"));
       break;
     case DependencyResponse.SYNVERT_OUTDATED:
-      showErrorMessage(
+      showErrorMessageWithAction(
         `synvert npm version ${remoteSynvertVersion} is available. (Current version: ${localSynvertVersion})`,
         "Update Now",
         () => installNpm("synvert"),
@@ -318,9 +291,9 @@ const updateDependencies = async (event) => {
     dependencyName = "synvert-javascript";
   }
   if (result.error) {
-    toast.error(`Failed to update ${dependencyName} dependencies: ${result.error}`);
+    showErrorMessage(`Failed to update ${dependencyName} dependencies: ${result.error}`);
   } else {
-    toast.success(`Successfully updated ${dependencyName} dependencies.`);
+    showInfoMessage(`Successfully updated ${dependencyName} dependencies.`);
   }
   triggerEvent(EVENT_DEPENDENCIES_UPDATED, { error: result.error });
 };

@@ -1,3 +1,6 @@
+import React from "react";
+import toast from "react-hot-toast";
+
 import { ROOT_PATH, ONLY_PATHS, SKIP_PATHS, LANGUAGE, LANGUAGES, PARSER } from "./constants";
 
 const CUSTOM = "custom";
@@ -143,3 +146,58 @@ export const log = (...args) => {
     console.log(...args);
   }
 };
+
+export const showInfoMessage = (message) => {
+  toast(
+    (t) => (
+      <div className="d-flex justify-content-between">
+        <div>{message}</div>
+        <button className="btn btn-info btn-sm" onClick={() => toast.dismiss(t.id)}>
+          Dismiss
+        </button>
+      </div>
+    ),
+    { duration: Infinity },
+  );
+};
+
+export const showErrorMessage = (message) => {
+  toast(
+    (t) => (
+      <div className="d-flex justify-content-between">
+        <div>{message}</div>
+        <button className="btn btn-info btn-sm" onClick={() => toast.dismiss(t.id)}>
+          Dismiss
+        </button>
+      </div>
+    ),
+    { duration: Infinity },
+  );
+};
+
+export const showErrorMessageWithAction = (message, buttonTitle, buttonAction) => {
+  toast(
+    (t) => (
+      <div>
+        <p>{message}</p>
+        <div className="d-flex justify-content-between">
+          {buttonTitle && buttonAction && (
+            <button
+              className="btn btn-danger btn-sm"
+              onClick={() => {
+                buttonAction();
+                toast.dismiss(t.id);
+              }}
+            >
+              {buttonTitle}
+            </button>
+          )}
+          <button className="btn btn-info btn-sm" onClick={() => toast.dismiss(t.id)}>
+            Dismiss
+          </button>
+        </div>
+      </div>
+    ),
+    { duration: Infinity },
+  );
+}
