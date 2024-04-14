@@ -32,6 +32,11 @@ const preferences = new ElectronPreferences({
                 options: [{ label: "Enabled", value: "yes" }],
               },
               {
+                label: "Synvert ruby bin path",
+                key: "bin_path",
+                type: "text",
+              },
+              {
                 label: "Number of workers to run in parallel",
                 key: "number_of_workers",
                 type: "number",
