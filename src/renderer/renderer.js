@@ -73,6 +73,8 @@ import {
   scssMaxFileSize,
   showMessage,
   showErrorMessageWithAction,
+  rubyBinPath,
+  javascriptBinPath,
 } from "./utils";
 
 const runCommand = async (command, args, { input } = {}) => {
@@ -109,7 +111,8 @@ const checkRuby = async () => {
   if (!rubyEnabled()) {
     return;
   }
-  const response = await checkRubyDependencies(runCommand);
+  const binPath = rubyBinPath();
+  const response = await checkRubyDependencies({ runCommand, binPath });
   switch (response.code) {
     case DependencyResponse.ERROR:
       showMessage(`Error when checking synvert-ruby environment: ${response.error}`);
@@ -148,7 +151,8 @@ const checkJavascript = async () => {
   ) {
     return;
   }
-  const response = await checkJavascriptDependencies(runCommand);
+  const binPath = javascriptBinPath();
+  const response = await checkJavascriptDependencies({ runCommand, binPath });
   switch (response.code) {
     case DependencyResponse.ERROR:
       showMessage(`Error when checking synvert-javascript environment: ${response.error}`);
@@ -192,17 +196,19 @@ const testSnippet = async (event) => {
   const {
     detail: { snippetCode, rootPath, onlyPaths, skipPaths },
   } = event;
-  const additionalCommandArgs = buildAdditionalCommandArgs(language);
+  const additionalArgs = buildAdditionalCommandArgs(language);
   const synvertCommand = language === "ruby" ? runSynvertRuby : runSynvertJavascript;
-  const { output, error } = await synvertCommand(
+  const binPath = language === "ruby" ? rubyBinPath() : javascriptBinPath();
+  const { output, error } = await synvertCommand({
     runCommand,
-    "test",
+    executeCommand: "test",
     rootPath,
     onlyPaths,
     skipPaths,
-    additionalCommandArgs,
+    additionalArgs,
     snippetCode,
-  );
+    binPath,
+  });
   if (error) {
     triggerEvent(EVENT_SNIPPET_TESTED, { error });
     return;
@@ -228,17 +234,19 @@ const runSnippet = async (event) => {
   const {
     detail: { snippetCode, rootPath, onlyPaths, skipPaths },
   } = event;
-  const additionalCommandArgs = buildAdditionalCommandArgs(language);
+  const additionalArgs = buildAdditionalCommandArgs(language);
   const synvertCommand = language === "ruby" ? runSynvertRuby : runSynvertJavascript;
-  const { output, error } = await synvertCommand(
+  const binPath = language === "ruby" ? rubyBinPath() : javascriptBinPath();
+  const { output, error } = await synvertCommand({
     runCommand,
-    "run",
+    executeCommand: "run",
     rootPath,
     onlyPaths,
     skipPaths,
-    additionalCommandArgs,
+    additionalArgs,
     snippetCode,
-  );
+    binPath,
+  });
   if (error) {
     triggerEvent(EVENT_SNIPPET_RUN, { error });
     return;
