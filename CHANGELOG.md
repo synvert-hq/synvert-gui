@@ -1,5 +1,21 @@
 # Change Log
 
+## [1.12.0] - 2024-04-14
+
+### Added
+
+* Add `ruby.bin_path` preference
+* Add `javascript.bin_path` preference
+
+### Changes
+
+* Show close button in toast
+
+### Fixed
+
+* Add missing `await` to check ruby dependencies
+* Fix `checkJavascriptDependencies` message
+
 ## [1.11.1] - 2024-04-11
 
 ### Changed
