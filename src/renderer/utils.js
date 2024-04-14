@@ -147,29 +147,15 @@ export const log = (...args) => {
   }
 };
 
-export const showInfoMessage = (message) => {
+export const showMessage = (message) => {
   toast(
     (t) => (
-      <div className="d-flex justify-content-between">
-        <div>{message}</div>
-        <button className="btn btn-info btn-sm" onClick={() => toast.dismiss(t.id)}>
-          Dismiss
+      <span>
+        {message}
+        <button type="button" className="close" aria-label="Close" onClick={() => toast.dismiss(t.id)}>
+          <span aria-hidden="true">×</span>
         </button>
-      </div>
-    ),
-    { duration: Infinity },
-  );
-};
-
-export const showErrorMessage = (message) => {
-  toast(
-    (t) => (
-      <div className="d-flex justify-content-between">
-        <div>{message}</div>
-        <button className="btn btn-info btn-sm" onClick={() => toast.dismiss(t.id)}>
-          Dismiss
-        </button>
-      </div>
+      </span>
     ),
     { duration: Infinity },
   );
@@ -180,6 +166,9 @@ export const showErrorMessageWithAction = (message, buttonTitle, buttonAction) =
     (t) => (
       <div>
         <p>{message}</p>
+        <button type="button" className="close" aria-label="Close" onClick={() => toast.dismiss(t.id)}>
+          <span aria-hidden="true">×</span>
+        </button>
         <div className="d-flex justify-content-between">
           {buttonTitle && buttonAction && (
             <button
@@ -193,7 +182,7 @@ export const showErrorMessageWithAction = (message, buttonTitle, buttonAction) =
             </button>
           )}
           <button className="btn btn-info btn-sm" onClick={() => toast.dismiss(t.id)}>
-            Dismiss
+            Close
           </button>
         </div>
       </div>

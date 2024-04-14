@@ -71,8 +71,7 @@ import {
   lessMaxFileSize,
   sassMaxFileSize,
   scssMaxFileSize,
-  showErrorMessage,
-  showInfoMessage,
+  showMessage,
   showErrorMessageWithAction,
 } from "./utils";
 
@@ -91,18 +90,18 @@ const runCommand = async (command, args, { input } = {}) => {
 const installGem = async (name) => {
   const { error } = await runCommand("gem", ["install", name]);
   if (error) {
-    showErrorMessage(`Failed to install the ${name} gem. ` + error);
+    showMessage(`Failed to install the ${name} gem. ` + error);
   } else {
-    showInfoMessage(`Successfully installed the ${name} gem.`);
+    showMessage(`Successfully installed the ${name} gem.`);
   }
 };
 
 const installNpm = async (name) => {
   const { error } = await runCommand("npm", ["install", "-g", name]);
   if (error) {
-    showErrorMessage(`Failed to install the ${name} npm. ` + error);
+    showMessage(`Failed to install the ${name} npm. ` + error);
   } else {
-    showInfoMessage(`Successfully installed the ${name} npm.`);
+    showMessage(`Successfully installed the ${name} npm.`);
   }
 };
 
@@ -113,10 +112,10 @@ const checkRuby = async () => {
   const response = await checkRubyDependencies(runCommand);
   switch (response.code) {
     case DependencyResponse.ERROR:
-      showErrorMessage(`Error when checking synvert-ruby environment: ${response.error}`);
+      showMessage(`Error when checking synvert-ruby environment: ${response.error}`);
       break;
     case DependencyResponse.RUBY_NOT_AVAILABLE:
-      showErrorMessage("ruby is not available");
+      showMessage("ruby is not available");
       break;
     case DependencyResponse.SYNVERT_NOT_AVAILABLE:
       showErrorMessageWithAction("Synvert gem not found. Run `gem install synvert`.", "Install Now", () => installGem("synvert"));
@@ -152,13 +151,13 @@ const checkJavascript = async () => {
   const response = await checkJavascriptDependencies(runCommand);
   switch (response.code) {
     case DependencyResponse.ERROR:
-      showErrorMessage(`Error when checking synvert-javascript environment: ${response.error}`);
+      showMessage(`Error when checking synvert-javascript environment: ${response.error}`);
       break;
     case DependencyResponse.JAVASCRIPT_NOT_AVAILABLE:
-      showErrorMessage("javascript (node) is not available");
+      showMessage("javascript (node) is not available");
       break;
     case DependencyResponse.SYNVERT_NOT_AVAILABLE:
-      showErrorMessage("Synvert gem not found. Run `gem install synvert`.", "Install Now", () => installGem("synvert"));
+      showMessage("Synvert gem not found. Run `gem install synvert`.", "Install Now", () => installGem("synvert"));
       break;
     case DependencyResponse.SYNVERT_OUTDATED:
       showErrorMessageWithAction(
@@ -291,9 +290,9 @@ const updateDependencies = async (event) => {
     dependencyName = "synvert-javascript";
   }
   if (result.error) {
-    showErrorMessage(`Failed to update ${dependencyName} dependencies: ${result.error}`);
+    showMessage(`Failed to update ${dependencyName} dependencies: ${result.error}`);
   } else {
-    showInfoMessage(`Successfully updated ${dependencyName} dependencies.`);
+    showMessage(`Successfully updated ${dependencyName} dependencies.`);
   }
   triggerEvent(EVENT_DEPENDENCIES_UPDATED, { error: result.error });
 };

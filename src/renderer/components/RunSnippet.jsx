@@ -8,7 +8,7 @@ import FilesToInclude from "./FilesToInclude";
 import FilesToExclude from "./FilesToExclude";
 import SearchButton from "./SearchButton";
 import ReplaceAllButton from "./ReplaceAllButton";
-import { showErrorMessage, showInfoMessage } from "../utils";
+import { showMessage } from "../utils";
 
 export default () => {
   const { dispatch } = useContext(AppContext);
@@ -16,11 +16,11 @@ export default () => {
   useEventListener(EVENT_SNIPPET_RUN, ({ detail: { affectedFiles, error } = {} }) => {
     dispatch({ type: SET_LOADING, loading: false });
     if (error) {
-      showErrorMessage(error);
+      showMessage(error);
       return;
     }
     if (!affectedFiles || affectedFiles.length == 0) {
-      showInfoMessage("No file affected by this snippet");
+      showMessage("No file affected by this snippet");
       return;
     }
   });

@@ -5,7 +5,7 @@ import { Allotment } from "allotment";
 import "allotment/dist/style.css";
 
 import AppContext from "../context";
-import { getInited, showErrorMessage, showInfoMessage } from "../utils";
+import { getInited, showMessage } from "../utils";
 import { SET_LOADING, SET_TEST_RESULTS, SET_SHOW_TEST_RESULTS, EVENT_SNIPPET_TESTED } from "../constants";
 import FirstTimeConfig from "./FirstTimeConfig";
 import ListSnippets from "./ListSnippets";
@@ -26,11 +26,11 @@ export default () => {
   useEventListener(EVENT_SNIPPET_TESTED, ({ detail: { testResults, error } = {} }) => {
     dispatch({ type: SET_LOADING, loading: false });
     if (error) {
-      showErrorMessage(error);
+      showMessage(error);
       return;
     }
     if (testResults.length === 0) {
-      showInfoMessage("No file affected by this snippet");
+      showMessage("No file affected by this snippet");
       return;
     }
     dispatch({ type: SET_TEST_RESULTS, testResults });
