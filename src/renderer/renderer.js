@@ -161,7 +161,7 @@ const checkJavascript = async () => {
       showMessage("javascript (node) is not available");
       break;
     case DependencyResponse.SYNVERT_NOT_AVAILABLE:
-      showMessage("Synvert gem not found. Run `gem install synvert`.", "Install Now", () => installGem("synvert"));
+      showMessage("Synvert npm not found. Run `npm install -g synvert`.", "Install Now", () => installNpm("synvert"));
       break;
     case DependencyResponse.SYNVERT_OUTDATED:
       showErrorMessageWithAction(
