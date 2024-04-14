@@ -73,6 +73,7 @@ export const rubyNumberOfWorkers = () => getPreference("ruby", "number_of_worker
 export const rubySingleQuote = () => getPreference("ruby", "single_quote").includes("yes");
 export const rubyTabWidth = () => getPreference("ruby", "tab_width");
 export const javascriptEnabled = () => getPreference("javascript", "enabled").includes("yes");
+export const javascriptBinPath = () => getPreference("javascript", "bin_path");
 export const javascriptMaxFileSize = () => getPreference("javascript", "max_file_size");
 export const javascriptSingleQuote = () => getPreference("javascript", "single_quote").includes("yes");
 export const javascriptSemi = () => getPreference("javascript", "semi").includes("yes");

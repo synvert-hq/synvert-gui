@@ -71,6 +71,11 @@ const preferences = new ElectronPreferences({
                 options: [{ label: "Enabled", value: "yes" }],
               },
               {
+                label: "Synvert javascript bin path",
+                key: "bin_path",
+                type: "text",
+              },
+              {
                 label: "Skip file if its size is more than the size. (KB)",
                 key: "max_file_size",
                 type: "number",
