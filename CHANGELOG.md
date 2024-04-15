@@ -1,5 +1,11 @@
 # Change Log
 
+## [1.12.1] - 2024-04-15
+
+### Changed
+
+* Rename `bin_path` to `command_path`
+
 ## [1.12.0] - 2024-04-14
 
 ### Added
