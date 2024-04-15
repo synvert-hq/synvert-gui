@@ -32,8 +32,8 @@ const preferences = new ElectronPreferences({
                 options: [{ label: "Enabled", value: "yes" }],
               },
               {
-                label: "Synvert ruby bin path",
-                key: "bin_path",
+                label: "Synvert ruby command path",
+                key: "command_path",
                 type: "text",
               },
               {
@@ -71,8 +71,8 @@ const preferences = new ElectronPreferences({
                 options: [{ label: "Enabled", value: "yes" }],
               },
               {
-                label: "Synvert javascript bin path",
-                key: "bin_path",
+                label: "Synvert javascript command path",
+                key: "command_path",
                 type: "text",
               },
               {

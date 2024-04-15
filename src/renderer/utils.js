@@ -7,13 +7,14 @@ const CUSTOM = "custom";
 export const DEFAULT_VALUES = {
   ruby: {
     enabled: ["yes"],
-    bin_path: "",
+    command_path: "",
     number_of_workers: 4,
     single_quote: ["yes"],
     tab_width: 2,
   },
   javascript: {
     enabled: ["yes"],
+    command_path: "",
     max_file_size: 100,
     single_quote: ["no"],
     semi: ["yes"],
@@ -68,12 +69,12 @@ export const saveInited = (inited) => savePreference(CUSTOM, "inited", inited);
 export const getInited = () => getPreference(CUSTOM, "inited");
 
 export const rubyEnabled = () => getPreference("ruby", "enabled").includes("yes");
-export const rubyBinPath = () => getPreference("ruby", "bin_path");
+export const rubyCommandPath = () => getPreference("ruby", "command_path");
 export const rubyNumberOfWorkers = () => getPreference("ruby", "number_of_workers");
 export const rubySingleQuote = () => getPreference("ruby", "single_quote").includes("yes");
 export const rubyTabWidth = () => getPreference("ruby", "tab_width");
 export const javascriptEnabled = () => getPreference("javascript", "enabled").includes("yes");
-export const javascriptBinPath = () => getPreference("javascript", "bin_path");
+export const javascriptCommandPath = () => getPreference("javascript", "command_path");
 export const javascriptMaxFileSize = () => getPreference("javascript", "max_file_size");
 export const javascriptSingleQuote = () => getPreference("javascript", "single_quote").includes("yes");
 export const javascriptSemi = () => getPreference("javascript", "semi").includes("yes");
