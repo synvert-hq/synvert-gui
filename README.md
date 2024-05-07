@@ -4,7 +4,7 @@
 
 ```
 npm install
-npm run start
+DEBUG=true npm start
 ```
 
 ## Publish
