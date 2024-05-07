@@ -1,5 +1,13 @@
 # Change Log
 
+## [1.13.0] - 2024-05-07
+
+### Changed
+
+- Update `@synvert-hq/synvert-ui-common` to 1.17.0
+- Revert to use `bin_path`
+- Use `@synvert-hq/synvert-ui-common` to install and sync synvert
+
 ## [1.12.1] - 2024-04-15
 
 ### Changed
@@ -27,7 +35,7 @@
 ### Changed
 
 - Moving from `@xinminlabs` to `@synvert-hq`
-- Use `@synvert-hq/synvert-ui-common` and `@synvert-hq/synvert-server-common packages`
+- Use `@synvert-hq/synvert-ui-common` and `@synvert-hq/synvert-server-common` packages
 
 ## [1.11.0] - 2024-02-17
 
