@@ -30,13 +30,16 @@ import "./app.jsx";
 import "./index.css";
 
 import {
-  formatCommandResult,
   handleTestResults,
   runSynvertRuby,
   runSynvertJavascript,
   DependencyResponse,
   checkRubyDependencies,
   checkJavascriptDependencies,
+  installGem,
+  installNpm,
+  syncRubySnippets,
+  syncJavascriptSnippets
 } from "@synvert-hq/synvert-ui-common";
 
 import {
@@ -73,8 +76,8 @@ import {
   scssMaxFileSize,
   showMessage,
   showErrorMessageWithAction,
-  rubyCommandPath,
-  javascriptCommandPath,
+  rubyBinPath,
+  javascriptBinPath,
 } from "./utils";
 
 const runCommand = async (command, args, { input } = {}) => {
@@ -82,28 +85,30 @@ const runCommand = async (command, args, { input } = {}) => {
     log({ type: "runCommand", command: [command].concat(args).join(" ") });
     const { stdout, stderr } = await window.electronAPI.runShellCommand(command, args, input);
     log({ type: "runCommand", stdout, stderr });
-    return formatCommandResult({ stdout, stderr });
+    return { stdout, stderr };
   } catch (e) {
     log({ type: "runCommand error", e });
-    return { error: e.message };
+    return { stderr: e.message };
   }
 };
 
-const installGem = async (name) => {
-  const { error } = await runCommand("gem", ["install", name]);
-  if (error) {
-    showMessage(`Failed to install the ${name} gem. ` + error);
+const runGemInstall = async (gemName) => {
+  const binPath = rubyBinPath();
+  const { stderr } = await installGem({ runCommand, gemName, binPath });
+  if (stderr) {
+    showMessage(`Failed to install the ${gemName} gem. ` + stderr);
   } else {
-    showMessage(`Successfully installed the ${name} gem.`);
+    showMessage(`Successfully installed the ${gemName} gem.`);
   }
 };
 
-const installNpm = async (name) => {
-  const { error } = await runCommand("npm", ["install", "-g", name]);
-  if (error) {
-    showMessage(`Failed to install the ${name} npm. ` + error);
+const runNpmInstall = async (npmName) => {
+  const binPath = javascriptBinPath();
+  const { stderr } = await installNpm({ runCommand, npmName, binPath });
+  if (stderr) {
+    showMessage(`Failed to install the ${npmName} npm. ` + stderr);
   } else {
-    showMessage(`Successfully installed the ${name} npm.`);
+    showMessage(`Successfully installed the ${npmName} npm.`);
   }
 };
 
@@ -111,8 +116,8 @@ const checkRuby = async () => {
   if (!rubyEnabled()) {
     return;
   }
-  const commandPath = rubyCommandPath();
-  const response = await checkRubyDependencies({ runCommand, commandPath });
+  const binPath = rubyBinPath();
+  const response = await checkRubyDependencies({ runCommand, binPath });
   switch (response.code) {
     case DependencyResponse.ERROR:
       showMessage(`Error when checking synvert-ruby environment: ${response.error}`);
@@ -121,20 +126,20 @@ const checkRuby = async () => {
       showMessage("ruby is not available");
       break;
     case DependencyResponse.SYNVERT_NOT_AVAILABLE:
-      showErrorMessageWithAction("Synvert gem not found. Run `gem install synvert`.", "Install Now", () => installGem("synvert"));
+      showErrorMessageWithAction("Synvert gem not found. Run `gem install synvert`.", "Install Now", () => runGemInstall("synvert"));
       break;
     case DependencyResponse.SYNVERT_OUTDATED:
       showErrorMessageWithAction(
         `synvert gem version ${response.remoteSynvertVersion} is available. (Current version: ${response.localSynvertVersion})`,
         "Update Now",
-        () => installGem("synvert"),
+        () => runGemInstall("synvert"),
       );
       break;
     case DependencyResponse.SYNVERT_CORE_OUTDATED:
       showErrorMessageWithAction(
         `synvert-core gem version ${response.remoteSynvertCoreVersion} is available. (Current Version: ${response.localSynvertCoreVersion})`,
         "Update Now",
-        () => installGem("synvert-core"),
+        () => runGemInstall("synvert-core"),
       );
       break;
   }
@@ -151,8 +156,8 @@ const checkJavascript = async () => {
   ) {
     return;
   }
-  const commandPath = javascriptCommandPath();
-  const response = await checkJavascriptDependencies({ runCommand, commandPath });
+  const binPath = javascriptBinPath();
+  const response = await checkJavascriptDependencies({ runCommand, binPath });
   switch (response.code) {
     case DependencyResponse.ERROR:
       showMessage(`Error when checking synvert-javascript environment: ${response.error}`);
@@ -161,13 +166,13 @@ const checkJavascript = async () => {
       showMessage("javascript (node) is not available");
       break;
     case DependencyResponse.SYNVERT_NOT_AVAILABLE:
-      showMessage("Synvert npm not found. Run `npm install -g synvert`.", "Install Now", () => installNpm("synvert"));
+      showErrorMessageWithAction("Synvert npm not found. Run `npm install -g @synvert-hq/synvert`.", "Install Now", () => runNpmInstall("@synvert-hq/synvert"));
       break;
     case DependencyResponse.SYNVERT_OUTDATED:
       showErrorMessageWithAction(
-        `synvert npm version ${remoteSynvertVersion} is available. (Current version: ${localSynvertVersion})`,
+        `@synvert-hq/synvert npm version ${remoteSynvertVersion} is available. (Current version: ${localSynvertVersion})`,
         "Update Now",
-        () => installNpm("synvert"),
+        () => runNpmInstall("@synvert-hq/synvert"),
       );
       break;
   }
@@ -198,8 +203,8 @@ const testSnippet = async (event) => {
   } = event;
   const additionalArgs = buildAdditionalCommandArgs(language);
   const synvertCommand = language === "ruby" ? runSynvertRuby : runSynvertJavascript;
-  const commandPath = language === "ruby" ? rubyCommandPath() : javascriptCommandPath();
-  const { output, error } = await synvertCommand({
+  const binPath = language === "ruby" ? rubyBinPath() : javascriptBinPath();
+  const { stdout, stderr } = await synvertCommand({
     runCommand,
     executeCommand: "test",
     rootPath,
@@ -207,15 +212,15 @@ const testSnippet = async (event) => {
     skipPaths,
     additionalArgs,
     snippetCode,
-    commandPath,
+    binPath,
   });
-  if (error) {
-    triggerEvent(EVENT_SNIPPET_TESTED, { error });
+  if (stderr) {
+    triggerEvent(EVENT_SNIPPET_TESTED, { error: stderr });
     return;
   }
   const { results, errorMessage } = await handleTestResults(
-    output,
-    error,
+    stdout,
+    stderr,
     rootPath,
     window.electronAPI.pathAPI,
     window.electronAPI.promiseFsAPI,
@@ -236,8 +241,8 @@ const runSnippet = async (event) => {
   } = event;
   const additionalArgs = buildAdditionalCommandArgs(language);
   const synvertCommand = language === "ruby" ? runSynvertRuby : runSynvertJavascript;
-  const commandPath = language === "ruby" ? rubyCommandPath() : javascriptCommandPath();
-  const { output, error } = await synvertCommand({
+  const binPath = language === "ruby" ? rubyBinPath() : javascriptBinPath();
+  const { stdout, stderr } = await synvertCommand({
     runCommand,
     executeCommand: "run",
     rootPath,
@@ -245,10 +250,10 @@ const runSnippet = async (event) => {
     skipPaths,
     additionalArgs,
     snippetCode,
-    commandPath,
+    binPath,
   });
-  if (error) {
-    triggerEvent(EVENT_SNIPPET_RUN, { error });
+  if (stderr) {
+    triggerEvent(EVENT_SNIPPET_RUN, { error: stderr });
     return;
   }
   try {
@@ -259,28 +264,30 @@ const runSnippet = async (event) => {
 };
 
 const updateRubyDependencies = async () => {
-  const { error } = await runCommand("gem", [
-    "install",
-    "synvert",
-    "synvert-core",
-    "node_query",
-    "node_mutation",
-    "parser_node_ext",
-    "syntax_tree_ext",
-  ]);
-  if (error) {
-    return { error };
+  const binPath = rubyBinPath();
+  const { stderr } = await installGem({
+    runCommand,
+    gemName: ["synvert", "synvert-core", "node_query", "node_mutation", "parser_node_ext", "syntax_tree_ext", "prism_ext"],
+    binPath,
+  });
+  if (stderr) {
+    return { error: stderr };
   }
-  const result = await runCommand("synvert-ruby", ["--sync"]);
+  const result = await syncRubySnippets({ runCommand, binPath });
   return { error: result.error };
 };
 
 const updateJavascriptDependencies = async () => {
-  const { error } = await runCommand("npm", ["install", "-g", "synvert"]);
-  if (error) {
-    return { error };
+  const binPath = javascriptBinPath();
+  const { stderr } = await installNpm({
+    runCommand,
+    npmName: "@synvert-hq/synvert",
+    binPath,
+  });
+  if (stderr) {
+    return { error: stderr };
   }
-  const result = await runCommand("synvert-javascript", ["--sync"]);
+  const result = await syncJavascriptSnippets({ runCommand, binPath });
   return { error: result.error };
 };
 
