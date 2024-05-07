@@ -50,7 +50,7 @@
     "@forevolve/bootstrap-dark": "^3.0.0",
     "@murasoftware/react-loading-overlay": "^1.0.3",
     "@synvert-hq/synvert-server-common": "^1.1.3",
-    "@synvert-hq/synvert-ui-common": "^1.16.1",
+    "@synvert-hq/synvert-ui-common": "^1.17.0",
     "@use-it/event-listener": "^0.1.7",
     "allotment": "^1.17.0",
     "bootstrap": "^4.6.2",
