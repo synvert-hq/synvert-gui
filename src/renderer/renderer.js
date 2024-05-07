@@ -96,7 +96,7 @@ const runGemInstall = async (gemName) => {
   const binPath = rubyBinPath();
   const { stderr } = await installGem({ runCommand, gemName, binPath });
   if (stderr) {
-    showMessage(`Failed to install the ${gemName} gem. ` + stderr);
+    showMessage(`Failed to install the ${gemName} gem. ${stderr}`);
   } else {
     showMessage(`Successfully installed the ${gemName} gem.`);
   }
@@ -106,7 +106,7 @@ const runNpmInstall = async (npmName) => {
   const binPath = javascriptBinPath();
   const { stderr } = await installNpm({ runCommand, npmName, binPath });
   if (stderr) {
-    showMessage(`Failed to install the ${npmName} npm. ` + stderr);
+    showMessage(`Failed to install the ${npmName} npm. ${stderr}`);
   } else {
     showMessage(`Successfully installed the ${npmName} npm.`);
   }
