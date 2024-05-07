@@ -32,8 +32,8 @@ const preferences = new ElectronPreferences({
                 options: [{ label: "Enabled", value: "yes" }],
               },
               {
-                label: "Synvert ruby command path",
-                key: "command_path",
+                label: "Synvert ruby bin path (directory containing synvert-ruby command, e.g. if you are using rbenv, it should be /Users/username/.rbenv/shims)",
+                key: "bin_path",
                 type: "text",
               },
               {
@@ -71,8 +71,8 @@ const preferences = new ElectronPreferences({
                 options: [{ label: "Enabled", value: "yes" }],
               },
               {
-                label: "Synvert javascript command path",
-                key: "command_path",
+                label: "Synvert javascript bin path (directory containing synvert-javascript command)",
+                key: "bin_path",
                 type: "text",
               },
               {
