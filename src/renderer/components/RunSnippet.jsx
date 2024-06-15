@@ -6,6 +6,7 @@ import { EVENT_SNIPPET_RUN, SET_LOADING } from "../constants";
 import WorkingDir from "./WorkingDir";
 import FilesToInclude from "./FilesToInclude";
 import FilesToExclude from "./FilesToExclude";
+import RespectGitignoreCheckbox from "./RespectGitIgnoreCheckbox";
 import SearchButton from "./SearchButton";
 import ReplaceAllButton from "./ReplaceAllButton";
 import { showMessage } from "../utils";
@@ -29,7 +30,8 @@ export default () => {
     <div className="run-snippet">
       <div className="container-fluid mt-3 d-flex flex-row align-items-center">
         <WorkingDir />
-        <div className="actions">
+        <div className="actions ml-2">
+          <RespectGitignoreCheckbox />
           <SearchButton />
           <ReplaceAllButton />
         </div>

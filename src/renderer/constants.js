@@ -33,9 +33,11 @@ export const SET_CURRENT_ACTION_INDEX = "SET_CURRENT_ACTION_INDEX";
 export const SET_ROOT_PATH = "SET_ROOT_PATH";
 export const SET_ONLY_PATHS = "SET_ONLY_PATHS";
 export const SET_SKIP_PATHS = "SET_SKIP_PATHS";
+export const SET_RESPECT_GITIGNORE = "SET_RESPECT_GITIGNORE";
 
 export const LANGUAGE = "language";
 export const PARSER = "parser";
 export const ROOT_PATH = "root_path";
 export const ONLY_PATHS = "only_paths";
 export const SKIP_PATHS = "skip_paths";
+export const RESPECT_GITIGNORE = "respect_gitignore";

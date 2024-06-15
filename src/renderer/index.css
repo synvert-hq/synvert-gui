@@ -72,7 +72,7 @@ button.close:hover {
 .new-snippet .nql-or-rules-select label {
   margin-right: 10px;
 }
-.new-snippet .nql-or-rules-select input[type="radio"] {
+input[type="radio"], input[type="checkbox"] {
   margin-right: 5px;
 }
 

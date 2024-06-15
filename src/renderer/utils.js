@@ -1,7 +1,7 @@
 import React from "react";
 import toast from "react-hot-toast";
 
-import { ROOT_PATH, ONLY_PATHS, SKIP_PATHS, LANGUAGE, LANGUAGES, PARSER } from "./constants";
+import { ROOT_PATH, ONLY_PATHS, SKIP_PATHS, RESPECT_GITIGNORE, LANGUAGE, LANGUAGES, PARSER } from "./constants";
 
 const CUSTOM = "custom";
 export const DEFAULT_VALUES = {
@@ -62,7 +62,7 @@ const getPreference = (section, key) => {
   if (!preferences[section]) {
     preferences[section] = {};
   }
-  return preferences[section][key] || DEFAULT_VALUES[section][key];
+  return preferences[section][key] === undefined ? DEFAULT_VALUES[section][key] : preferences[section][key];
 };
 
 export const saveInited = (inited) => savePreference(CUSTOM, "inited", inited);
@@ -125,6 +125,9 @@ export const saveOnlyPaths = (path) => savePreference(CUSTOM, getRootPath() + ":
 
 export const getSkipPaths = () => getPreference(CUSTOM, getRootPath() + ":" + SKIP_PATHS) || "";
 export const saveSkipPaths = (path) => savePreference(CUSTOM, getRootPath() + ":" + SKIP_PATHS, path);
+
+export const getRespectGitignore = () => getPreference(CUSTOM, getRootPath() + ":" + RESPECT_GITIGNORE);
+export const saveRespectGitignore = (respectGitignore) => savePreference(CUSTOM, getRootPath() + ":" + RESPECT_GITIGNORE, respectGitignore);
 
 export const convertSnippetsToStore = (snippets) =>
   snippets.reduce(

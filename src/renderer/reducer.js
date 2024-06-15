@@ -13,6 +13,7 @@ import {
   SET_ROOT_PATH,
   SET_ONLY_PATHS,
   SET_SKIP_PATHS,
+  SET_RESPECT_GITIGNORE,
   SET_LANGUAGE,
   SET_PARSER,
   SET_INITED,
@@ -156,6 +157,7 @@ export default (state = {}, action) => {
         rootPath: action.rootPath,
         onlyPaths: action.onlyPaths,
         skipPaths: action.skipPaths,
+        respectGitignore: action.respectGitignore,
       };
     }
     case SET_ONLY_PATHS: {
@@ -168,6 +170,12 @@ export default (state = {}, action) => {
       return {
         ...state,
         skipPaths: action.skipPaths,
+      };
+    }
+    case SET_RESPECT_GITIGNORE: {
+      return {
+        ...state,
+        respectGitignore: action.respectGitignore,
       };
     }
     default:

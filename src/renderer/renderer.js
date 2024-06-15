@@ -199,7 +199,7 @@ const testSnippet = async (event) => {
     return;
   }
   const {
-    detail: { snippetCode, rootPath, onlyPaths, skipPaths },
+    detail: { snippetCode, rootPath, onlyPaths, skipPaths, respectGitignore },
   } = event;
   const additionalArgs = buildAdditionalCommandArgs(language);
   const synvertCommand = language === "ruby" ? runSynvertRuby : runSynvertJavascript;
@@ -210,6 +210,7 @@ const testSnippet = async (event) => {
     rootPath,
     onlyPaths,
     skipPaths,
+    respectGitignore,
     additionalArgs,
     snippetCode,
     binPath,
@@ -237,7 +238,7 @@ const runSnippet = async (event) => {
     return;
   }
   const {
-    detail: { snippetCode, rootPath, onlyPaths, skipPaths },
+    detail: { snippetCode, rootPath, onlyPaths, skipPaths, respectGitignore },
   } = event;
   const additionalArgs = buildAdditionalCommandArgs(language);
   const synvertCommand = language === "ruby" ? runSynvertRuby : runSynvertJavascript;
@@ -248,6 +249,7 @@ const runSnippet = async (event) => {
     rootPath,
     onlyPaths,
     skipPaths,
+    respectGitignore,
     additionalArgs,
     snippetCode,
     binPath,

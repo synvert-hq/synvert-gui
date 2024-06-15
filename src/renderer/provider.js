@@ -4,7 +4,7 @@ import { useReducerAsync } from "use-reducer-async";
 import appReducer from "./reducer";
 import appAction from "./action";
 import AppContext from "./context";
-import { getInited, getLanguage, getOnlyPaths, getRootPath, getSkipPaths } from "./utils";
+import { getInited, getLanguage, getOnlyPaths, getRootPath, getSkipPaths, getRespectGitignore } from "./utils";
 
 const initialState = {
   inited: getInited(),
@@ -12,6 +12,7 @@ const initialState = {
   rootPath: getRootPath(),
   onlyPaths: getOnlyPaths(),
   skipPaths: getSkipPaths(),
+  respectGitignore: getRespectGitignore() === false ? false : true,
   snippetsStore: {},
   currentSnippetId: null,
   generatedSnippets: [],
